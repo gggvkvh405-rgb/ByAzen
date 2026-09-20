@@ -1,0 +1,24 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package ru.wexside.event;
+
+import ru.wexside.event.Event;
+
+public final class BrightnessEvent
+implements Event {
+    private float brightness;
+
+    public BrightnessEvent(float f) {
+        this.brightness = f;
+    }
+
+    public void setBrightness(float brightness) {
+        this.brightness = brightness;
+    }
+
+    public float getBrightness() {
+        return this.brightness;
+    }
+}
+

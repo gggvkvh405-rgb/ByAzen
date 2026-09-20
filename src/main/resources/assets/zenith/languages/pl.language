@@ -1,0 +1,1551 @@
+module.emotes.wheelBind = Klawisz kola emotek
+module.emotes.wheelBind.desc = Przytrzymaj, aby otworzyc kolo emotek
+module.emotes.autoF5 = Auto F5
+module.emotes.autoF5.desc = Przelacz na widok trzeciej osoby po uruchomieniu emotki
+module.emotes.autoF5Duration = Czas F5
+module.emotes.autoF5Duration.desc = Czas przed przywroceniem poprzedniego widoku
+
+module.aura.rotationMode = Rotacja
+module.aura.holyWorld = HolyWorld
+module.aura.funtime = FunTime
+module.aura.legit = Legit
+module.aura.legitMode = Tryb legit
+module.aura.legitMode.desc = Zachowanie rotacji legit
+module.aura.legitSnap = Snap
+module.aura.legitJerk = Zryw
+module.aura.legitConstant = Stały
+module.aura.legitMaxAngle = Maksymalny kąt
+module.aura.legitMaxAngle.desc = Maksymalne odchylenie kątowe w stronę celu
+module.aura.snap = Snapy
+module.aura.hvh = HvH
+
+module.aura.sprintMode = Bieg
+module.aura.sprintHvh = HvH
+module.aura.sprintNormal = Normalny
+module.aura.sprintLegit = Legit
+module.aura.sprintSuperLegit = SuperLegit
+module.aura.sprintNone = Brak
+
+module.aura.correction = Korekcja
+module.aura.correctionFocus = Fokus
+module.aura.correctionGood = Swobodna
+module.aura.correctionNone = Brak
+
+module.aura.distance = Dystans
+module.aura.distanceRotation = Dodatkowy dystans
+
+module.aura.settings = Ustawienia
+module.aura.settings.desc = Dodatkowe funkcje
+module.aura.shieldBreak = Łamać tarczę
+module.aura.shielRealese = Odpuszczać tarczę
+module.aura.eatUseAttack = Bić i jeść
+module.aura.attackIgnoreWals = Bić przez ściany
+
+module.aura.cooldownMode = Cooldown
+module.aura.slowMode = Max
+module.aura.speedMode = Min
+module.aura.customMode = Custom
+module.aura.timeCooldown = Bazowy czas ataku
+module.aura.attackCooldown = Wartość ataku
+
+module.aura.targetTypeSetting = Atakować
+module.aura.targetSettingWindow = Ustawienia celu
+module.aura.targetPlayers = Graczy
+module.aura.targetHostile = Wrogich
+module.aura.targetPeaceful = Spokojnych
+
+module.aura.onlyCrit = Tylko kryty
+module.aura.smartCrit = Inteligentne kryty
+module.aura.smartCrit.desc = Bije kryty jeśli wciśnięty przycisk skoku
+
+
+
+module.autoSwap.mode = Tryb
+module.autoSwap.mode.items = Przedmioty
+module.autoSwap.mode.wheel = Koło
+module.autoSwap.itemType = Przedmiot
+module.autoSwap.itemHead = Kula
+module.autoSwap.itemTotem = Totem
+module.autoSwap.itemGapple = Gapple
+module.autoSwap.itemShield = Tarcza
+
+module.autoSwap.swapType = Zamieniać na
+module.autoSwap.swapHead = Kula
+module.autoSwap.swapTotem = Totem
+module.autoSwap.swapGapple = Gapple
+module.autoSwap.swapShield = Tarcza
+
+module.autoSwap.keyToSwap = Przycisk
+module.autoSwap.keyToSwapCerb = Przycisk cerby
+module.autoSwap.wheelBind = Przycisk koła
+
+
+module.autoTotem.healthSetting = Maks. zdrowie
+module.autoTotem.elytraHealthSetting = Na elytrach
+
+module.autoTotem.triggerSetting = Wyzwalacz
+module.autoTotem.triggerCrystal = Kryształ
+module.autoTotem.triggerTNT = TNT
+module.autoTotem.TNTRangeSetting = Dystans TNT
+module.autoPotionBrewing.potion = Mikstura
+module.autoPotionBrewing.fireResistance = Odporność na ogień
+module.autoPotionBrewing.invisibility = Niewidzialność
+module.autoPotionBrewing.strength = Siła
+module.autoPotionBrewing.speed = Szybkość
+module.autoPotionBrewing.jumpBoost = Skoczność
+module.autoPotionBrewing.home = Nazwa domu
+module.autoPotionBrewing.homePlaceholder = Dom
+
+module.elytraTarget.autoFWSetting = Auto fajerwerk
+module.elytraTarget.predictSetting = Wyprzedzanie
+module.elytraTarget.notScipBox = Bić po hitboxie
+
+
+module.inventorySetting.stoping = Zatrzymywać ruch
+module.inventorySetting.delayMoveItem = Opóźnienie
+module.inventorySetting.updateSlot = Aktualizacja slotu
+
+module.reach.mods = Mody
+module.reach.predict = Predykt
+module.reach.defoult = Domyślny
+
+module.reach.reach = Dystans ataku
+module.reach.reachBlock = Dystans bloku
+module.reach.render = Rysować box
+
+module.targetPearl.modeSetting = Tryb
+module.targetPearl.modeBind = Bind
+module.targetPearl.modeAlways = Zawsze
+
+module.targetPearl.targetSetting = Cel
+module.targetPearl.targetTarget = Cel
+module.targetPearl.targetAll = Wszystko
+
+module.targetPearl.throwSetting = Rzucić
+module.targetPearl.distanceSetting = Dystans
+
+module.ahHelper.cheapSlotColor = Kolor taniego
+module.ahHelper.goodSlotColor = Kolor korzystnego
+
+module.autoAccept.onlyFriend = Tylko przyjaciele
+module.autoUse.desc = Automatycznie używa wybranych przedmiotów
+module.eventTracker.desc = Automatyzacja eventów
+module.autoUse.mode = Tryb
+module.autoUse.invisibility = Niewidzialność
+module.autoUse.food = Jedzenie
+module.tapeMouse.desc = Automatycznie naciska wybrany przycisk myszy
+module.tapeMouse.mouseButton = Przycisk myszy
+module.tapeMouse.mouseButton.desc = Przycisk, który moduł będzie naciskać
+module.tapeMouse.right = Prawa
+module.tapeMouse.left = Lewa
+module.tapeMouse.delay = Opóźnienie
+module.tapeMouse.delay.desc = Opóźnienie między kliknięciami
+
+module.autoDuels.mode = Kit
+module.autoDuels.shield = Tarcze
+module.autoDuels.shipi = Kolce
+module.autoDuels.bow = Łuk
+module.autoDuels.totem = Totemy
+module.autoDuels.noDebuff = NoDebuff
+module.autoDuels.balls = Kule
+module.autoDuels.classik = Klasyczny
+module.autoDuels.cheats = Cheaterski raj
+module.autoDuels.nezer = Nether
+
+
+module.autoWeb.searchXZ = Promień XZ
+module.autoWeb.search = Promień Y
+module.autoWeb.distance = Zasięg
+module.autoWeb.hand = Ręka
+module.autoWeb.rightHand = Prawa
+module.autoWeb.leftHand = Lewa
+
+module.baseFinder.mods = Praca
+module.baseFinder.mods.cave = Jaskiniowa
+module.baseFinder.mods.bypass = Obwodowa
+module.baseFinder.mods.click = Klik
+module.baseFinder.mods.packetAnalysis = Analiza pakietów
+
+module.baseFinder.range = Promień
+module.baseFinder.min = Minimalna ilość
+module.baseFinder.max = Maksymalna ilość
+module.baseFinder.minLength = Minimalna wysokość
+module.baseFinder.minWidth = Minimalna szerokość
+module.clickAction.friendBind = Dodać przyjaciela
+
+module.clickAction.expBind = Bańka doświadczenia
+module.clickAction.enderPearl = Perła enderu
+module.clickAction.windCharge = Ładunek wiatru
+
+module.elytraHelper.elytraSetting = Przycisk zamiany
+module.elytraHelper.fireworkSetting = Przycisk fajerwerku
+module.elytraHelper.startSetting = Auto start
+module.elytraHelper.sprintSetting = Sprint
+
+
+module.freeCam.speedSetting = Prędkość
+module.freeCam.freezeSetting = Zawieszać
+
+module.itemScroller.scrollerSetting = Opóźnienie
+module.shulkerPreview.alwaysShow = Zawsze pokazuj
+module.shulkerPreview.previewKey = Klawisz podglądu
+module.shulkerPreview.worldDisplay = Na świecie
+module.shulkerPreview.worldScale = Skala na świecie
+
+
+module.serverHelper.consumablesSetting = Timer zużywalnych
+module.serverHelper.autoPointSetting = Auto punkt
+module.serverHelper.autoLootSetting = Auto łup
+module.serverHelper.shulkerKey = Plecak
+
+module.serverHelper.antiFly = Anti lot
+module.serverHelper.scrollExp = Doświadczenie przewijania
+module.serverHelper.explosiveTrap = Wybuchowa pułapka
+module.serverHelper.normalTrap = Zwykła pułapka
+module.serverHelper.stun = Oszołomienie
+module.serverHelper.explosiveThing = Wybuchowa rzecz
+module.serverHelper.snowball = Śnieżka
+module.serverHelper.hitDisplaySetting = Pokazuj trafienie
+module.serverHelper.holyAura = Boska aura
+module.serverHelper.trap = Pułapka
+module.serverHelper.plast = Płyta
+module.serverHelper.clearDust = Czysty pył
+module.serverHelper.fireTornado = Ognisty tornad
+module.serverHelper.disorient = Dezorientacja
+module.serverHelper.radiationPotion = Mikstura radiacji
+module.serverHelper.drowsinessPotion = Środek nasenny
+module.serverHelper.assassinPotion = Mikstura zabójcy
+module.serverHelper.paladinPotion = Mikstura paladyna
+module.serverHelper.ragePotion = Mikstura gniewu
+module.serverHelper.holyWaterPotion = Święta woda
+module.serverHelper.popperPotion = Hukawka
+
+module.autoSprint.keepSwing = KeepSprint
+
+module.elytraMotion.mode = Tryb
+module.elytraMotion.mode.distance = Dystans
+module.elytraMotion.mode.smart = Inteligentny
+module.elytraMotion.distance = Odległość
+
+module.noSlow.mode = Tryb
+module.noSlow.mode.grimNew = Grim New
+module.noSlow.mode.grimOld = Grim old
+module.noSlow.sprint = Sprint
+
+
+module.speed.mode = Tryb
+module.speed.mode.holyWorld = HolyWorld
+module.speed.mode.grimOld = Grim old
+module.speed.mode.reallyWorld = ReallyWorld
+module.speed.mode.grimElytra = GrimElytra
+module.speed.collisionRadius = Promień
+module.speed.speed = Prędkość
+module.speed.onlyAura = Tylko z Aura
+module.timer.mode = Tryb
+module.timer.mode.normal = Normalny
+module.timer.mode.matrix = Matrix
+module.timer.mode.shift = Shift
+module.timer.mode.grim = Grim
+module.timer.oldMatrix = Stary Matrix
+module.timer.speed = Prędkość
+module.timer.shiftTicks = Tiki Shift
+module.timer.boostKey = Klawisz Grim
+module.timer.onFlag = Przy fladze
+module.timer.onFlag.reset = Reset
+module.timer.onFlag.disable = Wyłącz
+module.timer.onFlag.none = Nic
+
+module.fastBreak.breakDamage = Min obrażenia
+module.fastBreak.bypass = Obwód
+
+module.noDelay.ignoreSetting = Typ
+module.noDelay.ignoreSetting.jump = Skok
+module.noDelay.ignoreSetting.use = Użycie
+module.noDelay.ignoreSetting.break = Łamanie
+
+module.noPush.ignoreSetting = Usunąć
+module.noPush.ignoreSetting.water = Woda
+module.noPush.ignoreSetting.blocks = Bloki
+module.noPush.ignoreSetting.entities = Istoty
+module.noPush.ignoreSetting.snow = Śnieg
+module.noPush.ignoreSetting.berries = Jagody
+
+module.antiInvisible.colorSetting = Kolor
+
+module.arrows.radiusSetting = Promień
+module.arrows.sizeSetting = Rozmiar
+module.arrows.ignoreGol = Ignorować nagich
+
+
+module.blockESP.itemSelectSetting = Bloki
+module.blockESP.mode = Tryb
+module.blockESP.onlyUpdate = Aktualizacja
+module.blockESP.all = Skanować
+module.blockESP.range = Promień
+module.blockESP.time = Timer
+
+module.cameraTweaks.multiSetting = Ustawienia
+module.cameraTweaks.ratio = Proporcje
+module.cameraTweaks.clip = Klip
+module.cameraTweaks.distance = Dystans
+module.cameraTweaks.ratioSetting = Proporcje stron
+module.cameraTweaks.distanceSetting = Dystans kamery
+module.cameraTweaks.zoomSetting = Zoom
+module.cameraTweaks.freeLookSetting = Wolny widok
+
+module.crosshair.thickness = Grubość
+module.crosshair.length = Długość
+module.crosshair.gap = Przerwa
+module.crosshair.dynamicGap = Dynamiczna przerwa
+module.crosshair.useEntityColor = Kolor przy celowaniu
+
+module.entityESP.scaleSetting = Rozmiar
+module.entityESP.elements = Elementy
+module.entityESP.names = Nicki
+module.entityESP.items = Przedmioty
+module.entityESP.armor = Zbroję
+module.entityESP.triangles = Trójkąty
+module.entityESP.boxes = Boxy
+module.entityESP.hands = Ręce
+module.entityESP.targets = Istoty
+module.entityESP.players = Gracze
+module.entityESP.removeHiddenPlayerDelay = Usuwanie ukrytych
+module.entityESP.noArmor = Bez zbroi
+module.entityESP.friends = Przyjaciele
+module.entityESP.droppedItems = Przedmioty
+module.entityESP.shulkers = Shulkery
+module.entityESP.blur = Rozmycia
+module.entityESP.blurDesc = Wymaga dobrego PC
+module.entityESP.glow = Poświata
+module.entityESP.glowDesc = Potrzebny mocny PC
+module.entityESP.gradient = Gradient
+module.entityESP.gradientDesc = Gradientowy render boxów
+
+
+module.interface.elementsSetting = Elementy
+module.interface.watermark = Watermark
+module.interface.effects = Efekty
+module.interface.staff = Staff
+module.interface.notifications = Powiadomienia
+module.interface.inventory = Inwentarz
+module.interface.cooldowns = Cooldowny
+module.interface.info = Informacje
+module.interface.binds = Bindy
+module.interface.targetHud = Cel HUD
+module.interface.music = Muzyka
+module.interface.hotbar = Hotbar
+module.interface.scoreboard = Tablica wyników
+module.interface.tab = Tab
+module.interface.armor = Zbroja
+module.interface.mainSettings = Główne
+module.interface.triangles = Trójkąciki
+module.interface.blur = Rozmycia
+module.interface.glow = Poświata
+module.interface.whiteNoise = Biały szum
+module.interface.cosmetics = Kosmetyka
+module.interface.glass = Szkło
+module.interface.glowMode = Tryb poświaty
+module.interface.glowMode.outline = Obrys
+module.interface.fill = Wypełnienie
+module.interface.glowRadius = Promień poświaty
+module.interface.volume = Głośność powiadomień
+
+module.noRender.settings = Usunąć
+module.noRender.fire = Ogień
+module.noRender.badEffects = Złe efekty
+
+module.swingAnimation.handMode = Rece
+module.swingAnimation.withoutHands = Bez rak
+module.swingAnimation.withHands = Z rekami
+module.swingAnimation.animationMode = Tryb
+module.swingAnimation.handAnimationMode = Animacja uderzenia
+module.swingAnimation.holdMyItems = HoldMyItems
+module.swingAnimation.normal = Zwykły
+module.swingAnimation.first = Pierwszy
+module.swingAnimation.second = Drugi
+module.swingAnimation.third = Trzeci
+module.swingAnimation.fourth = Czwarty
+module.swingAnimation.fifth = Piąty
+module.swingAnimation.sixth = Szósty
+module.swingAnimation.swingPower = Prędkość
+module.swingAnimation.swingStrength = Siła
+module.swingAnimation.onlyAura = Tylko z Aura
+
+
+module.viewModel.rightArm = Prawa ręka
+module.viewModel.rightArmX = Prawa ręka X
+module.viewModel.rightArmY = Prawa ręka Y
+module.viewModel.rightArmZ = Prawa ręka Z
+module.viewModel.jerkOff = Machać
+
+module.viewModel.leftArm = Lewa ręka
+module.viewModel.leftArmX = Lewa ręka X
+module.viewModel.leftArmY = Lewa ręka Y
+module.viewModel.leftArmZ = Lewa ręka Z
+
+module.viewModel.sizeList = Rozmiar
+module.viewModel.rightArmSize = Rozmiar prawej ręki
+module.viewModel.leftArmSize = Rozmiar lewej ręki
+module.viewModel.reset = Reset
+
+
+module.targetESP.mode = Tryb
+module.targetESP.ghosts = Duchy
+module.targetESP.circle = Kółko
+module.targetESP.default = Kwadrat
+module.targetESP.scale = Rozmiar
+module.targetESP.length = Długość
+module.targetESP.description = Wyświetla efekt na celu
+module.targetESP.texture = Tekstura
+module.targetESP.texture.vortex = Wir
+module.targetESP.texture.garland = Girlanda
+module.targetESP.texture.brackets = Nawiasy
+module.targetESP.size = Rozmiar
+module.targetESP.speed = Szybkość
+
+module.worldTweaks.modeSetting = Ustawienia
+module.worldTweaks.lighting = Oświetlenie
+module.worldTweaks.fog = Mgła
+module.worldTweaks.time = Czas
+module.worldTweaks.saturation = Nasycenie
+module.worldTweaks.brightSetting = Oświetlenie
+module.worldTweaks.colorFog = Kolor mgły
+module.worldTweaks.distanceSetting = Dystans mgły
+module.worldTweaks.timeSetting = Pora dnia
+module.worldTweaks.contrastSetting = Kontrast
+module.worldTweaks.noneRaning = Usunąć deszcz
+
+module.aura.targetSortSetting = Sortowanie
+module.aura.targetFov = FOV
+module.aura.targetHit = Uderzenia
+module.aura.targetHp = Zdrowie
+module.aura.targetDistance = Dystans
+
+module.aura.safeTarget = Zachowaj cel
+module.aura.randomDelay = Losowe opoznienie
+
+module.elytraHelper.onlyHotBar = Tylko w hotbar
+module.xraybypass.height = Wysokość
+
+module.interface.targetPotions = Zielnia wroga
+module.interface.eventsComponent = Wydarzenia
+
+module.aura.targetArmor = Opancerzeni
+module.aura.noarmor = Bez zbroi
+
+module.autoTotem.tridentRangeSetting = Zasięg trójzębu
+
+theme.color = Główny kolor
+theme.secondColor = Drugi kolor
+theme.glowColor1 = Kolor poświaty 1
+theme.glowColor2 = Kolor poświaty 2
+theme.friendColor = Kolor przyjaciół
+theme.backgroundColor = Kolor tła GUI
+theme.foregroundColor = Przedni kolor tła
+theme.foregroundLight = Jaśniejsze tło
+theme.foregroundDark = Ciemne tło
+theme.foregroundGray = Szare tło
+theme.white = Główny tekst
+theme.whiteGray = Ikony wyłączone
+theme.gray = Tekst wyłączony
+theme.grayLight = Półwyłączony tekst
+theme.foregroundLightStroke = Jaśniejszy kontur
+theme.foregroundStroke = Kontur
+
+theme.reset = Zresetuj
+theme.deleteAll = Usuń wszystkie motywy
+theme.add = Dodaj motyw
+
+module.autoTotem.trident = Trójząb
+
+module.autoTotem.time = Zwróć po
+module.autoTotem.minecartTNT = Wagonik z TNT
+leave.factor = Czynnik
+leave.health = Zdrowie
+leave.players = Gracze
+leave.time = Wyjść po
+leave.command = Komenda
+leave.command.description = komenda na czacie
+autoauth.passSetting.command = Hasło
+autoauth.passSetting.description = hasło
+autoauth.loginSetting.login = Login
+autoauth.randomPass = Losowe hasło
+autoauth.openFile = Otwórz plik
+module.speed.waterSpeed = W wodzie
+module.swingAnimation.seventh = Siódma
+module.swingAnimation.eighth = Ósma
+module.swingAnimation.lunge = Wypad
+module.swingAnimation.jelly = Galaretka
+module.swingAnimation.slap = Klepnięcie
+module.swingAnimation.bonk = Uderzenie
+module.swingAnimation.realism = Realizm
+module.entityESP.mobs = Mobów
+module.aura.wallbypass = Ignoruj trawę
+module.wallBypass.attackDistance = Dystans ataku
+module.targetESP.red = Czerwienieć
+module.targetESP.red.description = Zmienia kolor przy uderzeniu
+module.targetESP.showOnHover = Pokazuj przy najechaniu
+module.targetESP.showOnHover.description = Wyswietla efekt na wrogu, w ktorego celujesz
+module.noRender.blockOverlay = W blokach
+module.noRender.scoreBoard = Tablica wyników
+
+module.offhand.swapHealMode = Gdy jesz
+module.offhand.swapEnemyMode = Gdy wróg je
+module.entityESP.mobs = Mobs
+module.interface.round = Zaokrąglenie
+module.offhand.mode.cerberus = Cerber
+module.offhand.mode.mythic = Mityczny
+module.offhand.mode.legendary = Legendarny
+module.offhand.mode.talisman = Talizman
+module.offhand.mode.none = Nic
+
+module.aura.distance.desc = Max attack range
+module.aura.distanceRotation.desc = Extra reach for rotation checks
+module.aura.fovSetting.desc = Aim FOV limit in HolyWorld mode
+module.aura.moduloOffset.desc = Rotation offset for HolyWorld aim
+module.aura.systemOffset.desc = Smoothing offset for HolyWorld aim
+module.aura.timeCooldown.desc = Base cooldown time value
+module.aura.attackCooldown.desc = Attack cooldown threshold
+module.aura.safeTarget.desc = Keep target between switches
+module.aura.onlyCrit.desc = Attack only with critical hits
+module.aura.wallbypass.desc = Ignore grass and thin blocks in raytrace
+module.aura.eatUseAttack.desc = Allow attacks while eating
+module.wallBypass.attackDistance.desc = Dystans ataku podczas WallBypass
+
+module.autoSprint.keepSwing.desc = Keep sprint while swimming after hits
+
+module.entityESP.scaleSetting.desc = Scale ESP elements size
+module.entityESP.removeHiddenPlayerDelay.desc = Ticks before disappeared players are removed
+
+module.blockESP.range.desc = Scan radius for blocks
+module.blockESP.time.desc = Scan interval in seconds
+module.blockESP.tracers.desc = Draw lines to blocks
+
+module.particles.particleCount.desc = Ambient particle count
+module.particles.particleSize.desc = Ambient particle size
+module.particles.particleSpeed.desc = Ambient particle speed
+module.particles.hitParticleCount.desc = Hit particle count
+module.particles.hitParticleSpeed.desc = Hit particle speed
+module.particles.hitParticleSize.desc = Hit particle size
+module.particles.hitParticleLifetime.desc = Hit particle lifetime
+module.particles.totemParticleCount.desc = Totem particle count
+module.particles.totemParticleSpeed.desc = Totem particle speed
+module.particles.totemParticleSize.desc = Totem particle size
+module.particles.totemParticleLifetime.desc = Totem particle lifetime
+module.particles.totemParticleInterval.desc = Delay between totem spawns
+module.particles.fireFlyCount.desc = Firefly count
+module.particles.fireFlySize.desc = Firefly size
+module.particles.fireFlySpeed.desc = Firefly speed
+module.particles.fireFlyTrailLength.desc = Firefly trail length
+module.particles.description = Cząsteczki wokół gracza
+module.particles.effects = Efekty
+module.particles.effects.desc = Typy cząsteczek otoczenia
+module.particles.meteor = Meteor
+module.particles.cubes = Kostki
+module.particles.pyramids = Piramidy
+module.particles.totem = Totem
+module.particles.crescent = Półksiężyc
+module.particles.heart = Serce
+module.particles.stars = Gwiazdy
+module.particles.count = Ilość
+module.particles.count.desc = Stała liczba cząsteczek dla każdego włączonego typu
+module.particles.lifetime = Żywotność
+module.particles.lifetime.desc = Czas życia zwykłych cząsteczek
+module.particles.size = Rozmiar
+module.particles.size.desc = Skala cząsteczek otoczenia
+module.particles.radius = Promień
+module.particles.radius.desc = Promień pojawiania się wokół gracza
+module.particles.tailLength = Ogon
+module.particles.tailLength.desc = Długość śladu meteoru
+module.particles.hit = Cząsteczki trafienia
+module.particles.hit.desc = Tworzy cząsteczki przy trafieniu
+module.particles.glow = Poświata
+module.particles.glow.desc = Intensywność poświaty cząsteczek
+module.particles.hitTypes = Kształty
+module.particles.hitTypes.desc = Kształty cząsteczek trafienia
+module.particles.diamond = Diament
+module.particles.triangle = Trójkąt
+module.particles.hitPhysics = Fizyka
+module.particles.both = Oba
+module.particles.hitCount = Ilość
+module.particles.hitCount.desc = Liczba cząsteczek na trafienie
+module.particles.hitLifetime = Żywotność
+module.particles.hitLifetime.desc = Czas życia cząsteczek trafienia
+module.particles.hitSpeed = Szybkość
+module.particles.hitSpeed.desc = Szybkość cząsteczek trafienia
+module.particles.hitScale = Rozmiar
+module.particles.hitScale.desc = Skala cząsteczek trafienia
+module.particles.hitOnlyCrit = Tylko krytyczne
+module.particles.hitOnlyCrit.desc = Tworzy cząsteczki tylko przy trafieniach krytycznych
+module.particles.hitBounce = Odbicie
+module.particles.hitBounce.desc = Cząsteczki trafienia odbijają się od bloków
+module.particles.color = Kolor
+module.particles.customColor = Własny kolor
+
+module.flyBypass.delay.desc = Packet delay for bypass
+
+module.interface.triangles.desc = Enable triangle corners on HUD
+module.interface.blur.desc = Enable UI blur
+module.interface.glow.desc = Enable UI glow
+module.interface.glowMode.desc = Tryb renderowania poświaty
+module.interface.glowRadius.desc = Promień efektu poświaty
+module.interface.glowSettings = Ustawienia poświaty
+module.interface.glowSettings.desc = Parametry efektu poświaty
+module.interface.glassSettings = Ustawienia szkła
+module.interface.glassSettings.desc = Parametry efektu szkła
+module.interface.glareColor = Kolor odblasu
+module.interface.glareColor.desc = Kolor i jasność diagonalnego odblasu
+module.interface.glareSpeed = Szybkość odblasu
+module.interface.glareSpeed.desc = Szybkość animacji diagonalnego odblasu
+module.interface.volume.desc = Notification volume
+module.interface.round.desc = HUD corner radius
+
+module.cameraTweaks.ratioSetting.desc = Screen aspect ratio
+module.cameraTweaks.distanceSetting.desc = Third-person camera distance
+
+module.freeCam.speedSetting.desc = Freecam movement speed
+
+module.speed.collisionRadius.desc = Collision check radius
+module.speed.speed.desc = Speed boost multiplier
+module.speed.onlyAura.desc = Work only with Aura target
+
+module.reach.reach.desc = Attack reach distance
+module.reach.reachBlock.desc = Block reach distance
+
+module.crosshair.thickness.desc = Crosshair line thickness
+module.crosshair.length.desc = Crosshair line length
+module.crosshair.gap.desc = Gap from center
+module.crosshair.dynamicGap.desc = Increase gap during cooldown
+module.crosshair.useEntityColor.desc = Color crosshair on entity
+
+module.backtrack.delay = Delay
+module.backtrack.delay.desc = Packet rewind delay
+module.backtrack.renderBox = Render Box
+module.backtrack.renderBox.desc = Render target box
+
+module.fakeLag.minRange = Min Range
+module.fakeLag.minRange.desc = Lower target check distance
+module.fakeLag.maxRange = Max Range
+module.fakeLag.maxRange.desc = Upper target check distance
+module.fakeLag.minDelay = Min Delay
+module.fakeLag.minDelay.desc = Minimum packet delay
+module.fakeLag.maxDelay = Max Delay
+module.fakeLag.maxDelay.desc = Maximum packet delay
+module.fakeLag.recoilTime = Recoil
+module.fakeLag.recoilTime.desc = Pause after forced flush
+module.fakeLag.renderBox = Render Box
+module.fakeLag.renderBox.desc = Render server-side player position
+module.fakeLag.mode = Mode
+module.fakeLag.mode.desc = Outgoing packet delay logic
+module.fakeLag.mode.constant = Constant
+module.fakeLag.mode.dynamic = Dynamic
+module.fakeLag.flushOn = Flush On
+module.fakeLag.flushOn.desc = Actions that release the queue
+module.fakeLag.flushEntityInteract = Entity Interact
+module.fakeLag.flushBlockInteract = Block Interact
+module.fakeLag.flushAction = Action
+
+module.blink.packetsPerSecond = Packets Per Second
+module.blink.packetsPerSecond.desc = How many queued packets to release each second
+
+module.predictions.renderItemEntity = Render Items
+module.predictions.renderItemEntity.desc = Render trajectory for dropped items
+module.predictions.mode = Mode
+module.predictions.mode.desc = Prediction render style
+module.predictions.comets = Comets
+module.predictions.sparks = Sparks
+module.predictions.fire = Ogień
+module.predictions.electric = Elektryczny
+module.predictions.frost = Mroz
+module.predictions.toxic = Toksyczny
+
+module.itemScroller.scrollerSetting.desc = Delay between fast moves
+module.shulkerPreview.alwaysShow.desc = Show shulker preview without key
+module.shulkerPreview.previewKey.desc = Hold to preview shulker in inventory and world
+module.shulkerPreview.worldDisplay.desc = Show shulker contents on dropped shulkers
+module.shulkerPreview.worldScale.desc = Preview size in world
+
+module.autoTotem.healthSetting.desc = Swap to totem below this health
+module.autoTotem.time.desc = Return item after delay
+module.autoTotem.elytraHealthSetting.desc = Health threshold while gliding
+module.autoTotem.TNTRangeSetting.desc = TNT trigger range
+module.autoTotem.tridentRangeSetting.desc = Trident trigger range
+
+module.baseFinder.range.desc = Scan radius
+module.baseFinder.min.desc = Minimum hole size
+module.baseFinder.max.desc = Maximum hole size
+module.baseFinder.minLength.desc = Minimum hole height
+module.baseFinder.minWidth.desc = Minimum hole width
+
+module.serverHelper.consumablesSetting.desc = Track consumables structures/events
+module.serverHelper.autoPointSetting.desc = Auto-mark event points
+module.serverHelper.hitDisplaySetting.desc = Pokazuje licznik śnieżki przy graczach ze Spowolnieniem VI
+
+module.nameProtect.hideFriends.desc = Hide friend names too
+module.nameProtect.openCommand = Skonfiguruj donat
+module.nameProtect.openCommand.desc = Komenda do zarządzania donatem
+module.bot.openGui = Otwórz GUI
+module.bot.connect = Połącz
+module.bot.control = Steruj
+module.bot.disconnect = Rozłącz
+module.bot.send = Wyślij
+module.bot.message = Wiadomość...
+module.bot.chat = Czat
+module.bot.rct = RCT
+module.bot.anarchy = Anarchia...
+module.bot.connectTo = Połącz z...
+module.bot.noConnection = Brak połączenia...
+module.bot.search = Szukaj...
+module.bot.add = Dodaj konto...
+module.bot.role = Rola...
+module.bot.payNick = Główny nick...
+module.bot.payLimit = Limit...
+module.bot.payAll = Wyślij
+module.bot.selected = Wybrano
+module.bot.proxy = host:port:login:pass
+module.bot.proxyPanel = Proxy
+module.bot.proxyNone = Bez proxy
+autopay.nick = Nick gracza
+autopay.nick.empty = Nick...
+autopay.maxAmount = Zostaw monet
+autopay.maxAmount.empty = Kwota...
+
+module.jumpCircle.size.desc = Mnoznik rozmiaru kregu
+module.jumpCircle.texture.desc = Tekstura kregu
+module.jumpCircle.speed.desc = Predkosc obrotu kregu
+module.jumpCircle.lifetime.desc = Czas zycia kregu
+module.killEffect.mode.desc = Typ efektu po zabiciu
+module.killEffect.duration.desc = Czas zycia efektu
+module.killEffect.scale.desc = Mnoznik rozmiaru efektu
+module.killEffect.count.desc = Liczba czastek w efekcie
+module.killEffect.speed.desc = Predkosc ruchu czastek
+module.killEffect.particleType.desc = Typ czastek dla zlozonych efektow
+module.killEffect.color.desc = Tryb koloru efektu
+module.killEffect.customColor.desc = Wlasny kolor efektu
+
+module.autoParse.priceMultiplier.desc = Price multiplier for auto-setup
+module.autoParse.tenMinutesMode.desc = Repeat every 10 minutes
+
+module.carrotFarm.mode.desc = Use 1.20.x bypass mode
+module.appleFarm.desc = Auto-farma dębów: sadzi sadzonki, nawozi mączką kostną i ścina drzewa dla jabłek
+
+module.noSweetSlow.speed.desc = Sweet berry bush speed
+
+module.targetPearl.distanceSetting.desc = Min distance to throw
+
+module.autoAccept.onlyFriend.desc = Accept only from friends
+
+module.xrayBypass.range.desc = Scan radius around player
+module.xrayBypass.height.desc = Vertical scan range
+module.xrayBypass.delay.desc = Blocks per tick
+
+module.trails.mode = Tryb
+module.trails.particles = Czastki
+module.trails.trails = Slady
+module.trails.hideFirstPerson = Ukryj w 1 osobie
+module.trails.length = Dlugosc
+module.trails.pointSize = Rozmiar punktu
+module.trails.opacity = Przezroczystosc
+module.trails.particleCount = Ilosc czastek
+module.trails.particleSize = Rozmiar czastek
+module.trails.particleSpeed = Predkosc czastek
+module.trails.particleLifetime = Czas zycia
+module.trails.texture = Tekstura
+module.trails.color = Kolor
+module.trails.customColor = Wlasny kolor
+
+module.trails.hideFirstPerson.desc = Hide trails in first person
+module.trails.trailLength.desc = Trail point length
+module.trails.pointSize.desc = Trail point size
+module.trails.opacity.desc = Trail opacity
+module.trails.particleCount.desc = Trail particle count
+module.trails.particleSize.desc = Trail particle size
+module.trails.particleSpeed.desc = Trail particle speed
+module.trails.particleLifetime.desc = Trail particle lifetime
+
+module.cropFarmer.legacyBypass.desc = Use 1.20.x bypass mode
+module.cropFarmer.crop = Crop
+module.cropFarmer.crop.desc = Crop to harvest and replant
+module.cropFarmer.crop.netherWart = Nether Wart
+module.cropFarmer.crop.carrot = Carrot
+module.cropFarmer.crop.potato = Potato
+module.cropFarmer.crop.beetroot = Beetroot
+module.cropFarmer.crop.wheat = Wheat
+module.cropFarmer.crop.torchflower = Torchflower
+module.cropFarmer.crop.pitcherPlant = Pitcher Plant
+module.cropFarmer.renderUnsuitableBeds = Unsuitable Beds
+module.cropFarmer.renderUnsuitableBeds.desc = Highlight beds without enough water or growth space
+module.cropFarmer.renderLowLightBeds = Low Light
+module.cropFarmer.renderLowLightBeds.desc = Highlight beds without enough light in yellow
+module.cropFarmer.renderWaterPositions = Water Layout
+module.cropFarmer.renderWaterPositions.desc = Highlight the minimum set of blocks for water placement in blue
+
+module.boneMealFarmer.desc = Grows crops with bone meal inside the selected region
+module.boneMealFarmer.legacyBypass.desc = Use 1.20.x bypass mode
+module.boneMealFarmer.crop = Crop
+module.boneMealFarmer.crop.desc = Crop to grow with bone meal
+
+module.swingAnimation.swingPower.desc = Czas animacji zamachu w tickach
+module.swingAnimation.swingStrength.desc = Siła animacji zamachu
+module.swingAnimation.onlyAura.desc = Animate only with Aura
+
+module.targetESP.scale.desc = Target effect scale
+module.targetESP.length.desc = Ghost length
+module.targetESP.texture.desc = Tekstura efektu celu
+module.targetESP.size.desc = Skala efektu celu
+module.targetESP.speed.desc = Szybkość animacji efektu
+
+module.cape.windStrength.desc = Wind force multiplier
+module.cape.gravity.desc = Gravity multiplier
+module.cape.stiffness.desc = Cloth stiffness
+module.cape.sensitivity.desc = Motion sensitivity
+
+module.autoWeb.searchXZ.desc = Search radius on XZ
+module.autoWeb.search.desc = Search radius on Y
+module.autoWeb.distance.desc = Placement reach distance
+
+module.autoTrap.distance.desc = Placement reach distance
+
+module.worldTweaks.brightSetting.desc = World brightness
+module.worldTweaks.distanceSetting.desc = Fog distance
+module.worldTweaks.timeSetting.desc = Time of day
+module.worldTweaks.contrastSetting.desc = World color contrast
+module.worldTweaks.noneRaning.desc = Disable rain
+
+module.elytraTarget.autoFWSetting.desc = Auto-use fireworks
+module.elytraTarget.predictSetting.desc = Target prediction ticks
+module.elytraTarget.notScipBox.desc = Use real hitbox when close
+
+module.elytraHelper.startSetting.desc = Auto-start gliding
+module.elytraHelper.sprintSetting.desc = Enable sprint when starting
+module.elytraHelper.onlyHotBar.desc = Use only hotbar items
+
+module.itemUseController.newVersion.desc = Enable 1.21.x item timing
+module.itemUseController.aim.desc = Aim before using items
+module.itemUseController.predictSetting.desc = Prediction ticks for aiming
+
+module.autoLeave.minHealth.desc = Leave below health
+module.autoLeave.leaveRadius.desc = Enemy detection radius
+module.autoLeave.leaveTime.desc = Delay before leaving
+
+module.arrows.radiusSetting.desc = Radar radius
+module.arrows.sizeSetting.desc = Arrow icon size
+module.arrows.ignoreGol.desc = Ignore unarmored players
+
+module.sweetFarm.mode.desc = Use 1.20.x bypass mode
+
+module.chestStealer.mode = Tryb
+module.chestStealer.mode.funTime = FunTime
+module.chestStealer.mode.holyWorld = HolyWorld
+module.chestStealer.mode.reallyWorld = ReallyWorld
+module.chestStealer.mode.custom = Custom
+module.chestStealer.startDelay = Opoznienie startu
+module.chestStealer.startDelay.desc = Opoznienie przed rozpoczeciem lootu
+module.chestStealer.delay = Min opoznienie
+module.chestStealer.delay.desc = Minimum click delay
+module.chestStealer.maxDelay = Max opoznienie
+module.chestStealer.maxDelay.desc = Maximum click delay
+module.chestStealer.closeDelay = Opoznienie zamkniecia
+module.chestStealer.closeDelay.desc = Opoznienie przed zamknieciem pustego kontenera
+module.chestStealer.closeScreen = Auto zamkniecie
+module.chestStealer.closeScreen.desc = Close when empty
+module.chestStealer.title.auction = Аукцион
+module.chestStealer.title.purchases = покупки
+
+module.autoLoot.ignoreWalls.desc = Ignore walls when interacting
+module.autoLoot.ignoreEntity.desc = Ignore non-target entities
+
+module.shaderHand.width.desc = Outline width
+
+autoauth.loginSetting.description = Auto login on join
+autoauth.randomPass.description = Generate random password
+
+module.inventorySetting.stoping.desc = Stop movement for inventory tasks
+module.inventorySetting.delayMoveItem.desc = Add delay to item moves
+module.inventorySetting.updateSlot.desc = Update slot after moves
+
+module.fastBreak.breakDamage.desc = Target break progress
+module.fastBreak.bypass.desc = Send bypass packets
+
+module.elytraMotion.distance.desc = Freeze distance to target
+
+module.noSlow.sprint.desc = Keep sprint while using items
+
+module.viewModel.rightArmX.desc = Right arm X offset
+module.viewModel.rightArmY.desc = Right arm Y offset
+module.viewModel.rightArmZ.desc = Right arm Z offset
+module.viewModel.jerkOff.desc = Animate arm bobbing
+module.viewModel.leftArmX.desc = Left arm X offset
+module.viewModel.leftArmY.desc = Left arm Y offset
+module.viewModel.leftArmZ.desc = Left arm Z offset
+module.viewModel.rightArmSize.desc = Right arm size
+module.viewModel.leftArmSize.desc = Left arm size
+
+module.blockESP.itemSelectSetting.desc = Blocks to highlight
+module.blockESP.mode.desc = Scan mode for blocks
+
+module.particles.textureSelection.desc = Enabled particle textures
+module.particles.mode.desc = Particle groups to render
+module.particles.colorMode.desc = Color source for particles
+module.particles.customColor.desc = Custom ambient color
+module.particles.physics.desc = Ambient particle physics
+module.particles.hitParticleMode.desc = Hit particle spawn mode
+module.particles.hitPhysics.desc = Hit particle physics
+module.particles.totemColorMode.desc = Totem particle color mode
+module.particles.totemCustomColor.desc = Custom totem color
+module.particles.particlesCategory.desc = Ambient particle settings
+module.particles.hitCategory.desc = Hit particle settings
+module.particles.totemCategory.desc = Totem particle settings
+module.particles.fireFliesCategory.desc = Firefly settings
+
+module.worldParticles.textures = Tekstury
+module.worldParticles.mode = Tryb
+module.worldParticles.renderMode = Tryb renderu
+module.worldParticles.default = Domyslny
+module.worldParticles.spaceTest = Space Test
+module.worldParticles.ambient = Czastki otoczenia
+module.worldParticles.fireflies = Swietliki
+module.worldParticles.count = Ilosc
+module.worldParticles.size = Rozmiar
+module.worldParticles.physics = Fizyka
+module.worldParticles.speed = Predkosc
+module.worldParticles.color = Kolor
+module.worldParticles.customColor = Wlasny kolor
+module.worldParticles.ffCount = Ilosc
+module.worldParticles.ffSize = Rozmiar
+module.worldParticles.ffSpeed = Predkosc
+module.worldParticles.ffTrail = Dlugosc ogona
+module.worldParticles.ambientCat = Czastki otoczenia
+module.worldParticles.ffCat = Swietliki
+module.worldParticles.spaceCount = Ilosc
+module.worldParticles.spaceSize = Rozmiar
+module.worldParticles.spaceSpeed = Predkosc
+module.worldParticles.spaceRange = Zasieg
+module.worldParticles.spaceTrail = Ogon
+module.worldParticles.spaceCat = Space Test
+
+module.hitParticles.textures = Tekstury
+module.hitParticles.physics = Fizyka
+module.hitParticles.count = Ilosc
+module.hitParticles.speed = Predkosc
+module.hitParticles.size = Rozmiar
+module.hitParticles.lifetime = Czas zycia
+module.hitParticles.spiralCount = Ilosc spiral
+module.hitParticles.angularSpeed = Predkosc obrotu
+module.hitParticles.radiusSpeed = Predkosc promienia
+module.hitParticles.color = Kolor
+module.hitParticles.customColor = Wlasny kolor
+module.hitParticles.settingsCat = Ustawienia
+module.hitParticles.spiralCat = Spirala
+module.hitParticles.spiral = Spirala
+
+module.totemParticles.textures = Tekstury
+module.totemParticles.count = Ilosc
+module.totemParticles.speed = Predkosc
+module.totemParticles.size = Rozmiar
+module.totemParticles.lifetime = Czas zycia
+module.totemParticles.interval = Interwal
+module.totemParticles.color = Kolor
+module.totemParticles.customColor = Wlasny kolor
+module.totemParticles.vanilla = Wanilia
+module.totemParticles.settingsCat = Ustawienia
+
+module.particles.sync = Sync
+module.particles.custom = Wlasny
+module.particles.boom = Wybuch
+module.particles.drop = Opadanie
+module.particles.fly = Lot
+
+particle.texture.snowflake = Sniezynka
+particle.texture.star = Gwiazda
+particle.texture.heart = Serce
+particle.texture.firefly = Swietlik
+particle.texture.spaceGlow = Kosmiczna poswiata
+particle.texture.spaceStar = Kosmiczna gwiazda
+
+module.worldParticles.textureSelection.desc = Tekstury czastek
+module.worldParticles.mode.desc = Grupy czastek
+module.worldParticles.renderMode.desc = Aktywny tryb czastek swiata
+module.worldParticles.particleCount.desc = Ilosc czastek otoczenia
+module.worldParticles.particleSize.desc = Rozmiar czastek otoczenia
+module.worldParticles.particleSpeed.desc = Predkosc czastek otoczenia
+module.worldParticles.physics.desc = Fizyka czastek otoczenia
+module.worldParticles.colorMode.desc = Zrodlo koloru
+module.worldParticles.customColor.desc = Wlasny kolor czastek
+module.worldParticles.fireFlyCount.desc = Ilosc swietlikow
+module.worldParticles.fireFlySize.desc = Rozmiar swietlikow
+module.worldParticles.fireFlySpeed.desc = Predkosc swietlikow
+module.worldParticles.fireFlyTrailLength.desc = Dlugosc ogona swietlika
+module.worldParticles.ambientCategory.desc = Ustawienia czastek otoczenia
+module.worldParticles.fireFliesCategory.desc = Ustawienia swietlikow
+module.worldParticles.spaceCount.desc = Ilosc kosmicznych czastek
+module.worldParticles.spaceSize.desc = Rozmiar kosmicznych czastek
+module.worldParticles.spaceSpeed.desc = Predkosc orbit kosmicznych czastek
+module.worldParticles.spaceRange.desc = Promien chmury kosmicznych czastek
+module.worldParticles.spaceTrailLength.desc = Dlugosc ogona kosmicznych czastek
+module.worldParticles.spaceCategory.desc = Testowe ustawienia kosmicznych czastek
+
+module.hitParticles.textureSelection.desc = Tekstury czastek uderzenia
+module.hitParticles.physics.desc = Fizyka czastek uderzenia
+module.hitParticles.count.desc = Ilosc czastek uderzenia
+module.hitParticles.speed.desc = Predkosc czastek uderzenia
+module.hitParticles.size.desc = Rozmiar czastek uderzenia
+module.hitParticles.lifetime.desc = Czas zycia czastek uderzenia
+module.hitParticles.spiralCount.desc = Ilosc spiral
+module.hitParticles.angularSpeed.desc = Predkosc obrotu spirali
+module.hitParticles.radiusSpeed.desc = Predkosc rozszerzania spirali
+module.hitParticles.colorMode.desc = Zrodlo koloru czastek uderzenia
+module.hitParticles.customColor.desc = Wlasny kolor czastek uderzenia
+module.hitParticles.settings.desc = Ustawienia czastek uderzenia
+module.hitParticles.spiral.desc = Ustawienia fizyki spiralnej
+
+module.totemParticles.textureSelection.desc = Tekstury czastek totemu
+module.totemParticles.count.desc = Ilosc czastek totemu
+module.totemParticles.speed.desc = Predkosc czastek totemu
+module.totemParticles.size.desc = Rozmiar czastek totemu
+module.totemParticles.lifetime.desc = Czas zycia czastek totemu
+module.totemParticles.interval.desc = Interwal spawnu totemu
+module.totemParticles.colorMode.desc = Tryb koloru czastek totemu
+module.totemParticles.customColor.desc = Wlasny kolor totemu
+module.totemParticles.settings.desc = Ustawienia czastek totemu
+
+module.speed.mode.desc = Speed mode
+module.timer.mode.desc = Timer mode
+module.timer.oldMatrix.desc = Old Matrix bypass
+module.timer.speed.desc = Timer multiplier
+module.timer.shiftTicks.desc = Amount of skipped ticks for Shift
+module.timer.boostKey.desc = Grim boost key
+module.timer.onFlag.desc = Action after anti-cheat setback
+module.flyBypass.mode.desc = Fly bypass mode
+
+module.aura.rotationMode.desc = Rotation algorithm
+module.aura.sprintMode.desc = Sprint handling mode
+module.aura.correction.desc = Movement correction mode
+module.aura.cooldownMode.desc = Cooldown calculation mode
+module.aura.targetWindow.desc = Target filters and sorting
+module.aura.targetTypeSetting.desc = Target types to attack
+module.aura.targetSortSetting.desc = Target sorting mode
+module.aura.randomDelay.desc = Dodaje losowe opoznienie miedzy atakami
+
+module.serverHelper.serverMode.desc = Server profile
+module.serverHelper.shulkerKey.desc = Open shulker keybind
+module.serverHelper.antiFly.desc = Anti-fly item keybind
+module.serverHelper.scrollExp.desc = Scroll exp keybind
+module.serverHelper.explosiveTrap.desc = Explosive trap keybind
+module.serverHelper.normalTrap.desc = Normal trap keybind
+module.serverHelper.stun.desc = Stun keybind
+module.serverHelper.explosiveThing.desc = Explosive item keybind
+module.serverHelper.snowball.desc = Snowball keybind
+module.serverHelper.holyAura.desc = Holy aura keybind
+module.serverHelper.trap.desc = Trap keybind
+module.serverHelper.plast.desc = Plate keybind
+module.serverHelper.clearDust.desc = Clear dust keybind
+module.serverHelper.fireTornado.desc = Fire tornado keybind
+module.serverHelper.disorient.desc = Disorient keybind
+module.serverHelper.radiationPotion.desc = Radiation potion keybind
+module.serverHelper.drowsinessPotion.desc = Drowsiness potion keybind
+module.serverHelper.assassinPotion.desc = Assassin potion keybind
+module.serverHelper.paladinPotion.desc = Paladin potion keybind
+module.serverHelper.ragePotion.desc = Rage potion keybind
+module.serverHelper.holyWaterPotion.desc = Holy water keybind
+module.serverHelper.popperPotion.desc = Popper keybind
+
+module.trails.mode.desc = Trail rendering mode
+module.trails.particleTexture.desc = Particle texture
+module.trails.colorMode.desc = Trail color mode
+module.trails.customColor.desc = Custom trail color
+
+module.targetESP.mode.desc = Target effect type
+module.swingAnimation.handMode.desc = Swing rendering type
+module.swingAnimation.animationMode.desc = Swing animation style
+module.swingAnimation.handAnimationMode.desc = Swing style with hand rendering
+module.jumpCircle.colorMode.desc = Circle color mode
+module.jumpCircle.customColor.desc = First circle color
+module.jumpCircle.customColor2.desc = Second circle color
+module.cape.animationMode.desc = Cape animation style
+
+module.targetPearl.modeSetting.desc = Throw mode
+module.targetPearl.targetSetting.desc = Which pearls to target
+module.targetPearl.throwSetting.desc = Key to throw
+
+module.autoWeb.hand.desc = Hand to place webs
+module.autoTrap.hand.desc = Hand to place obsidian
+module.chestStealer.mode.desc = Looting mode
+module.elytraMotion.mode.desc = Freeze condition mode
+module.noSlow.mode.desc = NoSlow mode
+module.autoSbor.mode.desc = Shopping profile
+module.autoSbor.executeButton.desc = Open AutoSbor menu
+module.autoSbor.count.desc = Ile przedmiotów zbierać na slot
+
+module.offhand.swapHealMode.desc = Offhand item when eating
+module.offhand.swapEnemyMode.desc = Offhand item when enemy eats
+
+module.autoSwap.itemType.desc = Item to equip
+module.autoSwap.swapType.desc = Item to swap to
+module.autoSwap.keyToSwap.desc = Swap keybind
+module.autoSwap.keyToSwapCerb.desc = Cerberus swap keybind
+module.autoSwap.mode.desc = AutoSwap mode
+module.autoSwap.wheelBind.desc = Wheel open keybind
+
+module.santaHat.hatModel.desc = Hat model variant
+module.autoDuels.mode.desc = Duel kit selection
+
+module.interface.elementsSetting.desc = HUD elements visibility
+module.interface.mainSettings.desc = Main HUD settings
+
+module.entityESP.elements.desc = ESP elements to draw
+module.entityESP.targets.desc = Entity types to show
+
+module.reach.mods.desc = Reach modifiers
+module.cameraTweaks.multiSetting.desc = Camera options
+module.baseFinder.mods.desc = Finder modes
+module.autoTotem.triggerSetting.desc = Triggers for totem swap
+
+module.worldTweaks.modeSetting.desc = World effects to modify
+module.worldTweaks.colorFog.desc = Fog color
+
+module.itemUseController.items.desc = Items for aiming assist
+module.autoLeave.leaveFactor.desc = Leave conditions
+module.autoLeave.command.desc = Command to run on leave
+module.triggerBot.targetTypeSetting.desc = Target types for trigger
+
+module.noRender.settings.desc = Elements to hide
+module.noDelay.ignoreSetting.desc = Cooldowns to ignore
+module.noPush.ignoreSetting.desc = Push sources to ignore
+
+
+module.ahHelper.cheapSlotColor.desc = Color for cheap slots
+module.ahHelper.goodSlotColor.desc = Color for good slots
+module.antiInvisible.colorSetting.desc = Color for invisible entities
+
+module.nameProtect.nameSetting.desc = Custom name replacement
+autoauth.passSetting.command.desc = Default password
+autoauth.openFile.desc = Open accounts file
+
+module.cameraTweaks.zoomSetting.desc = Zoom keybind
+module.cameraTweaks.freeLookSetting.desc = Free look keybind
+module.elytraHelper.elytraSetting.desc = Swap elytra keybind
+module.elytraHelper.fireworkSetting.desc = Firework keybind
+module.clickAction.friendBind.desc = Toggle friend keybind
+module.clickAction.expBind.desc = Use exp bottles keybind
+module.clickAction.enderPearl.desc = Use ender pearl keybind
+module.clickAction.windCharge.desc = Use wind charge keybind
+
+module.viewModel.rightArm.desc = Right arm position
+module.viewModel.leftArm.desc = Left arm position
+module.viewModel.sizeList.desc = Arm size settings
+module.viewModel.reset.desc = Reset arm transform
+
+module.autoBuy.executeButton.desc = Open AutoBuy menu
+panel.client.setting.guiScale = Skala GUI
+panel.client.setting.backgroundBlur = Rozmycie tła
+panel.client.setting.description = Opis
+panel.client.setting.settingIcon = Ikona ustawienia
+panel.client.setting.telegram = Telegram
+panel.client.setting.chat = Czat
+panel.client.playtime = Czas gry
+panel.client.playtime.session = Sesja
+panel.client.playtime.week = Tydzien
+panel.client.playtime.total = Lacznie
+panel.cosmetics.empty = Nie znaleziono kosmetyków
+gui.configelement.mode = Tryb
+gui.configelement.mode.all = Wszystko
+gui.configelement.mode.ignoreBinds = Ignoruj bindy
+gui.configelement.mode.onlyThemes = Tylko motywy
+gui.friendspanel.mode = Tryb
+gui.friendspanel.mode.cloud = Chmura
+gui.friendspanel.mode.local = Lokalnie
+gui.friendspanel.target = Cel
+uid_or_name = UID lub nazwa
+gui.configelement.local = Lokalnie
+gui.configelement.loadType = Typ ladowania
+gui.configelemen.load = Zaladuj
+panel.profile.setting.streamerMode = Tryb streamera
+panel.profile.setting.discordRpc = Discord RPC
+panel.profile.setting.webProfile = Profil web
+panel.profile.setting.openFolder = Otwórz folder
+nlgui.style.color.leftBackground = Left panel background
+nlgui.style.color.leftBackground.desc = Used as background for the left Navigation and Info sections in NLGUI
+nlgui.style.color.rightBackground = Right panel background
+nlgui.style.color.rightBackground.desc = Used as background for right sections and settings popups in NLGUI
+nlgui.style.color.panelLeftBackground = Inner blocks background
+nlgui.style.color.panelLeftBackground.desc = Used as inner block background in the color picker popup in NLGUI
+nlgui.style.color.surfaceEnableBackground = Active header background
+nlgui.style.color.surfaceEnableBackground.desc = Used for the active part of module/style card headers in NLGUI
+nlgui.style.color.headerDisableBackground = Base header background
+nlgui.style.color.headerDisableBackground.desc = Used as the base background of card and container headers in NLGUI
+nlgui.style.color.fieldSurfaceBackground = Field background
+nlgui.style.color.fieldSurfaceBackground.desc = Used for input fields, sliders, and text boxes in NLGUI settings
+nlgui.style.color.fieldBorder = Field border
+nlgui.style.color.fieldBorder.desc = Used for borders of input fields and interactive controls in NLGUI
+nlgui.style.color.surfaceDisableBackground = Card background
+nlgui.style.color.surfaceDisableBackground.desc = Used as the main background of module cards and style cards in NLGUI
+nlgui.style.color.textEnable = Primary text
+nlgui.style.color.textEnable.desc = Used for the main readable text in NLGUI
+nlgui.style.color.textTertiary = Tertiary text
+nlgui.style.color.textTertiary.desc = Used for muted text, secondary icons, and close buttons in NLGUI
+nlgui.style.color.textSecondary = Secondary text
+nlgui.style.color.textSecondary.desc = Used for descriptions and section subtitles in NLGUI
+nlgui.style.color.primaryColor = Primary accent
+nlgui.style.color.primaryColor.desc = Used as the main accent: icons, active controls, progress, and toggles in NLGUI
+nlgui.style.color.secondaryPrimaryColor = Secondary accent
+nlgui.style.color.secondaryPrimaryColor.desc = Reserved secondary accent for gradients and hover effects in NLGUI
+nlgui.style.color.glowColor1 = Glow color 1
+nlgui.style.color.glowColor1.desc = Main glow color reserved for decorative glow effects in NLGUI
+nlgui.style.color.glowColor2 = Glow color 2
+nlgui.style.color.glowColor2.desc = Secondary glow color reserved for smoother glow transitions in NLGUI
+nlgui.style.color.friendColor = Friend color
+nlgui.style.color.friendColor.desc = Reserved color for friend-highlighted elements in NLGUI
+nlgui.style.color.glareColor = Kolor odblasku
+nlgui.style.color.glareColor.desc = Kolor efektu szklanego odblasku
+nlgui.style.color.disableActiveBg = Inactive toggle background
+nlgui.style.color.disableActiveBg.desc = Used as background for inactive toggles and action buttons in NLGUI
+nlgui.style.color.heartActiveBg = Active favorite background
+nlgui.style.color.heartActiveBg.desc = Used as active background of the favorite (heart) button in NLGUI module cards
+nlgui.style.color.heartIcon = Favorite icon color
+nlgui.style.color.heartIcon.desc = Used for the heart icon color in favorite state in NLGUI
+nlgui.style.color.hudBackground = Tło HUD
+nlgui.style.color.hudBackground.desc = Używane jako tło kart elementów HUD w NLGUI
+nlgui.style.color.headerHudBackground = Tło nagłówka HUD
+nlgui.style.color.headerHudBackground.desc = Używane jako tło nagłówka kart elementów HUD w NLGUI
+
+module.interface.hudElement.scale = Skala
+module.interface.hudElement.scale.desc = Skala elementu HUD
+module.interface.notifications.preview = Podgląd powiadomienia
+module.interface.notifications.types = Powiadamiaj o
+module.interface.notifications.types.desc = Które zdarzenia pokazywać jako powiadomienia
+module.interface.notifications.types.modules = Przełączanie modułów
+module.interface.notifications.types.strength = Koniec siły
+module.interface.notifications.types.armor = Wytrzymałość zbroi
+module.interface.notifications.types.totems = Utrata totemów
+module.interface.notifications.direction = Kierunek
+module.interface.notifications.direction.desc = Gdzie rozwija się stos powiadomień
+module.interface.notifications.direction.down = W dół
+module.interface.notifications.direction.up = W górę
+module.interface.notifications.state.enabled = został włączony
+module.interface.notifications.state.disabled = został wyłączony
+
+cosmetics.figura.render = Renderowanie kosmetykow
+cosmetics.figura.render.self = Wlasne
+cosmetics.figura.render.friends = Znajomych
+cosmetics.emotes.render = Renderowanie animacji
+cosmetics.emotes.render.self = Wlasne
+cosmetics.emotes.render.friends = Znajomych
+cosmetics.pet.render = Renderowanie zwierzakow
+cosmetics.pet.scale = Skala zwierzaka
+cosmetics.pet.render.self = Wlasnego
+cosmetics.pet.render.friends = Znajomych
+module.viewArmorDurability.naSebe = Na sobie
+module.viewArmorDurability.naEnemies = Na wrogach
+module.aimAssist.distance = Dystans
+module.aimAssist.mode = Tryb
+module.aimAssist.mode.desc = Metoda wspomagania celowania
+module.aimAssist.mode.multiply = Mnoznik
+module.aimAssist.mode.neuro = Neuro
+module.aimAssist.changeX = Zmien X
+module.aimAssist.accelerationX = Przyspieszenie X
+module.aimAssist.decelerationX = Spowolnienie X
+module.aimAssist.changeY = Zmien Y
+module.aimAssist.accelerationY = Przyspieszenie Y
+module.aimAssist.decelerationY = Spowolnienie Y
+module.aimAssist.diffRangeX = Ignoruj FOV X
+module.aimAssist.diffRangeY = Ignoruj FOV Y
+module.aimAssist.targetSettingWindow = Ustawienia celu
+module.bowAimBot.autoShoot = Auto strzal
+module.bowAimBot.predictSetting = Predykcja
+module.bowAimBot.predictSetting.desc = Tiki predykcji dla luku
+module.itemUseController.newVersion = 1.21.x
+module.itemUseController.aim = Celowanie
+module.itemUseController.items = Przedmioty
+module.itemUseController.bow = Luk
+module.itemUseController.crossbow = Kusza
+module.itemUseController.snowball = Sniezka
+module.itemUseController.trident = Trojzab
+module.itemUseController.predictSetting = Predykcja
+module.flyBypass.mode = Tryb
+module.flyBypass.safeMode = Tryb bezpieczny
+module.flyBypass.riskMode = Tryb ryzyka
+module.flyBypass.delay = Opoznienie
+module.noSweetSlow.speed = Predkosc
+module.ahHelper.serverMode = Serwer
+module.ahHelper.serverMode.desc = Serwer pomocnika aukcji
+module.ahHelper.serverAuto = Auto
+module.ahHelper.serverHolyWorld = HolyWorld
+module.ahHelper.serverFunTime = FunTime
+module.ahHelper.autoConfirm = Auto potwierdzenie
+module.ahHelper.autoConfirm.desc = Automatycznie potwierdzaj zakup
+module.ahHelper.fixCount = Poprawka ilosci
+module.ahHelper.fixCount.desc = Pokazuj rzeczywista ilosc przedmiotu
+module.ahHelper.priceFind = Szukanie ceny
+module.ahHelper.priceFind.desc = Komenda szukania ceny
+module.ahHelper.priceFindAutoSell = /ah sell auto
+module.ahHelper.priceFindSearch = /ah search
+module.ahHelper.discount = Rabat
+module.ahHelper.discount.desc = Mnoznik ceny dla oplacalnego zakupu
+module.ahHelper.sellKeyHw = Klawisz sprzedazy HW
+module.ahHelper.sellKeyHw.desc = Bind sprzedazy na HolyWorld
+module.autoLoot.ignoreWalls = Ignoruj sciany
+module.autoLoot.ignoreEntity = Ignoruj byty
+module.xrayBypass.range = Zasieg
+module.xrayBypass.height = Wysokosc
+module.xrayBypass.delay = Opoznienie
+module.blockESP.tracers = Tracery
+module.shaderHand.shaderMode = Shader
+module.shaderHand.animation = Animacja
+module.shaderHand.timeSpeed = Predkosc czasu
+module.shaderHand.effectAlpha = Przezroczystosc efektu
+module.shaderHand.glowColor = Kolor glow
+module.shaderHand.glowRadius = Rozmiar glow
+module.shaderHand.patternSpeed = Predkosc wzoru
+module.shaderHand.shift = Przesuniecie
+module.shaderHand.shader.aqua = Aqua
+module.shaderHand.shader.flow = Flow
+module.shaderHand.shader.smoke = Smoke
+module.shaderHand.shader.holyFuck = HolyFuck
+module.shaderHand.shader.gang = Gang
+module.shaderHand.shader.gamer = Gamer
+module.shaderHand.shader.galaxy = Galaxy
+module.shaderHand.shader.techno = Techno
+module.shaderHand.shader.golden = Golden
+module.shaderHand.shader.guiShader = GuiShader
+module.shaderHand.shader.hidef = Hidef
+module.shaderHand.shader.homie = Homie
+module.shaderHand.shader.sheldon = Sheldon
+module.shaderHand.shader.smoky = Smoky
+module.shaderHand.shader.yippieOwns = YippieOwns
+module.shaderHand.shader.purple = Purple
+module.shaderHand.shader.spiralFlame = Spiral Flame
+module.shaderHand.shader.glow = Glow
+module.shaderHand.shaderMode.desc = Tryb shadera reki
+module.shaderHand.animation.desc = Animuje czas shadera
+module.shaderHand.timeSpeed.desc = Mnoznik predkosci animacji
+module.shaderHand.effectAlpha.desc = Sila renderowania efektu reki
+module.shaderHand.glowColor.desc = Kolor obrysu i glow
+module.shaderHand.glowRadius.desc = Rozmiar duzego glow wokol figury
+module.shaderHand.patternSpeed.desc = Predkosc wzoru dla shaderow smoke/gang
+module.shaderHand.shift.desc = Sila przesuniecia wzoru
+module.cape.desc = Niestandardowa peleryna z fizyka
+module.cape.windStrength = Sila wiatru
+module.cape.gravity = Grawitacja
+module.cape.stiffness = Sztywnosc
+module.cape.sensitivity = Czujnosc
+module.jumpCircle.desc = Ladne kregi przy skoku
+module.jumpCircle.size = Rozmiar
+module.jumpCircle.texture = Tekstura
+module.jumpCircle.speed = Predkosc
+module.jumpCircle.lifetime = Czas
+module.jumpCircle.texture.storm = Burza
+module.jumpCircle.texture.pool = Otchlan
+module.jumpCircle.texture.rings = Kregi
+module.jumpCircle.texture.explosion = Wybuch
+module.jumpCircle.colorMode = Kolor
+module.jumpCircle.sync = Synchronizacja
+module.jumpCircle.custom = Wlasny
+module.jumpCircle.customColor = Pierwszy kolor
+module.jumpCircle.customColor2 = Drugi kolor
+module.killEffect.desc = Efekt wizualny po zabiciu
+module.killEffect.mode = Efekt
+module.killEffect.mode.cubes = Kostki
+module.killEffect.mode.pyramids = Piramidy
+module.killEffect.mode.body = Cialo
+module.killEffect.mode.blackHole = Czarna dziura
+module.killEffect.mode.fountain = Fontanna
+module.killEffect.duration = Czas trwania
+module.killEffect.scale = Rozmiar
+module.killEffect.count = Ilosc
+module.killEffect.speed = Predkosc
+module.killEffect.particleType = Typ czastek
+module.killEffect.particleType.cubes = Kostki
+module.killEffect.particleType.pyramids = Piramidy
+module.killEffect.particleType.stars = Gwiazdy
+module.killEffect.particleType.totems = Totemy
+module.killEffect.particleType.random = Losowe
+module.killEffect.color = Kolor
+module.killEffect.customColor = Wlasny kolor
+module.blockOverLay.desc = Podswietla blok pod celownikiem
+module.blockOverLay.mode = Tryb renderowania
+module.blockOverLay.mode.desc = Wybiera shader lub zwykla ramke
+module.blockOverLay.shader = Shader
+module.blockOverLay.box = Ramka
+module.blockOverLay.animation = Animacja przejscia
+module.blockOverLay.animation.desc = Plynnie przesuwa podswietlenie miedzy blokami
+module.blockOverLay.animationSpeed = Predkosc przejscia
+module.blockOverLay.animationSpeed.desc = Predkosc animacji miedzy blokami
+module.blockOverLay.fadeAnimation = Animacja zanikania
+module.blockOverLay.fadeAnimation.desc = Plynnie ukrywa podswietlenie po zejsciu celownika z bloku
+module.blockOverLay.fadeSpeed = Predkosc zanikania
+module.blockOverLay.fadeSpeed.desc = Predkosc pojawiania i zanikania
+module.blockOverLay.shaderEffect = Efekt shadera
+module.blockOverLay.shaderEffect.desc = Efekt wizualny podswietlenia shaderem
+module.blockOverLay.effect.flame = Plomien
+module.blockOverLay.effect.aqua = Woda
+module.blockOverLay.effect.rainbow = Tecza
+module.blockOverLay.effect.hologram = Hologram
+module.blockOverLay.effect.aurora = Aurora
+module.blockOverLay.effect.plasma = Plazma
+module.blockOverLay.lineWidth = Grubosc linii
+module.blockOverLay.lineWidth.desc = Grubosc zwyklej ramki
+module.blockOverLay.boxColor = Kolor ramki
+module.blockOverLay.timeSpeed = Predkosc animacji
+module.blockOverLay.timeSpeed.desc = Predkosc animacji shadera
+module.blockOverLay.outlineColor = Kolor obramowania
+module.blockOverLay.firstFillColor = Pierwszy kolor wypelnienia
+module.blockOverLay.secondFillColor = Drugi kolor wypelnienia
+
+module.shaderESP.desc = Shaderowe podswietlenie bytow
+module.shaderESP.throughWalls = Przez sciany
+module.shaderESP.ignoreSelf = Ignoruj siebie
+module.shaderESP.maxDistance = Maksymalny dystans
+module.shaderESP.maxDistance.desc = Maksymalny dystans renderowania
+module.shaderESP.shaderMode = Shader
+module.shaderESP.shaderMode.desc = Tryb shadera
+module.shaderESP.flame = Plomien
+module.shaderESP.blur = Blur
+module.shaderESP.timeSpeed = Predkosc czasu
+module.shaderESP.timeSpeed.desc = Predkosc animacji shadera
+module.shaderESP.colorMode = Kolor
+module.shaderESP.colorMode.desc = Tryb koloru shadera
+module.shaderESP.syncAlpha = Alfa synchronizacji
+module.shaderESP.syncAlpha.desc = Przezroczystosc kolorow stylu
+module.shaderESP.sync = Synchronizacja
+module.shaderESP.custom = Wlasny
+module.shaderESP.targets = Cele
+module.shaderESP.targets.desc = Typy bytow
+module.shaderESP.players = Gracze
+module.shaderESP.noArmor = Bez zbroi
+module.shaderESP.hostiles = Wrogie
+module.shaderESP.passives = Pasywne
+module.shaderESP.items = Przedmioty
+module.shaderESP.crystals = Krysztaly
+module.shaderESP.outlineColor = Kolor obramowania
+module.shaderESP.firstFillColor = Pierwszy kolor wypelnienia
+module.shaderESP.secondFillColor = Drugi kolor wypelnienia
+module.shaderFog.desc = Atmosferyczny shader nieba i mgly
+module.shaderFog.shaderMode = Shader
+module.shaderFog.shaderMode.desc = Tryb shadera nieba
+module.shaderFog.gradient = Gradient
+module.shaderFog.galaxy = Kosmos
+module.shaderFog.aqua = Aqua
+module.shaderFog.purple = Purple
+module.shaderFog.overcast = Pochmurno
+module.shaderFog.colorMode = Kolor
+module.shaderFog.colorMode.desc = Tryb koloru shadera mgly
+module.shaderFog.sync = Synchronizacja
+module.shaderFog.custom = Wlasny
+module.shaderFog.syncAlpha = Alfa synchronizacji
+module.shaderFog.syncAlpha.desc = Przezroczystosc kolorow stylu
+module.shaderFog.firstColor = Pierwszy kolor
+module.shaderFog.secondColor = Drugi kolor
+module.shaderFog.purpleColor = Kolor Purple
+module.shaderFog.intensity = Intensywnosc
+module.shaderFog.intensity.desc = Sila mieszania shadera
+module.shaderFog.timeSpeed = Szybkosc
+module.shaderFog.timeSpeed.desc = Predkosc animacji dla Kosmosu, Aqua, Purple i Pochmurno
+module.autoMine.mode = Tryb
+module.autoMine.mode.desc = Typ kopalni
+module.autoMine.modeNormal = Zwykla
+module.autoMine.modeNether = Nether
+module.autoMine.modeCombined = Laczony
+module.autoMine.priorityBlock = Priorytetowe bloki
+module.autoMine.priorityBlock.desc = Bloki kopane w pierwszej kolejnosci
+
+module.guiWalk.mode = Tryb
+module.guiWalk.mode.desc = Tryb dzialania GuiWalk
+module.guiWalk.mode.visual = Wizualnie
+module.guiWalk.mode.grim = Grim
+module.guiWalk.mode.holyworld = Holyworld
+module.guiWalk.mode.legit = Legit
+module.guiWalk.cameraLock = Blokada kamery
+module.guiWalk.cameraLock.desc = Blokuje obracanie kamery podczas GuiWalk
+module.menu.animation = Animacja
+module.menu.animation.desc = Styl animacji menu
+module.menu.animation.normal = Normalna
+module.menu.animation.blur = Blur
+module.menu.closeAnimationSpeed = Szybkość zamykania
+module.menu.closeAnimationSpeed.desc = Szybkość animacji zamykania menu
+module.menu.elementSwitchSpeed = Szybkość kart
+module.menu.elementSwitchSpeed.desc = Szybkość przełączania kart menu
+module.menu.categorySwitchSpeed = Szybkość kategorii
+module.menu.categorySwitchSpeed.desc = Szybkość przełączania kategorii elementów
+module.menu.moveGui = Przesuwanie GUI (środkowy przycisk myszy)
+module.menu.moveGui.desc = Pozwala przesuwać GUI, przytrzymując środkowy przycisk myszy na górnym panelu
+module.bot.exitControl = Wyjdź z bota
+module.eventHelper.target.desc = Events to mark
+module.aimAssist.curveMinFrequency = Min czestotliwosc krzywych
+module.aimAssist.curveMinFrequency.desc = Minimalna przerwa miedzy powtorzeniami zapisanych krzywych
+module.aimAssist.curveMaxFrequency = Max czestotliwosc krzywych
+module.aimAssist.curveMaxFrequency.desc = Maksymalna przerwa miedzy powtorzeniami zapisanych krzywych
+module.rotationRecorder.allowRoutingTicks = Uzywaj do routingu
+module.rotationRecorder.allowRoutingTicks.desc = Po wylaczeniu nowe wiersze sa oznaczane dirty_physics_flag=1
+module.handFire.desc = Ognisty slad na rece
+module.handFire.palette = Paleta
+module.handFire.palette.desc = Schemat kolorow ognia na rece
+module.handFire.palette.fire = Ogien
+module.handFire.palette.client = Client
+module.handFire.palette.custom = Wlasny
+module.handFire.palette.rainbow = Tecza
+module.handFire.primaryColor = Kolor
+module.handFire.primaryColor.desc = Glowny kolor HandFire
+module.handFire.secondaryColor = Kolor 2
+module.handFire.secondaryColor.desc = Drugi kolor HandFire
+module.handFire.intensity = Jasnosc
+module.handFire.intensity.desc = Jasnosc ognistego sladu
+module.handFire.persistence = Pamiec
+module.handFire.persistence.desc = Jak wolno wygasa bufor akumulacji
+module.handFire.lift = Wznoszenie
+module.handFire.lift.desc = Jak mocno slad unosi sie w gore
+module.handFire.turbulence = Fale
+module.handFire.turbulence.desc = Szum i turbulencja plomienia
+module.handFire.alpha = Przezroczystosc
+module.handFire.alpha.desc = Ogolna gestosc efektu
+module.handFire.additive = Additive
+module.handFire.additive.desc = Miesza ogien ze scena dla jasniejszego glow
+module.handFire.vanillaHandAlpha = Przezroczystosc reki
+module.handFire.vanillaHandAlpha.desc = Przezroczystosc vanilla reki od 0 do 255
+module.handFire.drawVanillaHand = Rysuj reke
+module.handFire.drawVanillaHand.desc = Zostawia vanilla reke pod efektem
+module.handFire.drawUnderHand = Rysuj pod reka
+module.handFire.drawUnderHand.desc = Rysuje HandFire przed vanilla reka
+module.chams.desc = Szklany shader chams dla graczy
+module.chams.targets = Cele
+module.chams.targets.desc = Kogo renderowac przez Chams
+module.chams.players = Gracze
+module.chams.self = Siebie
+module.chams.friends = Znajomi
+module.chams.colorMode = Tryb koloru
+module.chams.colorMode.desc = Schemat kolorow Chams
+module.chams.color.rainbow = Tecza
+module.chams.color.client = Client
+module.chams.color.custom = Wlasny
+module.chams.secondColor = Drugi kolor
+module.chams.secondColor.desc = Uzyj drugiego koloru w trybie wlasnym
+module.chams.customColor = Kolor
+module.chams.customColor.desc = Glowny kolor Chams
+module.chams.customSecondColor = Kolor 2
+module.chams.customSecondColor.desc = Drugi kolor Chams
+module.chams.colorTransfer = Przeniesienie koloru
+module.chams.colorTransfer.desc = Sila wplywu koloru na szklane odbicia
+module.chams.blur = Blur
+module.chams.blur.desc = Rozmycie odbicia dla efektu szkla
+module.chams.blurIterations = Iteracje
+module.chams.blurIterations.desc = Liczba przejsc rozmycia
+module.chams.blurOffset = Offset
+module.chams.blurOffset.desc = Rozmiar kroku rozmycia
+module.chams.blurStrength = Sila rozmycia
+module.chams.blurStrength.desc = Sila rozmycia odbicia
+module.chams.brightness = Jasnosc
+module.chams.brightness.desc = Jasnosc efektu Chams
+module.chams.mirror = Lustro
+module.chams.mirror.desc = Lokalne lustra na scianach modelu
+module.chams.throughWalls = Przez sciany
+module.chams.throughWalls.desc = Rysuj modele graczy przez sciany
+module.chams.alpha = Przezroczystosc
+module.chams.alpha.desc = Przezroczystosc modelu
+module.chams.speed = Predkosc
+module.chams.speed.desc = Predkosc animacji shadera
+module.chams.fresnel = Fresnel
+module.chams.fresnel.desc = Sila poswiaty na krawedziach
+module.eventHelper.desc = Ustawia punkt na wydarzeniu
+module.eventHelper.target = Punkt na...
+module.eventHelper.eventActive = /event active
+module.eventHelper.newEvent = Nowe wydarzenia

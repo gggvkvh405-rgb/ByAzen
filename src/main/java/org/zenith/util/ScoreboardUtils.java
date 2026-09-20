@@ -1,0 +1,366 @@
+package org.zenith.util;
+
+import java.util.HashMap;
+import java.util.Map;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.util.InputUtil;
+
+public enum ScoreboardUtils {
+   call287("SPACE", 32),
+   call288("APOSTROPHE", 39),
+   call289("COMMA", 44),
+   call290("MINUS", 45),
+   call291("PERIOD", 46),
+   call292("SLASH", 47),
+   call293("0", 48),
+   call294("1", 49),
+   call295("2", 50),
+   call296("3", 51),
+   call297("4", 52),
+   call298("5", 53),
+   call299("6", 54),
+   call300("7", 55),
+   call301("8", 56),
+   call302("9", 57),
+   call303("SEMICOLON", 59),
+   call304("EQUAL", 61),
+   call305("A", 65),
+   call306("B", 66),
+   call307("C", 67),
+   call308("D", 68),
+   call309("E", 69),
+   call310("F", 70),
+   call311("G", 71),
+   call312("H", 72),
+   call313("I", 73),
+   call314("J", 74),
+   call315("K", 75),
+   call316("L", 76),
+   call317("M", 77),
+   call318("N", 78),
+   call319("O", 79),
+   call320("P", 80),
+   call321("Q", 81),
+   call322("R", 82),
+   call323("S", 83),
+   call324("T", 84),
+   call325("U", 85),
+   call326("V", 86),
+   call327("W", 87),
+   call328("X", 88),
+   call329("Y", 89),
+   call330("Z", 90),
+   call331("LEFT_BRACKET", 91),
+   call332("BACKSLASH", 92),
+   call333("RIGHT_BRACKET", 93),
+   call334("GRAVE_ACCENT", 96),
+   call335("ESCAPE", 256),
+   call336("ENTER", 257),
+   call337("TAB", 258),
+   call338("BACKSPACE", 259),
+   call339("INSERT", 260),
+   call340("DELETE", 261),
+   call341("RIGHT", 262),
+   call342("LEFT", 263),
+   call343("DOWN", 264),
+   call344("UP", 265),
+   call345("CAPS_LOCK", 280),
+   call346("SCROLL_LOCK", 281),
+   call347("NUM_LOCK", 282),
+   call348("PRINT_SCREEN", 283),
+   call349("PAUSE", 284),
+   call350("F1", 290),
+   call351("F2", 291),
+   call352("F3", 292),
+   call353("F4", 293),
+   call354("F5", 294),
+   call355("F6", 295),
+   call356("F7", 296),
+   call357("F8", 297),
+   call358("F9", 298),
+   call359("F10", 299),
+   call360("F11", 300),
+   call361("F12", 301),
+   call362("NUMPAD_0", 320),
+   call363("NUMPAD_1", 321),
+   call364("NUMPAD_2", 322),
+   call365("NUMPAD_3", 323),
+   call366("NUMPAD_4", 324),
+   call367("NUMPAD_5", 325),
+   call368("NUMPAD_6", 326),
+   call369("NUMPAD_7", 327),
+   call370("NUMPAD_8", 328),
+   call371("NUMPAD_9", 329),
+   call372("NUMPAD_DECIMAL", 330),
+   call373("NUMPAD_DIVIDE", 331),
+   call374("NUMPAD_MULTIPLY", 332),
+   call375("NUMPAD_SUBTRACT", 333),
+   call376("NUMPAD_ADD", 334),
+   call377("NUMPAD_ENTER", 335),
+   call378("NUMPAD_EQUAL", 336),
+   call379("LEFT_SUPER", 343),
+   call380("RIGHT_SUPER", 347),
+   call381("MENU", 348),
+   call382("WORLD_1", 161),
+   call383("WORLD_2", 162),
+   call384("LEFT_SHIFT", 340),
+   call385("LEFT_CONTROL", 341),
+   call386("LEFT_ALT", 342),
+   call387("RIGHT_SHIFT", 344),
+   call388("RIGHT_CONTROL", 345),
+   call389("RIGHT_ALT", 346),
+   call390("MOUSE1", 0),
+   call391("MOUSE2", 1),
+   call392("MOUSE3", 2),
+   call393("MOUSE4", 3),
+   call394("MOUSE5", 4),
+   call065("", -1);
+
+   public final String string113;
+   public final int int396;
+   public static final Map<Integer, ScoreboardUtils> map52 = new HashMap<>();
+   public static final Map<String, ScoreboardUtils> map53 = new HashMap<>();
+
+   @Override
+   public String toString() {
+      return this.string113;
+   }
+
+   public static String EventPosHook(int var0) {
+      return map52.getOrDefault(var0, call065).string113;
+   }
+
+   public static int ServerTheme(String var0) {
+      return map53.getOrDefault(var0.toLowerCase(), call065).int396;
+   }
+
+   public static boolean ItemRegistry(int var0) {
+      return InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow(), var0);
+   }
+
+   ScoreboardUtils(String var3, int var4) {
+      this.string113 = var3;
+      this.int396 = var4;
+   }
+
+   static {
+      map52.put(call287.int396, call287);
+      map53.put(call287.string113.toLowerCase(), call287);
+      map52.put(call288.int396, call288);
+      map53.put(call288.string113.toLowerCase(), call288);
+      map52.put(call289.int396, call289);
+      map53.put(call289.string113.toLowerCase(), call289);
+      map52.put(call290.int396, call290);
+      map53.put(call290.string113.toLowerCase(), call290);
+      map52.put(call291.int396, call291);
+      map53.put(call291.string113.toLowerCase(), call291);
+      map52.put(call292.int396, call292);
+      map53.put(call292.string113.toLowerCase(), call292);
+      map52.put(call293.int396, call293);
+      map53.put(call293.string113.toLowerCase(), call293);
+      map52.put(call294.int396, call294);
+      map53.put(call294.string113.toLowerCase(), call294);
+      map52.put(call295.int396, call295);
+      map53.put(call295.string113.toLowerCase(), call295);
+      map52.put(call296.int396, call296);
+      map53.put(call296.string113.toLowerCase(), call296);
+      map52.put(call297.int396, call297);
+      map53.put(call297.string113.toLowerCase(), call297);
+      map52.put(call298.int396, call298);
+      map53.put(call298.string113.toLowerCase(), call298);
+      map52.put(call299.int396, call299);
+      map53.put(call299.string113.toLowerCase(), call299);
+      map52.put(call300.int396, call300);
+      map53.put(call300.string113.toLowerCase(), call300);
+      map52.put(call301.int396, call301);
+      map53.put(call301.string113.toLowerCase(), call301);
+      map52.put(call302.int396, call302);
+      map53.put(call302.string113.toLowerCase(), call302);
+      map52.put(call303.int396, call303);
+      map53.put(call303.string113.toLowerCase(), call303);
+      map52.put(call304.int396, call304);
+      map53.put(call304.string113.toLowerCase(), call304);
+      map52.put(call305.int396, call305);
+      map53.put(call305.string113.toLowerCase(), call305);
+      map52.put(call306.int396, call306);
+      map53.put(call306.string113.toLowerCase(), call306);
+      map52.put(call307.int396, call307);
+      map53.put(call307.string113.toLowerCase(), call307);
+      map52.put(call308.int396, call308);
+      map53.put(call308.string113.toLowerCase(), call308);
+      map52.put(call309.int396, call309);
+      map53.put(call309.string113.toLowerCase(), call309);
+      map52.put(call310.int396, call310);
+      map53.put(call310.string113.toLowerCase(), call310);
+      map52.put(call311.int396, call311);
+      map53.put(call311.string113.toLowerCase(), call311);
+      map52.put(call312.int396, call312);
+      map53.put(call312.string113.toLowerCase(), call312);
+      map52.put(call313.int396, call313);
+      map53.put(call313.string113.toLowerCase(), call313);
+      map52.put(call314.int396, call314);
+      map53.put(call314.string113.toLowerCase(), call314);
+      map52.put(call315.int396, call315);
+      map53.put(call315.string113.toLowerCase(), call315);
+      map52.put(call316.int396, call316);
+      map53.put(call316.string113.toLowerCase(), call316);
+      map52.put(call317.int396, call317);
+      map53.put(call317.string113.toLowerCase(), call317);
+      map52.put(call318.int396, call318);
+      map53.put(call318.string113.toLowerCase(), call318);
+      map52.put(call319.int396, call319);
+      map53.put(call319.string113.toLowerCase(), call319);
+      map52.put(call320.int396, call320);
+      map53.put(call320.string113.toLowerCase(), call320);
+      map52.put(call321.int396, call321);
+      map53.put(call321.string113.toLowerCase(), call321);
+      map52.put(call322.int396, call322);
+      map53.put(call322.string113.toLowerCase(), call322);
+      map52.put(call323.int396, call323);
+      map53.put(call323.string113.toLowerCase(), call323);
+      map52.put(call324.int396, call324);
+      map53.put(call324.string113.toLowerCase(), call324);
+      map52.put(call325.int396, call325);
+      map53.put(call325.string113.toLowerCase(), call325);
+      map52.put(call326.int396, call326);
+      map53.put(call326.string113.toLowerCase(), call326);
+      map52.put(call327.int396, call327);
+      map53.put(call327.string113.toLowerCase(), call327);
+      map52.put(call328.int396, call328);
+      map53.put(call328.string113.toLowerCase(), call328);
+      map52.put(call329.int396, call329);
+      map53.put(call329.string113.toLowerCase(), call329);
+      map52.put(call330.int396, call330);
+      map53.put(call330.string113.toLowerCase(), call330);
+      map52.put(call331.int396, call331);
+      map53.put(call331.string113.toLowerCase(), call331);
+      map52.put(call332.int396, call332);
+      map53.put(call332.string113.toLowerCase(), call332);
+      map52.put(call333.int396, call333);
+      map53.put(call333.string113.toLowerCase(), call333);
+      map52.put(call334.int396, call334);
+      map53.put(call334.string113.toLowerCase(), call334);
+      map52.put(call335.int396, call335);
+      map53.put(call335.string113.toLowerCase(), call335);
+      map52.put(call336.int396, call336);
+      map53.put(call336.string113.toLowerCase(), call336);
+      map52.put(call337.int396, call337);
+      map53.put(call337.string113.toLowerCase(), call337);
+      map52.put(call338.int396, call338);
+      map53.put(call338.string113.toLowerCase(), call338);
+      map52.put(call339.int396, call339);
+      map53.put(call339.string113.toLowerCase(), call339);
+      map52.put(call340.int396, call340);
+      map53.put(call340.string113.toLowerCase(), call340);
+      map52.put(call341.int396, call341);
+      map53.put(call341.string113.toLowerCase(), call341);
+      map52.put(call342.int396, call342);
+      map53.put(call342.string113.toLowerCase(), call342);
+      map52.put(call343.int396, call343);
+      map53.put(call343.string113.toLowerCase(), call343);
+      map52.put(call344.int396, call344);
+      map53.put(call344.string113.toLowerCase(), call344);
+      map52.put(call345.int396, call345);
+      map53.put(call345.string113.toLowerCase(), call345);
+      map52.put(call346.int396, call346);
+      map53.put(call346.string113.toLowerCase(), call346);
+      map52.put(call347.int396, call347);
+      map53.put(call347.string113.toLowerCase(), call347);
+      map52.put(call348.int396, call348);
+      map53.put(call348.string113.toLowerCase(), call348);
+      map52.put(call349.int396, call349);
+      map53.put(call349.string113.toLowerCase(), call349);
+      map52.put(call350.int396, call350);
+      map53.put(call350.string113.toLowerCase(), call350);
+      map52.put(call351.int396, call351);
+      map53.put(call351.string113.toLowerCase(), call351);
+      map52.put(call352.int396, call352);
+      map53.put(call352.string113.toLowerCase(), call352);
+      map52.put(call353.int396, call353);
+      map53.put(call353.string113.toLowerCase(), call353);
+      map52.put(call354.int396, call354);
+      map53.put(call354.string113.toLowerCase(), call354);
+      map52.put(call355.int396, call355);
+      map53.put(call355.string113.toLowerCase(), call355);
+      map52.put(call356.int396, call356);
+      map53.put(call356.string113.toLowerCase(), call356);
+      map52.put(call357.int396, call357);
+      map53.put(call357.string113.toLowerCase(), call357);
+      map52.put(call358.int396, call358);
+      map53.put(call358.string113.toLowerCase(), call358);
+      map52.put(call359.int396, call359);
+      map53.put(call359.string113.toLowerCase(), call359);
+      map52.put(call360.int396, call360);
+      map53.put(call360.string113.toLowerCase(), call360);
+      map52.put(call361.int396, call361);
+      map53.put(call361.string113.toLowerCase(), call361);
+      map52.put(call362.int396, call362);
+      map53.put(call362.string113.toLowerCase(), call362);
+      map52.put(call363.int396, call363);
+      map53.put(call363.string113.toLowerCase(), call363);
+      map52.put(call364.int396, call364);
+      map53.put(call364.string113.toLowerCase(), call364);
+      map52.put(call365.int396, call365);
+      map53.put(call365.string113.toLowerCase(), call365);
+      map52.put(call366.int396, call366);
+      map53.put(call366.string113.toLowerCase(), call366);
+      map52.put(call367.int396, call367);
+      map53.put(call367.string113.toLowerCase(), call367);
+      map52.put(call368.int396, call368);
+      map53.put(call368.string113.toLowerCase(), call368);
+      map52.put(call369.int396, call369);
+      map53.put(call369.string113.toLowerCase(), call369);
+      map52.put(call370.int396, call370);
+      map53.put(call370.string113.toLowerCase(), call370);
+      map52.put(call371.int396, call371);
+      map53.put(call371.string113.toLowerCase(), call371);
+      map52.put(call372.int396, call372);
+      map53.put(call372.string113.toLowerCase(), call372);
+      map52.put(call373.int396, call373);
+      map53.put(call373.string113.toLowerCase(), call373);
+      map52.put(call374.int396, call374);
+      map53.put(call374.string113.toLowerCase(), call374);
+      map52.put(call375.int396, call375);
+      map53.put(call375.string113.toLowerCase(), call375);
+      map52.put(call376.int396, call376);
+      map53.put(call376.string113.toLowerCase(), call376);
+      map52.put(call377.int396, call377);
+      map53.put(call377.string113.toLowerCase(), call377);
+      map52.put(call378.int396, call378);
+      map53.put(call378.string113.toLowerCase(), call378);
+      map52.put(call379.int396, call379);
+      map53.put(call379.string113.toLowerCase(), call379);
+      map52.put(call380.int396, call380);
+      map53.put(call380.string113.toLowerCase(), call380);
+      map52.put(call381.int396, call381);
+      map53.put(call381.string113.toLowerCase(), call381);
+      map52.put(call382.int396, call382);
+      map53.put(call382.string113.toLowerCase(), call382);
+      map52.put(call383.int396, call383);
+      map53.put(call383.string113.toLowerCase(), call383);
+      map52.put(call384.int396, call384);
+      map53.put(call384.string113.toLowerCase(), call384);
+      map52.put(call385.int396, call385);
+      map53.put(call385.string113.toLowerCase(), call385);
+      map52.put(call386.int396, call386);
+      map53.put(call386.string113.toLowerCase(), call386);
+      map52.put(call387.int396, call387);
+      map53.put(call387.string113.toLowerCase(), call387);
+      map52.put(call388.int396, call388);
+      map53.put(call388.string113.toLowerCase(), call388);
+      map52.put(call389.int396, call389);
+      map53.put(call389.string113.toLowerCase(), call389);
+      map52.put(call390.int396, call390);
+      map53.put(call390.string113.toLowerCase(), call390);
+      map52.put(call391.int396, call391);
+      map53.put(call391.string113.toLowerCase(), call391);
+      map52.put(call392.int396, call392);
+      map53.put(call392.string113.toLowerCase(), call392);
+      map52.put(call393.int396, call393);
+      map53.put(call393.string113.toLowerCase(), call393);
+      map52.put(call394.int396, call394);
+      map53.put(call394.string113.toLowerCase(), call394);
+      map52.put(call065.int396, call065);
+      map53.put(call065.string113.toLowerCase(), call065);
+   }
+}
