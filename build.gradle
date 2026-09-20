@@ -60,8 +60,20 @@ tasks.withType(JavaCompile).configureEach {
     it.options.compilerArgs += ["-Xmaxerrs", "2000"]
 }
 
+processResources {
+    inputs.property "version", project.version
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+// Byte-for-byte reproducible archives (jar is rebuilt identically if sources did not change)
+tasks.withType(org.gradle.api.tasks.bundling.AbstractArchiveTask).configureEach {
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+}
+
 java {
-    withSourcesJar()
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
 }

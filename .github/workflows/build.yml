@@ -48,7 +48,12 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          cp build/libs/*.jar .
-          git add -f -- '*.jar' gradle/wrapper/gradle-wrapper.jar gradlew gradlew.bat gradle/wrapper/gradle-wrapper.properties
-          git commit -m "CI: ByAzen build output [skip ci]" || echo "nothing to commit"
-          git push
+          cp build/libs/ByAzen-*.jar .
+          # only the built jar and the wrapper files - never build/ or .gradle/ caches
+          git add -f -- './ByAzen-*.jar' gradle/wrapper/gradle-wrapper.jar gradlew gradlew.bat gradle/wrapper/gradle-wrapper.properties
+          if git diff --cached --quiet; then
+            echo "Nothing changed - jar is identical to the committed one"
+          else
+            git commit -m "CI: ByAzen build output [skip ci]"
+            git push
+          fi
