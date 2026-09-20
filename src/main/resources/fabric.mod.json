@@ -26,6 +26,14 @@
     "byazen.mixins.json"
   ],
   "accessWidener": "byazen.accesswidener",
+  "jars": [
+    {
+      "file": "META-INF/jars/killeffect-1.21.11.jar"
+    },
+    {
+      "file": "META-INF/jars/pulse-cosmetics-1.21.11-1.0.0.jar"
+    }
+  ],
   "depends": {
     "fabricloader": ">=0.19.3",
     "minecraft": [

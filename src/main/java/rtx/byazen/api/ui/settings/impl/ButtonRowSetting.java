@@ -2,6 +2,7 @@ package rtx.byazen.api.ui.settings.impl;
 
 import rtx.byazen.api.modules.settings.impl.ButtonSetting;
 import rtx.byazen.api.ui.settings.Setting;
+import rtx.byazen.api.ui.settings.RenderHelper;
 import rtx.byazen.utils.render.fonts.Fonts;
 
 public class ButtonRowSetting implements Setting {
@@ -24,6 +25,14 @@ public class ButtonRowSetting implements Setting {
 
     @Override
     public void render(float x, float y, float width, float alpha) {
+        String label = this.backend.getLabel();
+        if (label == null || label.isEmpty()) {
+            label = "Открыть";
+        }
+        float buttonWidth = Fonts.MONTSERRAT_MEDIUM.width(label, 6.0f) + 10.0f;
+        float buttonX = x + width - buttonWidth - 4.0f;
+        RenderHelper.drawName(this.backend.getName(), x, y, buttonX - (x + 6.0f) - 4.0f, alpha);
+        RenderHelper.drawBtn(buttonX, y + 2.0f, buttonWidth, 12.0f, label, alpha);
     }
 
     @Override

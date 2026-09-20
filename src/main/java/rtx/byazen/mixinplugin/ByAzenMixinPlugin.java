@@ -15,7 +15,8 @@ public final class ByAzenMixinPlugin implements IMixinConfigPlugin {
     );
     private static final Map<String, String> REQUIRED_MOD = Map.of(
         "rtx.byazen.mixin.compat.IrisHandRendererHandsMixin", "iris",
-        "rtx.byazen.mixin.compat.IrisRenderingPipelineHandsMixin", "iris"
+        "rtx.byazen.mixin.compat.IrisRenderingPipelineHandsMixin", "iris",
+        "rtx.byazen.mixin.compat.KillEffectSpawnMixin", "killeffect"
     );
     private static final Set<String> SKIPPED = new HashSet<String>();
 
