@@ -16,6 +16,8 @@ import rtx.byazen.api.modules.impl.Utils.guishare.GuiShareThemeState;
 import rtx.byazen.api.modules.impl.Utils.guishare.RemoteGuiPanel;
 import rtx.byazen.api.modules.impl.Utils.guishare.RemoteGuiPanelRenderer;
 import rtx.byazen.api.modules.impl.Utils.guishare.RemoteTheme;
+import rtx.byazen.api.ui.BaseScreen;
+import rtx.byazen.api.ui.UI;
 import rtx.byazen.api.ui.window.WorldGuiCloseAnimation;
 import rtx.byazen.utils.render.post.guilayerblur.GuiLayerBlurRenderer;
 import rtx.byazen.utils.render.post.guimotionblur.GuiMotionBlurRenderer;
@@ -141,6 +143,18 @@ public final class RemoteGuiWorld {
      */
     public static void renderPanels(DrawContext drawContext) {
         float f;
+        // ByAzen: other players' shared panels must never show up behind the local ClickGui
+        if (UI.isOpen() || BaseScreen.hasClosingOverlay()) {
+            captureRequested = false;
+            depthSnapshotWanted = false;
+            quads.clear();
+            cardBlurJobs.clear();
+            cardBlurTransform = null;
+            collectingCardBlurJob = null;
+            activeCardBlurJob = null;
+            cardBlurDrawIndex = 0;
+            return;
+        }
         captureRequested = false;
         depthSnapshotWanted = false;
         quads.clear();

@@ -23,11 +23,13 @@ extends Draggable {
     private static final float PAD_X = 9.0f;
     private static final float PAD_Y = 6.0f;
     private static final float FONT = 8.0f;
-    private static final float BRAND_FONT_SIZE = 11.0f;
+    private static final float BRAND_FONT_SIZE = 9.5f;
+    private static final float INFO_FONT_SIZE = 8.0f;
+    private static final float BRAND_TRACKING = 0.35f;
     private static final float H = 20.0f;
-    private static final String BRAND_FONT = "small-pixel";
+    private static final String BRAND_FONT = "montserrat-extrabold";
     private static final String INFO_FONT = "montserrat-medium";
-    private static final String[] BRAND_GLYPHS = new String[]{"K", "i", "m", "i", "k", "o"};
+    private static final String[] BRAND_GLYPHS = new String[]{"B", "y", "A", "z", "e", "n"};
     private static final String SEPARATOR = " | ";
     private static final float TEXT_Y_LIFT = 1.0f;
     private static final float MIN_TEXT_ALPHA = 0.003921569f;
@@ -129,19 +131,19 @@ extends Draggable {
         boolean bl = watermarkModule == null || watermarkModule.showNick.getValue();
         boolean bl2 = watermarkModule == null || watermarkModule.showTime.getValue();
         float f7 = f2 + 10.0f + 0.5f;
-        float f8 = f4 + 0.5f;
+        float f8 = f2 + 10.0f - INFO_FONT_SIZE * 0.6f;
         int n = Math.round(this.nameWidth / 8.0f);
         int n2 = 0;
         int n3 = n + 1;
         if (bl) {
             Render2D.circle((f3 += 6.0f) + 1.0f, f7, 1.0f, WatermarkComp.gradientDotColor(nArray, f6, n2, f5));
-            WatermarkComp.drawGradientString(INFO_FONT, this.cachedName, f3 += 8.0f, f8, 8.0f, 1, nArray, f5, f6);
+            WatermarkComp.drawGradientString(INFO_FONT, this.cachedName, f3 += 8.0f, f8, INFO_FONT_SIZE, 1, nArray, f5, f6);
             f3 += this.nameWidth;
         }
         if (bl2) {
             Render2D.circle((f3 += 6.0f) + 1.0f, f7, 1.0f, WatermarkComp.gradientDotColor(nArray, f6, n3, f5));
             int n4 = n3 + 1;
-            WatermarkComp.drawGradientString(INFO_FONT, this.timeText, f3 += 8.0f, f8, 8.0f, n4, nArray, f5, f6);
+            WatermarkComp.drawGradientString(INFO_FONT, this.timeText, f3 += 8.0f, f8, INFO_FONT_SIZE, n4, nArray, f5, f6);
             f3 += this.timeWidth;
         }
         return f3;
@@ -161,10 +163,10 @@ extends Draggable {
             this.brandWidth = 0.0f;
             for (int i = 0; i < BRAND_GLYPHS.length; ++i) {
                 float f;
-                this.brandGlyphWidths[i] = f = Render2D.msdfWidth(BRAND_FONT, BRAND_GLYPHS[i], 11.0f);
+                this.brandGlyphWidths[i] = f = Render2D.msdfWidth(BRAND_FONT, BRAND_GLYPHS[i], BRAND_FONT_SIZE) + BRAND_TRACKING;
                 this.brandWidth += f;
             }
-            this.separatorWidth = Render2D.msdfWidth(INFO_FONT, SEPARATOR, 8.0f);
+            this.separatorWidth = Render2D.msdfWidth(INFO_FONT, SEPARATOR, INFO_FONT_SIZE);
             this.staticMetricsReady = true;
         }
         this.updateInfoCache();
@@ -196,11 +198,11 @@ extends Draggable {
         String string2 = WatermarkComp.playerName();
         if (!string2.equals(this.cachedName)) {
             this.cachedName = string2;
-            this.nameWidth = Render2D.msdfWidth(INFO_FONT, string2, 8.0f);
+            this.nameWidth = Render2D.msdfWidth(INFO_FONT, string2, INFO_FONT_SIZE);
         }
         if (!(string = LocalTime.now().format(TIME_FORMAT)).equals(this.timeText)) {
             this.timeText = string;
-            this.timeWidth = Render2D.msdfWidth(INFO_FONT, string, 8.0f);
+            this.timeWidth = Render2D.msdfWidth(INFO_FONT, string, INFO_FONT_SIZE);
         }
         boolean bl = (watermarkModule = ModuleManager.get().get(WatermarkModule.class)) == null || watermarkModule.showNick.getValue();
         boolean bl2 = watermarkModule == null || watermarkModule.showTime.getValue();
@@ -258,8 +260,8 @@ extends Draggable {
         int[] nArray = WatermarkComp.watermarkPalette(interfaceModule);
         float f7 = WatermarkComp.indexedGradientPhase();
         float f8 = f5 + 9.0f;
-        float f9 = f6 + 6.0f - 1.0f;
-        WatermarkComp.drawIndexedGradientText(BRAND_FONT, BRAND_GLYPHS, this.brandGlyphWidths, f8, f9, 11.0f, 1, nArray, f, f7);
+        float f9 = f6 + 10.0f - BRAND_FONT_SIZE * 0.6f;
+        WatermarkComp.drawIndexedGradientText(BRAND_FONT, BRAND_GLYPHS, this.brandGlyphWidths, f8, f9, BRAND_FONT_SIZE, 1, nArray, f, f7);
         this.drawInfoBlock(f5, f6, f8 += this.brandWidth, f9, f, nArray, f7);
         Render2D.flush();
         drawContext.getMatrices().popMatrix();

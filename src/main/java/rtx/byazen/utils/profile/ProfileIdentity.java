@@ -19,14 +19,32 @@ public final class ProfileIdentity {
 
     public static String avatarUrl() {
         String string = Profile.getAvatarUrl();
-        if (string != null && !string.isBlank()) {
+        if (string != null && !string.isBlank() && ProfileIdentity.usable(string)) {
             return string;
         }
-        int n = ProfileIdentity.uid();
-        if (n > 0) {
-            return "https://kimiko_tech/api/account/avatar/" + n;
-        }
+        // Old builds fell back to a dead "kimiko" backend address, so the avatar never loaded
+        // and the GUI showed an empty/broken square. Better to return nothing - the Discord
+        // avatar (which really resolves) is used instead, otherwise a clean placeholder is drawn.
         return null;
+    }
+
+    private static boolean usable(String string) {
+        try {
+            java.net.URI uRI = java.net.URI.create(string.trim());
+            String string2 = uRI.getHost();
+            String string3 = uRI.getScheme();
+            if (string2 == null || string3 == null) {
+                return false;
+            }
+            if (!string3.equalsIgnoreCase("http") && !string3.equalsIgnoreCase("https")) {
+                return false;
+            }
+            // a host name may not contain underscores - such an address can never resolve
+            return !string2.contains("_") && string2.contains(".");
+        }
+        catch (Throwable throwable) {
+            return false;
+        }
     }
 }
 

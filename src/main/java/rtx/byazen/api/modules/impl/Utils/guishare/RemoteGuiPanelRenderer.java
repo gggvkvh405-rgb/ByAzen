@@ -1184,13 +1184,13 @@ public final class RemoteGuiPanelRenderer {
         float f12 = f10 + f11 * 0.5f;
         String string = "x";
         float f13 = 11.7f;
-        float f14 = 14.299999f;
+        float f14 = 11.0f;
         float f15 = 7.7999997f;
         float f16 = Fonts.BYAZEN.msdfWidth(string, f13);
-        float f17 = Fonts.SMALL_PIXEL.msdfWidth("BYAZEN", f14);
+        float f17 = Fonts.MONTSERRAT_EXTRABOLD.msdfWidth("ByAzen", f14);
         float f18 = f + (f8 - (f16 + f15 + f17)) * 0.5f;
         RemoteGuiPanelRenderer.remoteMsdfIcon(remoteTheme, "byazen", string, f18, f12 - f13 * 0.5f + 0.5f, f13, 225.0f * f3, 0.1f);
-        Fonts.SMALL_PIXEL.msdf("BYAZEN", f18 + f16 + f15, f12 - f14 * 0.5f + 0.5f, f14, RemoteGuiPanelRenderer.color(255, 255, 255, 255, f3));
+        Fonts.MONTSERRAT_EXTRABOLD.msdf("ByAzen", f18 + f16 + f15, f12 - f14 * 0.6f, f14, RemoteGuiPanelRenderer.color(255, 255, 255, 255, f3));
         float f19 = f2 + 34.0f;
         float f20 = f19 + 10.0f;
         float f21 = remoteGuiPanel.modulesHeaderT();

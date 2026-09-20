@@ -69,7 +69,7 @@ extends Draggable {
     private static final float NEW_GAP = 3.0f;
     private static final float NEW_HEAD = 15.0f;
     private static final float NEW_HEAD_RADIUS = 6.0f;
-    private static final String NEW_FONT = "small-pixel";
+    private static final String NEW_FONT = "montserrat-semibold";
     private static final float NEW_ICON = 8.0f;
     private static final float NEW_ICON_GAP = 3.0f;
     private static final float NEW_HEAD_ITEMS_GAP = 3.0f;
@@ -717,7 +717,7 @@ extends Draggable {
         float f41 = f36 + (f37 - f40) * 0.5f + 0.75f;
         float f42 = f36 + f39 - f40 - 2.0f;
         float f43 = Math.max(Math.min(f41, f42), f36 + 2.0f);
-        float f44 = f9 + 1.0f - 0.3f;
+        float f44 = f9 + 4.0f - 3.6f;
         float f45 = f40 <= 0.0f ? 0.0f : TargetHudComp.clamp01((f36 + f39 - f43) / f40);
         float f46 = TargetHudComp.clamp01((f43 + f40 * 0.5f - f36) / Math.max(f37, 1.0f));
         int n2 = TargetHudComp.barFillColorAt(f46, this.healthDisplay);

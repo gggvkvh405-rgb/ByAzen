@@ -978,13 +978,13 @@ implements GuiCapture.Source {
         float f14 = f12 + f13 * 0.5f;
         String string = "x";
         float f15 = 11.7f;
-        float f16 = 14.299999f;
+        float f16 = 11.0f;
         float f17 = 7.7999997f;
         float f18 = Fonts.BYAZEN.msdfWidth(string, f15);
-        float f19 = Fonts.SMALL_PIXEL.msdfWidth("BYAZEN", f16);
+        float f19 = Fonts.MONTSERRAT_EXTRABOLD.msdfWidth("ByAzen", f16);
         float f20 = f9 + (f10 - (f18 + f17 + f19)) * 0.5f;
         AccentGradient.msdfIcon("byazen", string, f20, f14 - f15 * 0.5f + 0.5f, f15, 225.0f * f4, 0.1f);
-        Fonts.SMALL_PIXEL.msdf("BYAZEN", f20 + f18 + f17, f14 - f16 * 0.5f + 0.5f, f16, UI.color(255, 255, 255, 255, f4));
+        Fonts.MONTSERRAT_EXTRABOLD.msdf("ByAzen", f20 + f18 + f17, f14 - f16 * 0.6f, f16, UI.color(255, 255, 255, 255, f4));
         float f21 = f2 + 34.0f;
         float f22 = f21 + 10.0f;
         float f23 = this.modulesHeaderAnim.getOutput().floatValue();

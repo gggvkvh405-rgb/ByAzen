@@ -36,7 +36,6 @@ public final class MsdfFonts {
         MsdfFonts.register("sf-regular", "fonts/sf-pro/sf-pro-regular");
         MsdfFonts.register("sf-medium", "fonts/sf-pro/sf-pro-medium");
         MsdfFonts.register("sf-bold", "fonts/sf-pro/sf-pro-bold");
-        MsdfFonts.register("small-pixel", "fonts/smallpixel/small-pixel");
     }
 
     public static void clear() {

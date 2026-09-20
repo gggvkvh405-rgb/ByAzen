@@ -19,7 +19,6 @@ public enum Fonts {
     I2("i2"),
     EVENT_ICONS("event-icons"),
     INV_ICONS("inv-icons"),
-    SMALL_PIXEL("small-pixel"),
     MAINMENU("mainmenu");
 
     private final String id;
