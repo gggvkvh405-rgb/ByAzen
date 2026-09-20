@@ -1,0 +1,379 @@
+{
+    "moan1":  {
+                  "sounds":  [
+                                 "byazen:hit_sounds/moan1"
+                             ]
+              },
+    "moan2":  {
+                  "sounds":  [
+                                 "byazen:hit_sounds/moan2"
+                             ]
+              },
+    "moan3":  {
+                  "sounds":  [
+                                 "byazen:hit_sounds/moan3"
+                             ]
+              },
+    "moan4":  {
+                  "sounds":  [
+                                 "byazen:hit_sounds/moan4"
+                             ]
+              },
+    "module_disable":  {
+                           "sounds":  [
+                                          "byazen:module_sounds/off"
+                                      ]
+                       },
+    "module_enable":  {
+                          "sounds":  [
+                                         "byazen:module_sounds/on"
+                                     ]
+                      },
+    "off":  {
+                "sounds":  [
+                               "byazen:module_sounds/off2"
+                           ]
+            },
+    "on":  {
+               "sounds":  [
+                              "byazen:module_sounds/on2"
+                          ]
+           },
+    "crime":  {
+                  "sounds":  [
+                                 "byazen:hit_sounds/crime"
+                             ]
+              },
+    "metallic":  {
+                     "sounds":  [
+                                    "byazen:hit_sounds/metallic"
+                                ]
+                 },
+    "welcome":  {
+                    "sounds":  [
+                                   "byazen:other/notification/notif"
+                               ]
+                },
+    "notification":  {
+                         "sounds":  [
+                                        "byazen:other/notification/notif"
+                                    ]
+                     },
+    "notification_low":  {
+                             "sounds":  [
+                                            "byazen:other/notification/low"
+                                        ]
+                         },
+    "player_ping":  {
+                        "sounds":  [
+                                       "byazen:other/notification/playerping"
+                                   ]
+                    },
+    "module_enable_type2":  {
+                                "sounds":  [
+                                               "byazen:module_sounds/on1"
+                                           ]
+                            },
+    "module_disable_type2":  {
+                                 "sounds":  [
+                                                "byazen:module_sounds/off1"
+                                            ]
+                             },
+    "toggle1_on":  {
+                       "sounds":  [
+                                      "byazen:module_sounds/toggle1_on"
+                                  ]
+                   },
+    "toggle1_off":  {
+                        "sounds":  [
+                                       "byazen:module_sounds/toggle1_off"
+                                   ]
+                    },
+    "mine":  {
+                 "sounds":  [
+                                "byazen:other/auto_mine/mine"
+                            ]
+             },
+    "accountswitch":  {
+                          "sounds":  [
+                                         "byazen:clickgui/switchcategory"
+                                     ]
+                      },
+    "searchtyping":  {
+                         "sounds":  [
+                                        "byazen:clickgui/searchtyping"
+                                    ]
+                     },
+    "slider":  {
+                   "sounds":  [
+                                  "byazen:clickgui/slider"
+                              ]
+               },
+    "settings_slider":  {
+                            "sounds":  [
+                                           "byazen:settings/slider/slider"
+                                       ]
+                        },
+    "select_category":  {
+                            "sounds":  [
+                                           "byazen:clickgui/select-category"
+                                       ]
+                        },
+    "open_gui":  {
+                     "sounds":  [
+                                    "byazen:clickgui/open-gui"
+                                ]
+                 },
+    "close_gui":  {
+                      "sounds":  [
+                                     "byazen:clickgui/close-gui"
+                                 ]
+                  },
+    "switchcategory":  {
+                           "sounds":  [
+                                          "byazen:clickgui/switchcategory"
+                                      ]
+                       },
+    "switch_left":  {
+                        "sounds":  [
+                                       "byazen:clickgui/switch-left"
+                                   ]
+                    },
+    "switch_right":  {
+                         "sounds":  [
+                                        "byazen:clickgui/switch-right"
+                                    ]
+                     },
+    "module_settings_open":  {
+                          "sounds":  [
+                                         "byazen:settings/openmodulesettings/module_settings_open"
+                                     ]
+                      },
+    "module_settings_close":  {
+                          "sounds":  [
+                                         "byazen:settings/openmodulesettings/module_settings_close"
+                                     ]
+                      },
+    "settings_open":  {
+                          "sounds":  [
+                                         "byazen:clickgui/settings-open"
+                                     ]
+                      },
+    "settings_close":  {
+                           "sounds":  [
+                                          "byazen:clickgui/settings-close"
+                                      ]
+                       },
+    "gui_category_select":  {
+                                "sounds":  [
+                                               "byazen:clickgui/guicategory_select"
+                                           ]
+                            },
+    "no-settings":  {
+                        "sounds":  [
+                                       "byazen:clickgui/no-settings"
+                                   ]
+                    },
+    "buttonclick":  {
+                        "sounds":  [
+                                       "byazen:clickgui/buttonclick"
+                                   ]
+                    },
+    "unknowncommand":  {
+                           "sounds":  [
+                                          "byazen:chat/command-error"
+                                      ]
+                       },
+    "entity.ribbit.ambient":  {
+                                  "sounds":  [
+                                                 "byazen:entity/ribbit_ambient1",
+                                                 "byazen:entity/ribbit_ambient2",
+                                                 "byazen:entity/ribbit_ambient3",
+                                                 "byazen:entity/ribbit_ambient4",
+                                                 "byazen:entity/ribbit_ambient5"
+                                             ]
+                              },
+    "entity.ribbit.step":  {
+                               "sounds":  [
+                                              "byazen:entity/ribbit_step1",
+                                              "byazen:entity/ribbit_step2"
+                                          ]
+                           },
+    "entity.ribbit.hurt":  {
+                               "sounds":  [
+                                              "byazen:entity/ribbit_hurt1",
+                                              "byazen:entity/ribbit_hurt2",
+                                              "byazen:entity/ribbit_hurt3"
+                                          ]
+                           },
+    "entity.ribbit.death":  {
+                                "sounds":  [
+                                               "byazen:entity/ribbit_death1",
+                                               "byazen:entity/ribbit_death2"
+                                           ]
+                            },
+    "guicategory_select":  {
+                               "sounds":  [
+                                              "byazen:clickgui/guicategory_select"
+                                          ]
+                           },
+    "settings-close":  {
+                           "sounds":  [
+                                          "byazen:clickgui/settings-close"
+                                      ]
+                       },
+    "settings-open":  {
+                          "sounds":  [
+                                         "byazen:clickgui/settings-open"
+                                     ]
+                      },
+    "switch-left":  {
+                        "sounds":  [
+                                       "byazen:clickgui/switch-left"
+                                   ]
+                    },
+    "switch-right":  {
+                         "sounds":  [
+                                        "byazen:clickgui/switch-right"
+                                    ]
+                     },
+    "ribbit_ambient1":  {
+                            "sounds":  [
+                                           "byazen:entity/ribbit_ambient1"
+                                       ]
+                        },
+    "ribbit_ambient2":  {
+                            "sounds":  [
+                                           "byazen:entity/ribbit_ambient2"
+                                       ]
+                        },
+    "ribbit_ambient3":  {
+                            "sounds":  [
+                                           "byazen:entity/ribbit_ambient3"
+                                       ]
+                        },
+    "ribbit_ambient4":  {
+                            "sounds":  [
+                                           "byazen:entity/ribbit_ambient4"
+                                       ]
+                        },
+    "ribbit_ambient5":  {
+                            "sounds":  [
+                                           "byazen:entity/ribbit_ambient5"
+                                       ]
+                        },
+    "ribbit_death1":  {
+                          "sounds":  [
+                                         "byazen:entity/ribbit_death1"
+                                     ]
+                      },
+    "ribbit_death2":  {
+                          "sounds":  [
+                                         "byazen:entity/ribbit_death2"
+                                     ]
+                      },
+    "ribbit_hurt1":  {
+                         "sounds":  [
+                                        "byazen:entity/ribbit_hurt1"
+                                    ]
+                     },
+    "ribbit_hurt2":  {
+                         "sounds":  [
+                                        "byazen:entity/ribbit_hurt2"
+                                    ]
+                     },
+    "ribbit_hurt3":  {
+                         "sounds":  [
+                                        "byazen:entity/ribbit_hurt3"
+                                    ]
+                     },
+    "ribbit_step1":  {
+                         "sounds":  [
+                                        "byazen:entity/ribbit_step1"
+                                    ]
+                     },
+    "ribbit_step2":  {
+                         "sounds":  [
+                                        "byazen:entity/ribbit_step2"
+                                    ]
+                     },
+    "off1":  {
+                 "sounds":  [
+                                "byazen:module_sounds/off1"
+                            ]
+             },
+    "off2":  {
+                 "sounds":  [
+                                "byazen:module_sounds/off2"
+                            ]
+             },
+    "on1":  {
+                "sounds":  [
+                               "byazen:module_sounds/on1"
+                           ]
+            },
+    "on2":  {
+                "sounds":  [
+                               "byazen:module_sounds/on2"
+                           ]
+            },
+    "low":  {
+                "sounds":  [
+                               "byazen:other/notification/low"
+                           ]
+            },
+    "notif":  {
+                  "sounds":  [
+                                 "byazen:other/notification/notif"
+                             ]
+              },
+    "playerping":  {
+                       "sounds":  [
+                                      "byazen:other/notification/playerping"
+                                  ]
+                   },
+    "frag_effect_echo_main":  {
+                                  "sounds":  [
+                                                 "byazen:charmsfxpack/echocharmmain"
+                                             ]
+                              },
+    "frag_effect_knock_main":  {
+                                   "sounds":  [
+                                                  "byazen:charmsfxpack/knockcharmmain"
+                                              ]
+                               },
+    "frag_effect_pulse":  {
+                              "sounds":  [
+                                             "byazen:charmsfxpack/pulsecharmdistant0",
+                                             "byazen:charmsfxpack/pulsecharmdistant1",
+                                             "byazen:charmsfxpack/pulsecharmdistant2",
+                                             "byazen:charmsfxpack/pulsecharmdistant3",
+                                             "byazen:charmsfxpack/pulsecharmdistant4"
+                                         ]
+                          },
+    "frag_effect_sparks_collision":  {
+                                         "sounds":  [
+                                                        "byazen:charmsfxpack/sparkscollisionneared"
+                                                    ]
+                                     },
+    "command_error":  {
+                          "sounds":  [
+                                         "byazen:chat/command-error"
+                                     ]
+                      },
+    "entity.nightmare_bb.hi":  {
+                                   "sounds":  [
+                                                  "byazen:entity/nightmare_bb/hi"
+                                              ]
+                               },
+    "entity.nightmare_bb.hello":  {
+                                      "sounds":  [
+                                                     "byazen:entity/nightmare_bb/hello"
+                                                 ]
+                                  },
+    "entity.nightmare_bb.laugh":  {
+                                      "sounds":  [
+                                                     "byazen:entity/nightmare_bb/laugh"
+                                                 ]
+                                  }
+}
