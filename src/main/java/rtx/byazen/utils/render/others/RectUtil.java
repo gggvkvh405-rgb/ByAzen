@@ -465,7 +465,19 @@ public final class RectUtil {
         Render2D.glass(builtGlass);
     }
 
+    /** Множитель прозрачности всех клиентских панелей: используется для плавного появления HUD (идея №32). */
+    private static volatile float globalAlpha = 1.0f;
+
+    public static void setGlobalAlpha(float value) {
+        RectUtil.globalAlpha = Math.max(0.0f, Math.min(1.0f, value));
+    }
+
+    public static float globalAlpha() {
+        return RectUtil.globalAlpha;
+    }
+
     private static void drawClientRectImpl(float f, float f2, float f3, float f4, float f5, float f6, float f7, boolean bl, boolean bl2) {
+        f6 *= RectUtil.globalAlpha;
         boolean bl3;
         if (f3 <= 0.0f || f4 <= 0.0f || f6 <= 0.0f) {
             return;

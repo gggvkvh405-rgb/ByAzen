@@ -239,8 +239,18 @@ public final class DragController {
     }
 
     public void setTargetX(float f) {
-        this.xPos = f;
-        this.desiredX = f;
+        float snapped = DragController.snap(f);
+        this.xPos = snapped;
+        this.desiredX = snapped;
+    }
+
+    /** Магнитная сетка: выравнивание позиции виджета по шагу из настроек (идея №30). */
+    private static float snap(float value) {
+        float step = rtx.byazen.api.modules.impl.Interface.HudPolishModule.snapStep();
+        if (step <= 0.0f) {
+            return value;
+        }
+        return Math.round(value / step) * step;
     }
 
     public boolean isDragging() {
