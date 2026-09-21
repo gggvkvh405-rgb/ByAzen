@@ -8,6 +8,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import rtx.byazen.ByAzen;
 import rtx.byazen.api.ui.UI;
+import rtx.byazen.utils.chat.ChatMessage;
 
 /**
  * Reflection bridge to the bundled "Pulse Cosmetics" mod.
@@ -27,6 +28,7 @@ public final class PulseCosmeticsBridge {
 
     private static boolean initialised;
     private static boolean available;
+    private static String lastError = "неизвестная ошибка";
     private static Class<?> categoryClass;
     private static Constructor<?> screenConstructor;
     private static Method showOther;
@@ -45,6 +47,7 @@ public final class PulseCosmeticsBridge {
         initialised = true;
         try {
             if (!FabricLoader.getInstance().isModLoaded(MOD_ID)) {
+                lastError = "мод Pulse Cosmetics не загружен клиентом";
                 return false;
             }
             categoryClass = Class.forName(CATEGORY_CLASS);
@@ -59,6 +62,7 @@ public final class PulseCosmeticsBridge {
         }
         catch (Throwable throwable) {
             available = false;
+            lastError = throwable.toString();
             ByAzen.LOGGER.warn("[ByAzen] Pulse Cosmetics bridge is unavailable: {}", throwable.toString());
         }
         return available;
@@ -66,6 +70,11 @@ public final class PulseCosmeticsBridge {
 
     public static boolean available() {
         return init();
+    }
+
+    /** Human readable reason why the bridge is unavailable. */
+    public static String lastError() {
+        return lastError;
     }
 
     private static Object category(String name) {
@@ -148,21 +157,26 @@ public final class PulseCosmeticsBridge {
     /** Opens the cosmetic picker of the mod on the requested category tab. */
     public static boolean openMenu(String categoryName) {
         if (!init()) {
+            ChatMessage.error("Pulse Cosmetics: " + lastError);
             return false;
         }
         Object category = category(categoryName);
         if (category == null) {
+            ChatMessage.error("Pulse Cosmetics: категория " + categoryName + " не найдена");
             return false;
         }
         try {
             Object screen = screenConstructor.newInstance(category, 0);
             if (!(screen instanceof Screen)) {
+                ChatMessage.error("Pulse Cosmetics: не удалось создать окно косметики");
                 return false;
             }
             PulseCosmeticsBridge.open((Screen) screen);
             return true;
         }
         catch (Throwable throwable) {
+            lastError = throwable.toString();
+            ChatMessage.error("Pulse Cosmetics: " + lastError);
             ByAzen.LOGGER.warn("[ByAzen] Failed to open the Pulse Cosmetics menu: {}", throwable.toString());
             return false;
         }
@@ -171,6 +185,7 @@ public final class PulseCosmeticsBridge {
     /** Puts the player into graffiti removal mode of the mod (look at a graffiti, then use the item). */
     public static boolean startGraffitiRemoval() {
         if (!init()) {
+            ChatMessage.error("Pulse Cosmetics: " + lastError);
             return false;
         }
         try {

@@ -11,6 +11,7 @@ import rtx.byazen.api.modules.settings.impl.BooleanSetting;
 import rtx.byazen.api.modules.settings.impl.ButtonSetting;
 import rtx.byazen.api.modules.settings.impl.MultiSelectSetting;
 import rtx.byazen.api.modules.settings.impl.SeparatorSetting;
+import rtx.byazen.utils.chat.ChatMessage;
 
 /**
  * ByAzen module for the bundled "Pulse Cosmetics" mod: capes, wings, hats, bodywear, pets and graffiti.
@@ -40,6 +41,7 @@ extends Module {
     private final ButtonSetting graffitiCleaner = this.register(new ButtonSetting("Очиститель граффити", "Режим удаления граффити: наведитесь на рисунок и нажмите ПКМ.").label("Включить").onClick(PulseCosmeticsBridge::startGraffitiRemoval));
 
     private boolean pendingApply;
+    private boolean warnedUnavailable;
 
     public PulseCosmetics() {
         super("Pulse Cosmetics", "Косметика Pulse: меню выбора, чужая косметика по категориям, питомец от первого лица и граффити.", Category.VISUALS);
@@ -61,6 +63,9 @@ extends Module {
     @Override
     protected void onEnable() {
         this.pendingApply = true;
+        if (PulseCosmeticsBridge.available()) {
+            ChatMessage.send("Pulse Cosmetics включён: меню косметики — кнопка «Открыть» в настройках модуля");
+        }
     }
 
     private void applySettings() {
@@ -92,6 +97,10 @@ extends Module {
 
     void tick() {
         if (!PulseCosmeticsBridge.available()) {
+            if (!this.warnedUnavailable) {
+                this.warnedUnavailable = true;
+                ChatMessage.error("Pulse Cosmetics: " + PulseCosmeticsBridge.lastError() + " (переустановите ByAzen целиком)");
+            }
             return;
         }
         if (!this.isEnabled()) {

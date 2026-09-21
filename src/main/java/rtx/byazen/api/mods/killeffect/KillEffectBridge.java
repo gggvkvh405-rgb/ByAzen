@@ -10,6 +10,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import rtx.byazen.ByAzen;
 import rtx.byazen.api.ui.UI;
+import rtx.byazen.utils.chat.ChatMessage;
 
 /**
  * Reflection bridge to the bundled "Kill Effect" mod (3D Blockbench kill effects).
@@ -27,6 +28,7 @@ public final class KillEffectBridge {
 
     private static boolean initialised;
     private static boolean available;
+    private static String lastError = "неизвестная ошибка";
     private static Field selectedEffectId;
     private static Field effectsManager;
     private static Method activeEffects;
@@ -42,6 +44,7 @@ public final class KillEffectBridge {
         initialised = true;
         try {
             if (!FabricLoader.getInstance().isModLoaded(MOD_ID)) {
+                lastError = "мод Kill Effect не загружен клиентом";
                 return false;
             }
             Class<?> clientClass = Class.forName(CLIENT_CLASS);
@@ -53,6 +56,7 @@ public final class KillEffectBridge {
         }
         catch (Throwable throwable) {
             available = false;
+            lastError = throwable.toString();
             ByAzen.LOGGER.warn("[ByAzen] Kill Effect bridge is unavailable: {}", throwable.toString());
         }
         return available;
@@ -60,6 +64,11 @@ public final class KillEffectBridge {
 
     public static boolean available() {
         return init();
+    }
+
+    /** Human readable reason why the bridge is unavailable. */
+    public static String lastError() {
+        return lastError;
     }
 
     /** Currently selected effect id of the mod, or {@code null} when nothing is selected. */
@@ -105,11 +114,13 @@ public final class KillEffectBridge {
     /** Opens the effect picker of the mod. */
     public static boolean openMenu() {
         if (!init()) {
+            ChatMessage.error("Kill Effect: " + lastError);
             return false;
         }
         try {
             Object screen = screenConstructor.newInstance();
             if (!(screen instanceof Screen)) {
+                ChatMessage.error("Kill Effect: не удалось создать окно выбора эффекта");
                 return false;
             }
             if (UI.isOpen()) {
@@ -121,6 +132,8 @@ public final class KillEffectBridge {
             return true;
         }
         catch (Throwable throwable) {
+            lastError = throwable.toString();
+            ChatMessage.error("Kill Effect: " + lastError);
             ByAzen.LOGGER.warn("[ByAzen] Failed to open the Kill Effect menu: {}", throwable.toString());
             return false;
         }

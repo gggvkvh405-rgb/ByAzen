@@ -10,6 +10,7 @@ import rtx.byazen.api.modules.Module;
 import rtx.byazen.api.modules.settings.impl.ButtonSetting;
 import rtx.byazen.api.modules.settings.impl.SelectSetting;
 import rtx.byazen.api.modules.settings.impl.SeparatorSetting;
+import rtx.byazen.utils.chat.ChatMessage;
 
 /**
  * ByAzen module for the bundled "Kill Effect" mod: 3D kill effects built from Blockbench models.
@@ -58,6 +59,7 @@ extends Module {
     private final ButtonSetting openMenu = this.register(new ButtonSetting("Меню эффектов", "Полное меню Kill Effect с превью всех эффектов.").label("Открыть").onClick(KillEffectBridge::openMenu));
 
     private boolean pendingApply;
+    private boolean warnedUnavailable;
 
     public KillEffect3D() {
         super("Kill Effect 3D", "3D-эффекты убийства: модели, анимации и выбор эффекта. Пока модуль выключен, эффекты не появляются.", Category.VISUALS);
@@ -78,6 +80,9 @@ extends Module {
     @Override
     protected void onEnable() {
         this.pendingApply = true;
+        if (KillEffectBridge.available()) {
+            ChatMessage.send("Kill Effect 3D включён: меню эффектов — кнопка «Открыть» в настройках модуля");
+        }
     }
 
     private static String idForName(String name) {
@@ -127,6 +132,10 @@ extends Module {
 
     void tick() {
         if (!KillEffectBridge.available()) {
+            if (!this.warnedUnavailable) {
+                this.warnedUnavailable = true;
+                ChatMessage.error("Kill Effect: " + KillEffectBridge.lastError() + " (переустановите ByAzen целиком)");
+            }
             return;
         }
         if (!this.isEnabled()) {

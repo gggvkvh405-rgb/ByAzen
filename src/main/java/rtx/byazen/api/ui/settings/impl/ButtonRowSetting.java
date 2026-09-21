@@ -41,16 +41,20 @@ public class ButtonRowSetting implements Setting {
     }
 
     @Override
-    public boolean click(float mouseX, float mouseY, float x, float y, float width) {
-        if (mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height()) {
-            this.backend.click();
-            return true;
+    public boolean click(float x, float y, float width, float mouseX, float mouseY) {
+        if (mouseX < x || mouseX > x + width || mouseY < y || mouseY > y + this.height()) {
+            return false;
         }
-        return false;
+        this.backend.click();
+        return true;
     }
 
     @Override
     public float preferredWidth() {
-        return Fonts.MONTSERRAT_MEDIUM.width(this.backend.getName(), 6.0f) + 48.0f;
+        String label = this.backend.getLabel();
+        if (label == null || label.isEmpty()) {
+            label = "Открыть";
+        }
+        return 6.0f + Fonts.MONTSERRAT_MEDIUM.width(this.backend.getName(), 6.0f) + 6.0f + Fonts.MONTSERRAT_MEDIUM.width(label, 6.0f) + 10.0f + 8.0f;
     }
 }
