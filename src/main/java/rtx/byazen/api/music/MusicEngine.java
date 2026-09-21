@@ -44,6 +44,9 @@ public final class MusicEngine {
     }
 
     private static final MusicEngine INSTANCE = new MusicEngine();
+    /** Сколько раз пытаемся «догнать» живой поток, если декодер споткнулся о мусор в эфире. */
+    private static final int MAX_RECONNECTS = 3;
+    private static final long RECONNECT_DELAY_MS = 350L;
     private static final String USER_AGENT = "ByAzen/1.3.0 (+https://github.com/gggvkvh405-rgb/ByAzen)";
     private static final HttpClient HTTP = HttpClient.newBuilder()
             .followRedirects(HttpClient.Redirect.ALWAYS)
@@ -265,7 +268,7 @@ public final class MusicEngine {
             }
             BufferedInputStream stream = new BufferedInputStream(raw, 1 << 16);
             if (this.isMp3(track)) {
-                finished = this.playMp3(stream, token);
+                finished = this.playMp3(track, stream, token);
             }
             else {
                 finished = this.playPcm(stream, token);
@@ -348,38 +351,78 @@ public final class MusicEngine {
         return !lower.endsWith(".ogg") && !lower.endsWith(".oga") && track.kind() != MusicTrack.Kind.LOCAL;
     }
 
-    /** Decodes an MP3 stream frame by frame; returns true when the stream ended by itself. */
-    private boolean playMp3(BufferedInputStream stream, long token) throws Exception {
+    /**
+     * Decodes an MP3 stream frame by frame; returns true when the stream ended by itself.
+     * <p>
+     * Живые радиостанции иногда «спотыкаются»: декодер теряет синхронизацию, но поток ещё идёт.
+     * Если после падения в буфере остались данные, соединение открывается заново - эфир продолжается,
+     * а не обрывается.
+     */
+    private boolean playMp3(MusicTrack track, BufferedInputStream stream, long token) throws Exception {
         Bitstream bitstream = new Bitstream(stream);
         Decoder decoder = new Decoder();
+        boolean reconnectable = track.kind() != MusicTrack.Kind.LOCAL;
+        int reconnects = 0;
+        long decodedFrames = 0L;
         int rate = 44100;
         int channels = 2;
-        try {
-            while (this.isCurrent(token) && !this.stopping && !Thread.currentThread().isInterrupted()) {
-                Header header = bitstream.readFrame();
-                if (header == null) {
+        while (this.isCurrent(token) && !this.stopping && !Thread.currentThread().isInterrupted()) {
+            Header header;
+            try {
+                header = bitstream.readFrame();
+            }
+            catch (Throwable throwable) {
+                header = null;
+            }
+            if (header == null) {
+                if (!reconnectable || reconnects >= MAX_RECONNECTS || decodedFrames == 0L || !MusicEngine.hasBufferedData(stream)) {
                     return true;
                 }
-                SampleBuffer samples = (SampleBuffer) decoder.decodeFrame(header, bitstream);
-                if (samples != null && samples.getBufferLength() > 0) {
-                    rate = decoder.getOutputFrequency();
-                    channels = decoder.getOutputChannels();
-                    if (this.line == null) {
-                        this.openLine(rate, channels, token);
-                    }
-                    this.writeShort(samples.getBuffer(), samples.getBufferLength(), rate, channels, token);
+                ++reconnects;
+                try {
+                    bitstream.close();
                 }
-                bitstream.closeFrame();
+                catch (Throwable ignored) {
+                }
+                this.detail = "Переподключение к потоку…";
+                Thread.sleep(RECONNECT_DELAY_MS);
+                InputStream reopened = this.openStream(track, token);
+                if (reopened == null || !this.isCurrent(token) || this.stopping) {
+                    return true;
+                }
+                stream = new BufferedInputStream(reopened, 1 << 16);
+                bitstream = new Bitstream(stream);
+                this.detail = "";
+                continue;
             }
+            ++decodedFrames;
+            SampleBuffer samples = (SampleBuffer) decoder.decodeFrame(header, bitstream);
+            if (samples != null && samples.getBufferLength() > 0) {
+                rate = decoder.getOutputFrequency();
+                channels = decoder.getOutputChannels();
+                if (this.line == null) {
+                    this.openLine(rate, channels, token);
+                }
+                this.writeShort(samples.getBuffer(), samples.getBufferLength(), rate, channels, token);
+            }
+            bitstream.closeFrame();
         }
-        finally {
-            try {
-                bitstream.close();
-            }
-            catch (Throwable ignored) {
-            }
+        try {
+            bitstream.close();
+        }
+        catch (Throwable ignored) {
         }
         return false;
+    }
+
+    /** Есть ли ещё данные в буфере (значит поток не закончился, а просто потерял синхронизацию). */
+    private static boolean hasBufferedData(BufferedInputStream stream) {
+        try {
+            return stream.available() > 0;
+        }
+        catch (Throwable throwable) {
+            return false;
+        }
     }
 
     /** Decodes WAV/AIFF/AU (anything the JDK supports) into the same output line. */

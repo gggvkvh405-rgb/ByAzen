@@ -79,6 +79,11 @@ public final class AudioSmokeTest {
         // Критерий: поток реально декодируется в PCM. Уровень (peak/rms) печатаем как справку:
         // тестовая фикстура может быть почти тишиной, и это не ошибка плеера.
         boolean ok = frames > 0 && total > 0 && rate > 0 && channels >= 1 && pcm.size() == (long) total * 2L;
+        if (args.length > 1) {
+            double minimum = Double.parseDouble(args[1]);
+            System.out.printf("минимум  = %.2f c (rms >= 0.05)%n", minimum);
+            ok = ok && milliseconds / 1000.0 >= minimum && rms >= 0.05;
+        }
         System.out.println(ok ? "AUDIO SMOKE: OK" : "AUDIO SMOKE: FAILED");
         if (!ok) {
             System.exit(1);

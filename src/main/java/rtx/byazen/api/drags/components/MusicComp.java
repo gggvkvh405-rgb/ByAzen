@@ -299,6 +299,9 @@ extends Draggable {
         if (engine.state() == MusicEngine.State.ERROR) {
             return "Ошибка: " + engine.detail();
         }
+        if (!engine.detail().isBlank() && engine.state() == MusicEngine.State.PLAYING) {
+            return engine.detail();
+        }
         if (engine.isPaused()) {
             return "Пауза" + (track.subtitle().isBlank() ? "" : " • " + track.subtitle());
         }

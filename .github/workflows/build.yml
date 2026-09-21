@@ -37,12 +37,22 @@ jobs:
           mkdir -p tools/build
           curl -sSfL -o tools/build/jlayer.jar \
             https://repo1.maven.org/maven2/com/googlecode/soundlibs/jlayer/1.0.1.4/jlayer-1.0.1.4.jar
-          curl -sSfL -o tools/build/fixture.mp3 \
-            -H "Authorization: Bearer ${{ github.token }}" \
-            -H "Accept: application/vnd.github.raw" \
-            https://api.github.com/repos/mpatric/mp3agic/contents/src/test/resources/obsolete.mp3
+          MIN=""
+          if command -v ffmpeg >/dev/null 2>&1; then
+            # настоящий MP3: 3 секунды синуса 440 Гц, 128 kbps, 44.1 kHz, стерео
+            ffmpeg -hide_banner -loglevel error -y -f lavfi -i "sine=frequency=440:duration=3" \
+              -ac 2 -ar 44100 -b:a 128k tools/build/fixture.mp3
+            MIN="2.5"
+            echo "фикстура: сгенерирована ffmpeg (3 c, 440 Гц)"
+          else
+            curl -sSfL -o tools/build/fixture.mp3 \
+              -H "Authorization: Bearer ${{ github.token }}" \
+              -H "Accept: application/vnd.github.raw" \
+              https://api.github.com/repos/mpatric/mp3agic/contents/src/test/resources/obsolete.mp3
+            echo "фикстура: mp3agic/obsolete.mp3 (ffmpeg недоступен)"
+          fi
           javac -cp tools/build/jlayer.jar -d tools/build tools/AudioSmokeTest.java
-          java -cp "tools/build/jlayer.jar:tools/build" AudioSmokeTest tools/build/fixture.mp3 | tee tools/build/audio-smoke.txt
+          java -cp "tools/build/jlayer.jar:tools/build" AudioSmokeTest tools/build/fixture.mp3 $MIN | tee tools/build/audio-smoke.txt
 
       - name: Build ByAzen
         run: |
