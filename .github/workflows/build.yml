@@ -42,7 +42,7 @@ jobs:
             -H "Accept: application/vnd.github.raw" \
             https://api.github.com/repos/mpatric/mp3agic/contents/src/test/resources/obsolete-noimage.mp3
           javac -cp tools/build/jlayer.jar -d tools/build tools/AudioSmokeTest.java
-          java -cp "tools/build/jlayer.jar:tools/build" AudioSmokeTest tools/build/fixture.mp3
+          java -cp "tools/build/jlayer.jar:tools/build" AudioSmokeTest tools/build/fixture.mp3 | tee tools/build/audio-smoke.txt
 
       - name: Build ByAzen
         run: |
@@ -73,7 +73,34 @@ jobs:
           if-no-files-found: error
 
       - name: Verify built jar
-        run: python3 tools/verify_jar.py
+        run: python3 tools/verify_jar.py | tee tools/build/jar-verify.txt
+
+      - name: Publish CI report into repository
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          {
+            echo "# Отчёт CI по сборке ByAzen"
+            echo
+            echo "Коммит: ${GITHUB_SHA}"
+            echo
+            echo '## Аудио-тракт (MP3 -> PCM, как в игре)'
+            echo '```'
+            cat tools/build/audio-smoke.txt
+            echo '```'
+            echo
+            echo '## Проверка собранного jar'
+            echo '```'
+            cat tools/build/jar-verify.txt
+            echo '```'
+          } > ci-report.md
+          git add -f -- ci-report.md
+          if git diff --cached --quiet; then
+            echo "Ничего не изменилось"
+          else
+            git commit -m "CI: отчёт сборки [skip ci]"
+            git push
+          fi
 
       - name: Publish jar into repository
         run: |
