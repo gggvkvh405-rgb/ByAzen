@@ -99,10 +99,10 @@ extends Module {
             float power = this.vignettePower.getValue() / 100.0f * this.amount;
             float thickness = Math.min(width, height) * 0.42f;
             int solid = Cinematic.alpha(power * 255.0f);
-            Render2D.rect(0.0f, 0.0f, width, thickness, 0.0f, Cinematic.argb(solid), 0, Cinematic.argb(solid), 0);
-            Render2D.rect(0.0f, height - thickness, width, thickness, 0.0f, 0, Cinematic.argb(solid), 0, Cinematic.argb(solid));
-            Render2D.rect(0.0f, 0.0f, thickness, height, 0.0f, Cinematic.argb(solid), Cinematic.argb(solid), 0, 0);
-            Render2D.rect(width - thickness, 0.0f, thickness, height, 0.0f, 0, 0, Cinematic.argb(solid), Cinematic.argb(solid));
+            Render2D.rect(0.0f, 0.0f, width, thickness, 0.0f, Cinematic.argb(solid, 0), 0, Cinematic.argb(solid, 0), 0);
+            Render2D.rect(0.0f, height - thickness, width, thickness, 0.0f, 0, Cinematic.argb(solid, 0), 0, Cinematic.argb(solid, 0));
+            Render2D.rect(0.0f, 0.0f, thickness, height, 0.0f, Cinematic.argb(solid, 0), Cinematic.argb(solid, 0), 0, 0);
+            Render2D.rect(width - thickness, 0.0f, thickness, height, 0.0f, 0, 0, Cinematic.argb(solid, 0), Cinematic.argb(solid, 0));
         }
         if (this.grain.getValue()) {
             this.drawGrain(width, height);

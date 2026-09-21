@@ -200,7 +200,8 @@ public final class WaypointStore {
 
     public static Vec3d playerPos() {
         MinecraftClient client = MinecraftClient.getInstance();
-        return client != null && client.player != null ? client.player.getPos() : null;
+        return client != null && client.player != null
+                ? new Vec3d(client.player.getX(), client.player.getY(), client.player.getZ()) : null;
     }
 
     /** Идентификатор измерения игрока, например minecraft:overworld. */

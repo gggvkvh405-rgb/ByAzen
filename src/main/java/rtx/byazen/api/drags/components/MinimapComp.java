@@ -219,13 +219,13 @@ extends Draggable {
         float arrow = 7.0f;
         float tipX = centerX + (float)Math.cos(angle) * arrow;
         float tipY = centerY + (float)Math.sin(angle) * arrow;
-        Render2D.line(centerX, centerY, tipX, tipY, 1.4f, ClientAccent.accentOpaque(245.0f * alpha));
+        Render2D.line(centerX, centerY, tipX, tipY, 1.4f, ClientAccent.accent(245.0f * alpha));
         float back = angle + 2.5f;
         Render2D.line(tipX, tipY, centerX + (float)Math.cos(back) * arrow * 0.7f, centerY + (float)Math.sin(back) * arrow * 0.7f, 1.4f,
-                ClientAccent.accentOpaque(200.0f * alpha));
+                ClientAccent.accent(200.0f * alpha));
         back = angle - 2.5f;
         Render2D.line(tipX, tipY, centerX + (float)Math.cos(back) * arrow * 0.7f, centerY + (float)Math.sin(back) * arrow * 0.7f, 1.4f,
-                ClientAccent.accentOpaque(200.0f * alpha));
+                ClientAccent.accent(200.0f * alpha));
         Render2D.circle(centerX, centerY, 1.8f, MinimapComp.color(250, 252, 255, 250.0f * alpha));
     }
 

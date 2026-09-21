@@ -173,7 +173,7 @@ extends Module {
         float centerY = height * 0.5f;
         float radius = Math.min(width, height) * 0.32f;
         float angle = (float)Math.toRadians(this.directionAngle - 90.0f);
-        int color = DamageEffects.argb(amount * 200.0f, 0xFF5A6A);
+        int color = DamageEffects.argb(Math.round(amount * 200.0f), 0xFF5A6A);
         int strokes = 7;
         float spread = 0.55f;
         for (int i = 0; i < strokes; ++i) {

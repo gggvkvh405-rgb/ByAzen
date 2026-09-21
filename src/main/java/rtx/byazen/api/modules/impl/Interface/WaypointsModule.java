@@ -167,7 +167,7 @@ extends InterfaceComponentModule {
         if (client == null || client.player == null) {
             return null;
         }
-        net.minecraft.util.math.Vec3d pos = client.player.getPos();
+        net.minecraft.util.math.Vec3d pos = new net.minecraft.util.math.Vec3d(client.player.getX(), client.player.getY(), client.player.getZ());
         String dimension = WaypointStore.dimensionId();
         int color = ClientAccent.accentOpaque() & 0xFFFFFF;
         Waypoint waypoint = new Waypoint(name, Math.floor(pos.x) + 0.5, Math.floor(pos.y), Math.floor(pos.z) + 0.5, dimension, color, "");

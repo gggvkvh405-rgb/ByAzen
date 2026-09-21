@@ -123,7 +123,7 @@ extends Draggable {
                 boolean active = point.name().equalsIgnoreCase(activeName);
                 float dotX = x + PAD_X + 2.2f;
                 float dotY = rowY + NAME_SIZE * 0.5f + 1.0f;
-                Render2D.circle(dotX, dotY, active ? 3.0f : 2.4f, active ? ClientAccent.accentOpaque(250.0f * a) : (point.color() & 0xFFFFFF | WaypointsComp.alpha(235.0f * a) << 24));
+                Render2D.circle(dotX, dotY, active ? 3.0f : 2.4f, active ? ClientAccent.accent(250.0f * a) : (point.color() & 0xFFFFFF | WaypointsComp.alpha(235.0f * a) << 24));
                 if (active) {
                     Render2D.circleOutline(dotX, dotY, 4.6f, 1.0f, ClientAccent.accentSoft(200.0f * a));
                 }
