@@ -52,7 +52,7 @@ extends Module {
     public final ModeSetting texture = this.register(new ModeSetting("Частица", "Какая текстура у частиц.", TEXTURE_RANDOM, ParticleDeathOptions.options()));
 
     public final SeparatorSetting lookSeparator = this.register(new SeparatorSetting("Вид"));
-    public final BooleanSetting useMobColor = this.register(new BooleanSetting("Цвет моба", "Красить частицы под цвет моба, если он известен.", false));
+    public final BooleanSetting useMobColor = this.register(new BooleanSetting("Цвет моба", "Красить частицы в оттенок, свой для каждого вида моба.", false));
     public final ColorSetting color = this.register(new ColorSetting("Цвет", "Цвет частиц, если цвет моба выключен.", new java.awt.Color(196, 214, 255, 235)).visible(() -> !this.useMobColor.getValue()));
     public final BooleanSetting flash = this.register(new BooleanSetting("Вспышка", "Короткая мягкая вспышка на месте смерти.", true));
     public final ColorSetting flashColor = this.register(new ColorSetting("Цвет вспышки", "Цвет вспышки при смерти.", new java.awt.Color(255, 240, 220, 200)).visible(this.flash::getValue));
@@ -94,7 +94,7 @@ extends Module {
             LivingEntity living = (LivingEntity)entity;
             int id = entity.getId();
             if (living.isAlive() && !living.isRemoved()) {
-                this.tracked.put(id, entity.getPos());
+                this.tracked.put(id, new Vec3d(entity.getX(), entity.getY(), entity.getZ()));
                 this.colors.put(id, DeathEffects.tintOf(living));
                 alive.add(id);
                 continue;
@@ -120,7 +120,7 @@ extends Module {
                     this.random.nextDouble() * 0.18 * (double)spread + 0.05,
                     (this.random.nextDouble() - 0.5) * 0.22 * (double)spread);
             this.particles.spawn(pos.add(0.0, 0.35, 0.0), motion, life * (0.7f + this.random.nextFloat() * 0.6f),
-                    this.random.nextFloat() * 360.0f, DeathEffects.pick(this.texture.getValue()), DeathEffects.argb(225, tint),
+                    this.random.nextFloat() * 360.0f, this.pickFor(this.texture.getValue()), DeathEffects.argb(225, tint),
                     this.gravity.getValue() / 100.0f * 0.02f, 0.02f);
         }
         if (this.flash.getValue()) {
@@ -156,8 +156,20 @@ extends Module {
         return entity instanceof MobEntity && targets.isSelected(WHO_MOBS);
     }
 
+    /** Оттенок конкретного вида моба: стабильный, но у каждого вида свой. */
     private static int tintOf(LivingEntity entity) {
-        return 0xC8D6FF;
+        String key = entity.getType().getTranslationKey();
+        int hash = key == null ? 0 : key.hashCode();
+        float hue = (float)Math.floorMod(hash, 360) / 360.0f;
+        return java.awt.Color.getHSBColor(hue, 0.45f, 1.0f).getRGB() & 0xFFFFFF;
+    }
+
+    /** Текстура для частицы: «Случайно» каждый раз выбирает новую из списка. */
+    private Identifier pickFor(String mode) {
+        if (TEXTURE_RANDOM.equals(mode)) {
+            return ParticleConstants.TEXTURES[this.random.nextInt(ParticleConstants.TEXTURES.length)].id();
+        }
+        return DeathEffects.pick(mode);
     }
 
     private static Identifier pick(String mode) {
