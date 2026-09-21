@@ -43,10 +43,34 @@ public final class MusicEngine {
         ERROR
     }
 
+    /** Что делать, когда трек закончился. */
+    public enum Repeat {
+        OFF("Без повтора"),
+        ALL("Повтор списка"),
+        ONE("Повтор трека");
+
+        private final String label;
+
+        Repeat(String label) {
+            this.label = label;
+        }
+
+        public String label() {
+            return this.label;
+        }
+
+        public Repeat next() {
+            Repeat[] values = Repeat.values();
+            return values[(this.ordinal() + 1) % values.length];
+        }
+    }
+
     private static final MusicEngine INSTANCE = new MusicEngine();
     /** Сколько раз пытаемся «догнать» живой поток, если декодер споткнулся о мусор в эфире. */
     private static final int MAX_RECONNECTS = 3;
     private static final long RECONNECT_DELAY_MS = 350L;
+    /** Целевой RMS нормализации: разные станции звучат примерно одинаково громко. */
+    private static final float TARGET_RMS = 0.16f;
     private static final String USER_AGENT = "ByAzen/1.3.0 (+https://github.com/gggvkvh405-rgb/ByAzen)";
     private static final HttpClient HTTP = HttpClient.newBuilder()
             .followRedirects(HttpClient.Redirect.ALWAYS)
@@ -67,6 +91,10 @@ public final class MusicEngine {
     private volatile boolean stopping;
     private volatile long connectingSince;
     private volatile SourceDataLine line;
+    private volatile Repeat repeat = Repeat.ALL;
+    private volatile boolean shuffle;
+    private volatile boolean normalize = true;
+    private volatile float normGain = 1.0f;
     private volatile int lineChannels = 2;
 
     private MusicEngine() {
@@ -120,6 +148,46 @@ public final class MusicEngine {
 
     public float volume() {
         return this.volume;
+    }
+
+    public Repeat repeat() {
+        return this.repeat;
+    }
+
+    public void setRepeat(Repeat value) {
+        this.repeat = value == null ? Repeat.OFF : value;
+    }
+
+    public void cycleRepeat() {
+        this.repeat = this.repeat.next();
+    }
+
+    public boolean shuffle() {
+        return this.shuffle;
+    }
+
+    public void setShuffle(boolean value) {
+        this.shuffle = value;
+    }
+
+    public void toggleShuffle() {
+        this.shuffle = !this.shuffle;
+    }
+
+    public boolean normalize() {
+        return this.normalize;
+    }
+
+    public void setNormalize(boolean value) {
+        this.normalize = value;
+        if (!value) {
+            this.normGain = 1.0f;
+        }
+    }
+
+    /** Текущий рабочий коэффициент нормализации (для индикации в интерфейсе). */
+    public float normalizeGain() {
+        return this.normGain;
     }
 
     /** 0..1 progress of the current track, or -1 for live streams. */
@@ -201,14 +269,14 @@ public final class MusicEngine {
     }
 
     public void next() {
-        if (this.index + 1 < this.queue.size()) {
-            this.startTrack(this.index + 1);
-            return;
-        }
-        this.stop();
+        this.advance(false);
     }
 
     public void previous() {
+        if (this.shuffle && this.queue.size() > 1) {
+            this.startTrack(this.randomIndex());
+            return;
+        }
         if (this.index > 0) {
             this.startTrack(this.index - 1);
             return;
@@ -216,6 +284,43 @@ public final class MusicEngine {
         if (this.current != null) {
             this.startTrack(Math.max(0, this.index));
         }
+    }
+
+    /** Переход к следующему треку: повтор, перемешивание, конец очереди. */
+    private void advance(boolean automatic) {
+        if (this.queue.isEmpty()) {
+            this.stop();
+            return;
+        }
+        if (this.repeat == Repeat.ONE && this.current != null && !automatic) {
+            this.restart();
+            return;
+        }
+        if (this.shuffle && this.queue.size() > 1) {
+            this.startTrack(this.randomIndex());
+            return;
+        }
+        if (this.index + 1 < this.queue.size()) {
+            this.startTrack(this.index + 1);
+            return;
+        }
+        if (this.repeat == Repeat.ALL || this.repeat == Repeat.ONE) {
+            this.startTrack(0);
+            return;
+        }
+        this.stop();
+    }
+
+    private int randomIndex() {
+        int size = this.queue.size();
+        if (size <= 1) {
+            return 0;
+        }
+        int picked = this.index;
+        for (int attempt = 0; attempt < 6 && picked == this.index; ++attempt) {
+            picked = (int) (Math.random() * (double) size);
+        }
+        return Math.max(0, Math.min(size - 1, picked));
     }
 
     public void restart() {
@@ -296,8 +401,20 @@ public final class MusicEngine {
             this.fail(finished ? "Пустой поток" : "Не удалось декодировать аудио");
             return;
         }
+        if (this.repeat == Repeat.ONE) {
+            this.restart();
+            return;
+        }
+        if (this.shuffle && this.queue.size() > 1) {
+            this.advance(true);
+            return;
+        }
         if (this.index + 1 < this.queue.size()) {
             this.startTrack(this.index + 1);
+            return;
+        }
+        if (this.repeat == Repeat.ALL) {
+            this.startTrack(0);
             return;
         }
         this.state = State.IDLE;
@@ -492,7 +609,8 @@ public final class MusicEngine {
             return;
         }
         boolean duplicate = this.lineChannels == 2 && channels == 1;
-        float target = this.paused ? 0.0f : this.volume;
+        this.updateNormalizationShort(samples, length);
+        float target = this.paused ? 0.0f : this.volume * this.normGain;
         float currentGain = this.gain;
         float step = (target - currentGain) / (float) Math.max(1, length);
         int outLength = duplicate ? length * 2 : length;
@@ -524,7 +642,8 @@ public final class MusicEngine {
         }
         int samples = length / 2;
         boolean duplicate = this.lineChannels == 2 && channels == 1;
-        float target = this.paused ? 0.0f : this.volume;
+        this.updateNormalizationBytes(source, length);
+        float target = this.paused ? 0.0f : this.volume * this.normGain;
         float currentGain = this.gain;
         float step = (target - currentGain) / (float) Math.max(1, samples);
         byte[] bytes = new byte[duplicate ? length * 2 : length];
@@ -556,6 +675,40 @@ public final class MusicEngine {
         catch (Throwable ignored) {
             // the line was closed by a track switch - the worker is about to exit anyway
         }
+    }
+
+    /** Нормализация: считаем реальный RMS блока и медленно подтягиваем усиление к целевому. */
+    private void updateNormalizationShort(short[] samples, int length) {
+        if (!this.normalize) {
+            this.normGain = 1.0f;
+            return;
+        }
+        double sum = 0.0;
+        for (int i = 0; i < length; ++i) {
+            double value = samples[i];
+            sum += value * value;
+        }
+        this.applyNormalization((float) Math.sqrt(sum / (double) Math.max(1, length)) / 32768.0f);
+    }
+
+    private void updateNormalizationBytes(byte[] source, int length) {
+        if (!this.normalize) {
+            this.normGain = 1.0f;
+            return;
+        }
+        int samples = length / 2;
+        double sum = 0.0;
+        for (int i = 0; i < samples; ++i) {
+            int value = (source[i * 2 + 1] << 8) | (source[i * 2] & 0xFF);
+            sum += (double) value * (double) value;
+        }
+        this.applyNormalization((float) Math.sqrt(sum / (double) Math.max(1, samples)) / 32768.0f);
+    }
+
+    private void applyNormalization(float rms) {
+        float targetGain = rms < 0.0008f ? this.normGain : TARGET_RMS / rms;
+        targetGain = Math.max(0.35f, Math.min(2.4f, targetGain));
+        this.normGain += (targetGain - this.normGain) * 0.03f;
     }
 
     private void updateLevel(double meanSquare) {

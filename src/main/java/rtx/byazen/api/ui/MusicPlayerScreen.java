@@ -81,6 +81,7 @@ extends BaseScreen {
     private float volumeHover;
     private float closeHover;
     private float progressHover;
+    private final float[] modeHover = new float[3];
     private boolean draggingScroll;
     private boolean draggingVolume;
     private float scrollGrabOffset;
@@ -479,9 +480,131 @@ extends BaseScreen {
             }
         }
         MusicPlayerScreen.text(FONT_TEXT, time, barX, barY - 9.0f, 5.4f, MusicPlayerScreen.rgba(188, 194, 206, 150.0f * a));
+        this.drawModes(x, y, a, mx, my, dt);
         if (this.progressHover > 0.05f && track != null) {
-            MusicPlayerScreen.text(FONT_TEXT, "Нажмите, чтобы начать заново", barX + barWidth - Render2D.msdfWidth(FONT_TEXT, "Нажмите, чтобы начать заново", 5.4f),
+            float hintWidth = Render2D.msdfWidth(FONT_TEXT, "Нажмите, чтобы начать заново", 5.4f);
+            MusicPlayerScreen.text(FONT_TEXT, "Нажмите, чтобы начать заново", this.modesLeft(x) - hintWidth - 10.0f,
                     barY - 9.0f, 5.4f, ClientAccent.accentSoft(200.0f * a * this.progressHover));
+        }
+    }
+
+    /** Подписи режимов: повтор, перемешивание, нормализация громкости (идеи №8, №9, №10). */
+    private String modeLabel(int index) {
+        MusicEngine engine = MusicEngine.get();
+        switch (index) {
+            case 0: {
+                switch (engine.repeat()) {
+                    case ALL: {
+                        return "ПОВТОР: ВСЕ";
+                    }
+                    case ONE: {
+                        return "ПОВТОР: 1 ТРЕК";
+                    }
+                    default: {
+                        return "ПОВТОР: ВЫКЛ";
+                    }
+                }
+            }
+            case 1: {
+                return engine.shuffle() ? "МИКС: ВКЛ" : "МИКС: ВЫКЛ";
+            }
+            default: {
+                return engine.normalize() ? "НОРМ: ВКЛ" : "НОРМ: ВЫКЛ";
+            }
+        }
+    }
+
+    private float modeWidth(int index) {
+        return Render2D.msdfWidth(FONT_SEMI, this.modeLabel(index), 5.0f) + 12.0f;
+    }
+
+    private float modesLeft(float x) {
+        float width = 0.0f;
+        for (int i = 0; i < 3; ++i) {
+            width += this.modeWidth(i) + 5.0f;
+        }
+        return x + W - PAD - width + 5.0f;
+    }
+
+    private void drawModes(float x, float y, float a, float mx, float my, float dt) {
+        MusicEngine engine = MusicEngine.get();
+        float barY = y + H - 14.0f;
+        float pillY = barY - 9.0f - 2.0f;
+        float cursor = this.modesLeft(x);
+        for (int i = 0; i < 3; ++i) {
+            float width = this.modeWidth(i);
+            boolean hot = mx >= cursor && mx <= cursor + width && my >= pillY && my <= pillY + 12.0f;
+            this.modeHover[i] += ((hot ? 1.0f : 0.0f) - this.modeHover[i]) * Math.min(1.0f, dt * 13.0f);
+            boolean active = i == 0 ? engine.repeat() != MusicEngine.Repeat.OFF : i == 1 ? engine.shuffle() : engine.normalize();
+            int fill = MusicPlayerScreen.rgba(255, 255, 255, (10.0f + 14.0f * this.modeHover[i]) * a);
+            Render2D.rect(cursor, pillY, width, 12.0f, 6.0f, fill);
+            if (active) {
+                Render2D.outline(cursor, pillY, width, 12.0f, 6.0f, 1.0f, ClientAccent.accentSoft((70.0f + 60.0f * this.modeHover[i]) * a));
+            }
+            int color = active
+                    ? MusicPlayerScreen.rgba(238, 242, 250, (170.0f + 70.0f * this.modeHover[i]) * a)
+                    : MusicPlayerScreen.rgba(182, 189, 202, (120.0f + 80.0f * this.modeHover[i]) * a);
+            MusicPlayerScreen.text(FONT_SEMI, this.modeLabel(i), cursor + 6.0f, pillY + 6.0f - 3.0f, 5.0f, color);
+            cursor += width + 5.0f;
+        }
+    }
+
+    /** Клик по «пилюлям» режимов. */
+    private boolean handleModeClick(float mx, float my, float x, float y) {
+        float barY = y + H - 14.0f;
+        float pillY = barY - 9.0f - 2.0f;
+        if (my < pillY || my > pillY + 12.0f) {
+            return false;
+        }
+        float cursor = this.modesLeft(x);
+        for (int i = 0; i < 3; ++i) {
+            float width = this.modeWidth(i);
+            if (mx >= cursor && mx <= cursor + width) {
+                this.cycleMode(i);
+                return true;
+            }
+            cursor += width + 5.0f;
+        }
+        return false;
+    }
+
+    /** Переключение режима: 0 — повтор, 1 — перемешивание, 2 — нормализация. */
+    private void cycleMode(int index) {
+        MusicEngine engine = MusicEngine.get();
+        rtx.byazen.api.modules.impl.Interface.MusicPlayerModule module =
+                rtx.byazen.api.modules.ModuleManager.get().get(rtx.byazen.api.modules.impl.Interface.MusicPlayerModule.class);
+        Sounds.play("select_category");
+        switch (index) {
+            case 0: {
+                if (module != null) {
+                    module.cycleRepeatMode();
+                }
+                else {
+                    engine.cycleRepeat();
+                    this.toast("Повтор: " + engine.repeat().label());
+                }
+                break;
+            }
+            case 1: {
+                if (module != null) {
+                    module.cycleShuffleMode();
+                }
+                else {
+                    engine.toggleShuffle();
+                    this.toast(engine.shuffle() ? "Перемешивание включено" : "Перемешивание выключено");
+                }
+                break;
+            }
+            default: {
+                if (module != null) {
+                    module.toggleNormalize();
+                }
+                else {
+                    engine.setNormalize(!engine.normalize());
+                    this.toast(engine.normalize() ? "Нормализация включена" : "Нормализация выключена");
+                }
+                break;
+            }
         }
     }
 
@@ -608,6 +731,9 @@ extends BaseScreen {
                 this.updateVolumeFromMouse(mx, x);
                 return true;
             }
+            if (this.handleModeClick(mx, my, x, y)) {
+                return true;
+            }
             float barX = x + PAD;
             float barY = y + H - 14.0f;
             float barWidth = W - PAD * 2.0f;
@@ -723,7 +849,53 @@ extends BaseScreen {
                 return true;
             }
         }
+        switch (input.key()) {
+            case 82: {
+                this.cycleMode(0);
+                return true;
+            }
+            case 83: {
+                this.cycleMode(1);
+                return true;
+            }
+            case 78: {
+                this.cycleMode(2);
+                return true;
+            }
+            case 70: {
+                if (this.tab != Tab.SEARCH) {
+                    this.search.focus();
+                    this.lastTypeNs = System.currentTimeMillis();
+                    if (!this.popularLoaded) {
+                        this.publishPopular();
+                    }
+                    this.tab = Tab.SEARCH;
+                    this.scroll = 0.0f;
+                    this.scrollTarget = 0.0f;
+                }
+                this.search.focus();
+                return true;
+            }
+            case 256: {
+                this.close();
+                return true;
+            }
+            default:
+                break;
+        }
         return super.keyPressed(input);
+    }
+
+    /** Открыть плеер сразу на вкладке поиска (горячая клавиша быстрого поиска). */
+    public void focusSearchTab() {
+        this.tab = Tab.SEARCH;
+        this.scroll = 0.0f;
+        this.scrollTarget = 0.0f;
+        this.search.focus();
+        this.lastTypeNs = System.currentTimeMillis();
+        if (!this.popularLoaded) {
+            this.publishPopular();
+        }
     }
 
     // ------------------------------------------------------------------ actions

@@ -24,6 +24,8 @@ import rtx.byazen.api.modules.impl.Interface.HotKeysModule;
 import rtx.byazen.api.modules.impl.Interface.InfoModule;
 import rtx.byazen.api.modules.impl.Interface.InterfaceModule;
 import rtx.byazen.api.modules.impl.Interface.InventoryModule;
+import rtx.byazen.api.modules.impl.Interface.ClockModule;
+import rtx.byazen.api.modules.impl.Interface.CustomTextModule;
 import rtx.byazen.api.modules.impl.Interface.KeyStrokesModule;
 import rtx.byazen.api.modules.impl.Interface.MusicPlayerModule;
 import rtx.byazen.api.modules.impl.Interface.NotificationsModule;
@@ -34,6 +36,7 @@ import rtx.byazen.api.modules.impl.Utils.AutoCommands;
 import rtx.byazen.api.modules.impl.Utils.AutoDuel;
 import rtx.byazen.api.modules.impl.Utils.AutoResell;
 import rtx.byazen.api.modules.impl.Utils.AutoRespawn;
+import rtx.byazen.api.modules.impl.Utils.DeathHistoryModule;
 import rtx.byazen.api.modules.impl.Utils.AutoSprint;
 import rtx.byazen.api.modules.impl.Utils.AutoSwap;
 import rtx.byazen.api.modules.impl.Utils.AutoTpAccept;
@@ -51,10 +54,12 @@ import rtx.byazen.api.modules.impl.Utils.HitSound;
 import rtx.byazen.api.modules.impl.Utils.HolyWorldHelper;
 import rtx.byazen.api.modules.impl.Utils.Irc;
 import rtx.byazen.api.modules.impl.Utils.ItemScroller;
+import rtx.byazen.api.modules.impl.Utils.QuickHideModule;
 import rtx.byazen.api.modules.impl.Utils.Optimization;
 import rtx.byazen.api.modules.impl.Utils.Party;
 import rtx.byazen.api.modules.impl.Utils.Profiler;
 import rtx.byazen.api.modules.impl.Utils.ShulkerPreview;
+import rtx.byazen.api.modules.impl.Utils.SessionStatsModule;
 import rtx.byazen.api.modules.impl.Utils.StreamerMode;
 import rtx.byazen.api.modules.impl.Utils.TalTracker;
 import rtx.byazen.api.modules.impl.Utils.TapeMouse;
@@ -125,7 +130,7 @@ public final class ModuleManager {
     }
 
     public void init() {
-        this.register(new HitSound(), new AutoSprint(), new Ambience(), new BetterMinecraft(), new AspectRatio(), new ClickGui(), new CustomHotbar(), new CustomPet(), new Customization(), new FogBlur(), new HitBubbles(), new HpCounter(), new HitColor(), new Hitboxes(), new SelfTag(), new InterfaceModule(), new NotificationsModule(), new WatermarkModule(), new HotKeysModule(), new Profiler(), new TargetHudModule(), new PotionsModule(), new CooldownsModule(), new InfoModule(), new ArrayListModule(), new ArmorModule(), new InventoryModule(), new HPFocus(), new KeyStrokesModule(), new MusicPlayerModule(), new ViewModel(), new Freelook(), new HandSwap(), new CameraSettings(), new ItemPhysics(), new CustomSwords(), new JumpCircle(), new Crosshair(), new KillEffect(), new KillEffect3D(), new PulseCosmetics(), new NameTags(), new GlowEsp(), new ChinaHat(), new Emotions(), new BlockOverlay(), new FakePlayer(), new ShaderHands(), new ItemHighlight(), new NoRender(), new WorldParticles(), new HitParticles(), new Predictions(), new ProjectileHelper(), new SwingAnimation(), new TargetESP(), new Trails(), new ShulkerPreview(), new AutoDuel(), new AutoResell(), new AutoTpAccept(), new ClientSounds(), new DeathCoords(), new AutoRespawn(), new ClickPearl(), new HolyWorldHelper(), new FastExp(), new TalTracker(), new ItemScroller(), new StreamerMode(), new ElytraSwap(), new AutoSwap(), new TestSettings(), new AutoCommands(), new TapeMouse(), new CrystalOptimizer(), new Optimization(), new Irc(), new Party(), new Globals());
+        this.register(new HitSound(), new AutoSprint(), new Ambience(), new BetterMinecraft(), new AspectRatio(), new ClickGui(), new CustomHotbar(), new CustomPet(), new Customization(), new FogBlur(), new HitBubbles(), new HpCounter(), new HitColor(), new Hitboxes(), new SelfTag(), new InterfaceModule(), new NotificationsModule(), new WatermarkModule(), new HotKeysModule(), new Profiler(), new TargetHudModule(), new PotionsModule(), new CooldownsModule(), new InfoModule(), new ArrayListModule(), new ArmorModule(), new InventoryModule(), new HPFocus(), new KeyStrokesModule(), new MusicPlayerModule(), new ClockModule(), new CustomTextModule(), new ViewModel(), new Freelook(), new HandSwap(), new CameraSettings(), new ItemPhysics(), new CustomSwords(), new JumpCircle(), new Crosshair(), new KillEffect(), new KillEffect3D(), new PulseCosmetics(), new NameTags(), new GlowEsp(), new ChinaHat(), new Emotions(), new BlockOverlay(), new FakePlayer(), new ShaderHands(), new ItemHighlight(), new NoRender(), new WorldParticles(), new HitParticles(), new Predictions(), new ProjectileHelper(), new SwingAnimation(), new TargetESP(), new Trails(), new ShulkerPreview(), new AutoDuel(), new AutoResell(), new AutoTpAccept(), new ClientSounds(), new DeathCoords(), new AutoRespawn(), new SessionStatsModule(), new DeathHistoryModule(), new QuickHideModule(), new ClickPearl(), new HolyWorldHelper(), new FastExp(), new TalTracker(), new ItemScroller(), new StreamerMode(), new ElytraSwap(), new AutoSwap(), new TestSettings(), new AutoCommands(), new TapeMouse(), new CrystalOptimizer(), new Optimization(), new Irc(), new Party(), new Globals());
         EventBus.get().subscribe(this);
     }
 
