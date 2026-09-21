@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.util.ArrayList;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.EntityHitResult;
 import rtx.byazen.api.drags.Position;
 import rtx.byazen.api.events.impl.render.HudRenderEvent;
@@ -12,6 +15,7 @@ import rtx.byazen.api.modules.Module;
 import rtx.byazen.api.modules.settings.impl.BooleanSetting;
 import rtx.byazen.api.modules.settings.impl.ButtonSetting;
 import rtx.byazen.api.modules.settings.impl.ModeSetting;
+import rtx.byazen.api.modules.settings.impl.SeparatorSetting;
 import rtx.byazen.api.modules.settings.impl.SliderSetting;
 import rtx.byazen.api.modules.settings.impl.TextSetting;
 import rtx.byazen.api.ui.UI;
@@ -25,6 +29,10 @@ public class Crosshair
 extends Module {
     private static final int BLACK = -16777216;
     public static final int GRID = 15;
+    public static final String STYLE_NORMAL = "\u041a\u0430\u043a \u043e\u0431\u044b\u0447\u043d\u043e";
+    public static final String STYLE_DOT = "\u0422\u043e\u0447\u043a\u0430";
+    public static final String STYLE_RING = "\u041a\u043e\u043b\u044c\u0446\u043e";
+    public static final String STYLE_HIDE = "\u0421\u043a\u0440\u044b\u0442\u044c";
     private final ModeSetting mode = this.register(new ModeSetting("\u0412\u043d\u0435\u0448\u043d\u0438\u0439 \u0432\u0438\u0434", "\u0422\u0438\u043f \u043f\u0440\u0438\u0446\u0435\u043b\u0430.", "\u041a\u0440\u0435\u0441\u0442\u0438\u043a", "\u041a\u0440\u0435\u0441\u0442\u0438\u043a", "\u041a\u0440\u0443\u0436\u043e\u043a", "\u0421\u0432\u043e\u0439"));
     private final SliderSetting attackOffset = this.register(new SliderSetting("\u041e\u0442\u0441\u0442\u0443\u043f \u0430\u0442\u0430\u043a\u0438", "\u0420\u0430\u0437\u0431\u0440\u043e\u0441 \u043b\u0443\u0447\u0435\u0439 \u043f\u043e \u043a\u0443\u043b\u0434\u0430\u0443\u043d\u0443 \u043f\u0440\u0435\u0434\u043c\u0435\u0442\u0430.").range(0, 20).setValue(10.0f).visible(() -> this.mode.is("\u041a\u0440\u0435\u0441\u0442\u0438\u043a")));
     private final SliderSetting indent = this.register(new SliderSetting("\u041e\u0442\u0441\u0442\u0443\u043f", "\u041e\u0442\u0441\u0442\u0443\u043f \u043b\u0443\u0447\u0435\u0439 \u043e\u0442 \u0446\u0435\u043d\u0442\u0440\u0430 \u044d\u043a\u0440\u0430\u043d\u0430.").range(0, 5).setValue(0.0f).visible(() -> this.mode.is("\u041a\u0440\u0435\u0441\u0442\u0438\u043a")));
@@ -38,7 +46,17 @@ extends Module {
     private final BooleanSetting customOutline = this.register(new BooleanSetting("\u041e\u0431\u0432\u043e\u0434\u043a\u0430", "\u0422\u0451\u043c\u043d\u0430\u044f \u043e\u0431\u0432\u043e\u0434\u043a\u0430 \u0432\u043e\u043a\u0440\u0443\u0433 \u043f\u0438\u043a\u0441\u0435\u043b\u0435\u0439.", true).visible(() -> this.mode.is("\u0421\u0432\u043e\u0439")));
     private final BooleanSetting customTargetReact = this.register(new BooleanSetting("\u0420\u0435\u0430\u043a\u0446\u0438\u044f \u043d\u0430 \u0446\u0435\u043b\u044c", "\u041f\u0440\u0438\u0446\u0435\u043b \u043a\u0440\u0430\u0441\u043d\u0435\u0435\u0442 \u043f\u0440\u0438 \u043d\u0430\u0432\u0435\u0434\u0435\u043d\u0438\u0438 \u043d\u0430 \u0441\u0443\u0449\u043d\u043e\u0441\u0442\u044c.", true).visible(() -> this.mode.is("\u0421\u0432\u043e\u0439")));
     private final TextSetting customPixels = this.register(new TextSetting("\u041f\u0438\u043a\u0441\u0435\u043b\u0438", "\u0414\u0430\u043d\u043d\u044b\u0435 \u043f\u0438\u043a\u0441\u0435\u043b\u044c\u043d\u043e\u0433\u043e \u043f\u0440\u0438\u0446\u0435\u043b\u0430.").setText(Crosshair.defaultGrid()).visible(() -> false));
+    private final SeparatorSetting contextSeparator = this.register(new SeparatorSetting("\u041f\u0440\u0438\u0446\u0435\u043b\u044b \u043f\u043e \u0441\u0438\u0442\u0443\u0430\u0446\u0438\u0438"));
+    private final ModeSetting bowStyle = this.register(new ModeSetting("\u041b\u0443\u043a \u0438 \u0442\u0440\u0435\u0437\u0443\u0431\u0435\u0446", "\u0412\u0438\u0434 \u043f\u0440\u0438\u0446\u0435\u043b\u0430, \u043a\u043e\u0433\u0434\u0430 \u0432 \u0440\u0443\u043a\u0435 \u043b\u0443\u043a, \u0430\u0440\u0431\u0430\u043b\u0435\u0442 \u0438\u043b\u0438 \u0442\u0440\u0435\u0437\u0443\u0431\u0435\u0446.", STYLE_NORMAL, STYLE_NORMAL, STYLE_DOT, STYLE_RING, STYLE_HIDE));
+    private final ModeSetting placeStyle = this.register(new ModeSetting("\u041a\u0440\u043e\u0432\u0430\u0442\u044c \u0438 \u044f\u043a\u043e\u0440\u044c", "\u0412\u0438\u0434 \u043f\u0440\u0438\u0446\u0435\u043b\u0430, \u043a\u043e\u0433\u0434\u0430 \u0432 \u0440\u0443\u043a\u0435 \u043a\u0440\u043e\u0432\u0430\u0442\u044c \u0438\u043b\u0438 \u044f\u043a\u043e\u0440\u044c \u0432\u0437\u0440\u044b\u0432\u0430 (PvP-\u0440\u0430\u0437\u043c\u0435\u0449\u0435\u043d\u0438\u0435).", STYLE_NORMAL, STYLE_NORMAL, STYLE_DOT, STYLE_RING, STYLE_HIDE));
+    private final SeparatorSetting hitSeparator = this.register(new SeparatorSetting("\u0410\u043d\u0438\u043c\u0430\u0446\u0438\u044f \u0443\u0434\u0430\u0440\u0430"));
+    private final BooleanSetting hitAnim = this.register(new BooleanSetting("\u0410\u043d\u0438\u043c\u0430\u0446\u0438\u044f \u043f\u0440\u0438 \u0443\u0434\u0430\u0440\u0435", "\u041f\u0440\u0438\u0446\u0435\u043b \u0440\u0430\u0441\u0445\u043e\u0434\u0438\u0442\u0441\u044f \u0438 \u0432\u0441\u043f\u044b\u0445\u0438\u0432\u0430\u0435\u0442 \u0432 \u043c\u043e\u043c\u0435\u043d\u0442 \u0443\u0434\u0430\u0440\u0430.", true));
+    private final BooleanSetting hitMarks = this.register(new BooleanSetting("\u041e\u0442\u043c\u0435\u0442\u043a\u0438 \u0443\u0434\u0430\u0440\u0430", "\u0427\u0435\u0442\u044b\u0440\u0435 \u0448\u0442\u0440\u0438\u0445\u0430 \u0432\u043e\u043a\u0440\u0443\u0433 \u043f\u0440\u0438\u0446\u0435\u043b\u0430 \u0432 \u043c\u043e\u043c\u0435\u043d\u0442 \u0443\u0434\u0430\u0440\u0430.", true).visible(this.hitAnim::getValue));
+    private final BooleanSetting hitOnlyEntity = this.register(new BooleanSetting("\u0422\u043e\u043b\u044c\u043a\u043e \u043f\u043e \u0446\u0435\u043b\u0438", "\u0410\u043d\u0438\u043c\u0430\u0446\u0438\u044f \u0442\u043e\u043b\u044c\u043a\u043e \u043a\u043e\u0433\u0434\u0430 \u0443\u0434\u0430\u0440 \u043f\u0440\u0438\u0448\u0451\u043b \u043f\u043e \u043c\u043e\u0431\u0443 \u0438\u043b\u0438 \u0438\u0433\u0440\u043e\u043a\u0443.", true).visible(this.hitAnim::getValue));
     private float red = 1.0f;
+    private long hitAt;
+    private boolean hitLanded;
+    private boolean hitCooldownFull = true;
     private float prevYaw;
     private float prevPitch;
     private boolean prevInit;
@@ -237,13 +255,22 @@ extends Module {
         float f3 = Position.screenWidth();
         float f4 = Position.screenHeight();
         Render2D.beginFrame(drawContext);
-        if (this.mode.is("\u041a\u0440\u0435\u0441\u0442\u0438\u043a")) {
+        this.updateHitAnimation();
+        String context = this.contextStyle();
+        if (STYLE_HIDE.equals(context)) {
+            // в этой ситуации прицел вообще не нужен: лук, трёзубец, кровать или якорь
+        } else if (STYLE_DOT.equals(context)) {
+            this.renderDotStyle(f3 * 0.5f, f4 * 0.5f);
+        } else if (STYLE_RING.equals(context)) {
+            this.renderRingStyle(f3 * 0.5f, f4 * 0.5f, f2);
+        } else if (this.mode.is("\u041a\u0440\u0435\u0441\u0442\u0438\u043a")) {
             this.renderCross(f3, f4, f, f2);
         } else if (this.mode.is("\u0421\u0432\u043e\u0439")) {
             this.renderCustom(f3, f4, f2);
         } else {
             this.renderCircle(f3 * 0.5f, f4 * 0.5f, f3, f4, f, f2);
         }
+        this.drawHitAnimation(f3 * 0.5f, f4 * 0.5f);
         Render2D.flush();
     }
 
@@ -283,6 +310,103 @@ extends Module {
         }
         n = bl ? ClientAccent.accent(f6) : ClientAccent.accent(1.0f);
         Render2D.outline360(f - f3, f2 - f3, f3 * 2.0f, f3 * 2.0f, f3, f4, n, arrayList);
+    }
+
+    // ------------------------------------------------------------------ прицелы 3.0
+
+    /** Какой прицел нужен прямо сейчас: лук/трезубец или кровать/якорь в руке. */
+    private String contextStyle() {
+        if (this.mc.player == null) {
+            return STYLE_NORMAL;
+        }
+        ItemStack stack = this.mc.player.getMainHandStack();
+        if (Crosshair.bowLike(stack) && !this.bowStyle.is(STYLE_NORMAL)) {
+            return this.bowStyle.getSelected();
+        }
+        if (Crosshair.placeLike(stack) && !this.placeStyle.is(STYLE_NORMAL)) {
+            return this.placeStyle.getSelected();
+        }
+        return STYLE_NORMAL;
+    }
+
+    private static boolean bowLike(ItemStack itemStack) {
+        String string = Crosshair.itemPath(itemStack);
+        return string.equals("bow") || string.equals("crossbow") || string.equals("trident");
+    }
+
+    private static boolean placeLike(ItemStack itemStack) {
+        String string = Crosshair.itemPath(itemStack);
+        return string.endsWith("_bed") || string.equals("respawn_anchor");
+    }
+
+    private static String itemPath(ItemStack itemStack) {
+        if (itemStack == null || itemStack.isEmpty()) {
+            return "";
+        }
+        Identifier identifier = Registries.ITEM.getId(itemStack.getItem());
+        return identifier == null ? "" : identifier.getPath();
+    }
+
+    /** Компактная точка - при стрельбе из лука или трезубца. */
+    private void renderDotStyle(float f, float f2) {
+        int n = this.mc.crosshairTarget instanceof EntityHitResult ? -43691 : -1;
+        Render2D.circleOutline(f, f2, 3.0f, 1.1f, Crosshair.withAlpha(-16777216, 120.0f));
+        Render2D.circle(f, f2, 1.5f, 0.9f, n);
+    }
+
+    /** Кольцо с центром - для кровати и якоря взрыва. */
+    private void renderRingStyle(float f, float f2, float f3) {
+        float f4 = 8.0f;
+        int n = this.mc.crosshairTarget instanceof EntityHitResult ? ClientAccent.accent(235.0f) : -1;
+        Render2D.circleOutline(f, f2, f4, 1.6f, Crosshair.withAlpha(-16777216, 150.0f));
+        Render2D.circleOutline(f, f2, f4 - 0.7f, 0.9f, n);
+        Render2D.circle(f, f2, 1.2f, 0.8f, n);
+    }
+
+    /** Фиксирует момент удара по перезапуску перезарядки атаки. */
+    private void updateHitAnimation() {
+        if (this.mc.player == null) {
+            return;
+        }
+        boolean bl = this.mc.player.getAttackCooldownProgress(0.0f) >= 0.999f;
+        if (!bl && this.hitCooldownFull) {
+            boolean bl2 = this.mc.crosshairTarget instanceof EntityHitResult;
+            if (!this.hitOnlyEntity.getValue() || bl2) {
+                this.hitAt = System.currentTimeMillis();
+                this.hitLanded = bl2;
+            }
+        }
+        this.hitCooldownFull = bl;
+    }
+
+    /** Расходящееся кольцо и штрихи в момент удара. */
+    private void drawHitAnimation(float f, float f2) {
+        if (!this.hitAnim.getValue() || this.hitAt == 0L) {
+            return;
+        }
+        long l = System.currentTimeMillis() - this.hitAt;
+        if (l < 0L || l > 260L) {
+            return;
+        }
+        float f3 = (float)l / 260.0f;
+        float f4 = 1.0f - (1.0f - f3) * (1.0f - f3);
+        int n = this.hitLanded ? -43691 : -1;
+        float f5 = 4.0f + f4 * 9.0f;
+        float f6 = (1.0f - f3) * (this.hitLanded ? 230.0f : 150.0f);
+        Render2D.circleOutline(f, f2, f5, 1.2f, Crosshair.withAlpha(n, f6));
+        if (this.hitMarks.getValue()) {
+            float f7 = f5 + 2.0f;
+            float f8 = f7 + 3.5f - f3 * 1.5f;
+            Render2D.line(f + f7, f2, f + f8, f2, 1.2f, Crosshair.withAlpha(n, f6));
+            Render2D.line(f - f7, f2, f - f8, f2, 1.2f, Crosshair.withAlpha(n, f6));
+            Render2D.line(f, f2 + f7, f, f2 + f8, 1.2f, Crosshair.withAlpha(n, f6));
+            Render2D.line(f, f2 - f7, f, f2 - f8, 1.2f, Crosshair.withAlpha(n, f6));
+        }
+    }
+
+    private static int withAlpha(int n, float f) {
+        int n2 = Math.max(0, Math.min(255, Math.round(f)));
+        return n & 0xFFFFFF | n2 << 24;
     }
 }
 

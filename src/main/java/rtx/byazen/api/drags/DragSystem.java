@@ -88,6 +88,16 @@ public final class DragSystem {
         EventBus.get().subscribe(this);
     }
 
+    /** Поиск элемента HUD по идентификатору (пресеты позиции водяного знака и т.п.). */
+    public Draggable find(String string) {
+        for (Draggable draggable : this.elements) {
+            if (draggable != null && string.equals(draggable.getId())) {
+                return draggable;
+            }
+        }
+        return null;
+    }
+
     public void unregister(Draggable draggable) {
         this.elements.remove(draggable);
         if (this.activeDrag == draggable) {

@@ -46,7 +46,13 @@ public abstract class ChatComponentMixin {
             graphics.getMatrices().pushMatrix();
             graphics.getMatrices().translate(0.0f, displacement);
         }
-        original.call(instance, queueMessage, restrictedMessageWidth, restrictedMessage, focused);
+        rtx.byazen.utils.render.ChatMaskScope.enter();
+        try {
+            original.call(instance, queueMessage, restrictedMessageWidth, restrictedMessage, focused);
+        }
+        finally {
+            rtx.byazen.utils.render.ChatMaskScope.exit();
+        }
         if (displacement != 0.0f) {
             graphics.getMatrices().popMatrix();
         }

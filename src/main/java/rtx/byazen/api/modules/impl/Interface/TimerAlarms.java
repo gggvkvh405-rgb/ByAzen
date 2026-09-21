@@ -23,7 +23,7 @@ import rtx.byazen.utils.sounds.Sounds;
 public final class TimerAlarms
 extends InterfaceComponentModule {
 
-    private final SeparatorSetting mainSeparator = new SeparatorSetting("Зелья");
+    private final SeparatorSetting mainSeparator = this.register(new SeparatorSetting("Зелья"));
     public final BooleanSetting potionAlarm = this.register(new BooleanSetting("Окончание зелья", "Предупреждать, когда действие зелья подходит к концу.", true));
     public final SliderSetting potionSeconds = this.register(new SliderSetting("Порог, сек", "За сколько секунд до конца предупреждать.").range(3.0f, 60.0f).increment(1.0f).setValue(10.0f)
             .visible(this.potionAlarm::getValue));
