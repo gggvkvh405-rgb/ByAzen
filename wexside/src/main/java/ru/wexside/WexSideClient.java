@@ -78,7 +78,6 @@ import ru.wexside.util.Easing;
 import ru.wexside.util.EspFeatureRegistry;
 import ru.wexside.util.EspRenderCoordinator;
 import ru.wexside.util.GuiDrawApi;
-import ru.wexside.util.GuiPhotoBanner;
 import ru.wexside.util.GuiRenderBackend;
 import ru.wexside.util.HotbarSlotLock;
 import ru.wexside.util.InventoryController;
@@ -265,8 +264,7 @@ implements ClientModInitializer {
         }
         this.clientProfile = new ClientProfile(ClientRole.USER, cordName.trim(), "offline", 0, EnumSet.of(ModuleState.DISABLED), null, new byte[0]);
         notificationCenter = new NotificationCenter(moduleManager.getModule(HUDModule.class));
-        GuiPhotoBanner photoBanner = new GuiPhotoBanner(new TextureResource(new ClasspathResource("/assets/wexside/textures/gui/startup_card.jpg")), System::nanoTime, Easing.EASE_OUT_CUBIC, Easing.EASE_IN_CUBIC, ThemeColors::backgroundPrimary, ThemeColors::borderStrong);
-        this.miscellaneous = new ClickGuiPanel(moduleManager, this.containerDisplaySettings, this.localConfigCatalog, photoBanner);
+        this.miscellaneous = new ClickGuiPanel(moduleManager, this.containerDisplaySettings, this.localConfigCatalog);
         eventBus.subscribe(KeyPressedEvent.class, this::handleMenuKey);
         configManager.initialize();
         this.localConfigCatalog.refresh();

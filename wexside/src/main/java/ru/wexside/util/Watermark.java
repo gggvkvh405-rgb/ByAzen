@@ -67,7 +67,7 @@ extends AbstractHudElement {
     protected float getWidth() {
         ClientRole clientRole = this.getClientRole();
         String string2 = clientRole != null ? clientRole.getIconGlyph() : null;
-        return 15.5f + FontRegistry.font4.process3("wexside", 6.5f) + this.process3(string2, this.getHudName()) + this.process3("j", this.getString2()) + this.process3("\u0437", this.getPingText()) + 5.0f;
+        return 15.5f + FontRegistry.font4.process3("ByAzen", 6.5f) + this.process3(string2, this.getHudName()) + this.process3("j", this.getString2()) + this.process3("\u0437", this.getPingText()) + 5.0f;
     }
 
     @Override
@@ -77,11 +77,11 @@ extends AbstractHudElement {
         int n2 = ThemeColors.separator();
         this.renderPanelSurface(drawApi, matrix4f, f, f2, f3, f4, 6.0f, f5);
         float f7 = f6 = f + 5.0f * f5;
-        float f8 = FontRegistry.font4.process3("wexside", 6.5f) * f5;
+        float f8 = FontRegistry.font4.process3("ByAzen", 6.5f) * f5;
         float f9 = 7.5f * f5 + 3.0f * f5 + f8;
         TextGradient textGradient = this.createTextGradient();
         FontRegistry.font3.process8(matrix4f, drawApi, "@", f6, this.centerVertically(f2, f5, 7.5f), 7.5f * f5, 0.0f, -1, textGradient, f7, f9);
-        FontRegistry.font4.process8(matrix4f, drawApi, "wexside", f6 += 7.5f * f5 + 3.0f * f5, this.centerVertically(f2, f5, FontRegistry.font4.process4("wexside", 6.5f)), 6.5f * f5, 0.0f, -1, textGradient, f7, f9);
+        FontRegistry.font4.process8(matrix4f, drawApi, "ByAzen", f6 += 7.5f * f5 + 3.0f * f5, this.centerVertically(f2, f5, FontRegistry.font4.process4("ByAzen", 6.5f)), 6.5f * f5, 0.0f, -1, textGradient, f7, f9);
         f6 += f8;
         ClientRole clientRole = this.getClientRole();
         if (clientRole != null && clientRole.getDisplayName() != null) {

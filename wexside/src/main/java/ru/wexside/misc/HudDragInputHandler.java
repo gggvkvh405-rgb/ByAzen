@@ -15,6 +15,7 @@ import ru.wexside.WexSideClient;
 import ru.wexside.misc.ColorPlaneInputHandler;
 import ru.wexside.misc.GuiInteractionState;
 import ru.wexside.misc.HudDragRegistry;
+import ru.wexside.ui.HudEditorScreen;
 import ru.wexside.util.AbstractHudElement;
 
 public final class HudDragInputHandler
@@ -69,7 +70,7 @@ implements ColorPlaneInputHandler {
     }
 
     public boolean isEditorScreen() {
-        return class_310.method_1551().field_1755 instanceof class_408 || class_310.method_1551().field_1755 instanceof class_490;
+        return class_310.method_1551().field_1755 instanceof class_408 || class_310.method_1551().field_1755 instanceof class_490 || class_310.method_1551().field_1755 instanceof HudEditorScreen;
     }
 }
 

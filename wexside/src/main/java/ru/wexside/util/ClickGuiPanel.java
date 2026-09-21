@@ -58,7 +58,6 @@ import ru.wexside.ui.ModalPopup;
 import ru.wexside.ui.NavigationEntry;
 import ru.wexside.util.ClientMenuContent;
 import ru.wexside.util.GuiDrawApi;
-import ru.wexside.util.GuiPhotoBanner;
 import ru.wexside.util.NavigationSection;
 
 public class ClickGuiPanel
@@ -89,9 +88,8 @@ KeyPressHandler {
     private final float value4;
     private final ClientMenuContent clientMenuContent;
     private final float value6;
-    private final GuiPhotoBanner photoBanner;
 
-    public ClickGuiPanel(ModuleManager moduleManager, ContainerDisplaySettings containerDisplaySettings2, LocalConfigCatalog configCatalog, GuiPhotoBanner photoBanner) {
+    public ClickGuiPanel(ModuleManager moduleManager, ContainerDisplaySettings containerDisplaySettings2, LocalConfigCatalog configCatalog) {
         super(0, 0, 425, 250);
         this.value = 0.5555556f;
         this.value4 = 90.0f;
@@ -106,7 +104,6 @@ KeyPressHandler {
         this.floatingPanelManager.setParent(this);
         this.containerDisplay = containerDisplaySettings2.getContainerDisplay();
         this.configCatalog = configCatalog;
-        this.photoBanner = photoBanner;
         float f = 6.0f;
         float f2 = 90.0f - f * 2.0f;
         ArrayList<NavigationEntry> arrayList = new ArrayList<NavigationEntry>();
@@ -193,7 +190,6 @@ KeyPressHandler {
             this.process12(drawApi, matrix4f, f, iiliIIiilI2);
         } else {
             this.process10(drawApi, matrix4f, f);
-            this.photoBanner.render(drawApi, matrix4f, this.getBounds().getWidth(), this.getBounds().getHeight());
             this.popupManager.renderOpenPopups(f, matrix4f);
         }
         drawApi.end();
@@ -226,7 +222,6 @@ KeyPressHandler {
 
     @Override
     public void update2() {
-        this.photoBanner.onGuiClosed();
         this.floatingPanelManager.closeAll();
         this.popupManager.closeAll();
         super.update2();
@@ -416,7 +411,6 @@ KeyPressHandler {
         drawApi.beginLayerFrame(preparedLayer.getTexture(), f4, f5);
         Matrix4f matrix4f2 = new Matrix4f((Matrix4fc)preparedLayer.getContentMatrix()).translate(preparedLayer.contentX(), preparedLayer.contentY(), 0.0f);
         this.process10(drawApi, matrix4f2, f);
-        this.photoBanner.render(drawApi, matrix4f2, this.getBounds().getWidth(), this.getBounds().getHeight());
         this.popupManager.renderOpenPopups(f, matrix4f2);
         drawApi.endLayerFrame();
         iiliIIiilI2.render(f, matrix4f);
@@ -424,7 +418,6 @@ KeyPressHandler {
 
     @Override
     public void update3() {
-        this.photoBanner.onGuiOpened();
         if (this.configCatalog != null) {
             this.configCatalog.refresh();
         }

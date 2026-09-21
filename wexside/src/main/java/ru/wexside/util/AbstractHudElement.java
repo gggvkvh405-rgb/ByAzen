@@ -25,6 +25,7 @@ import ru.wexside.misc.PreparedLayer;
 import ru.wexside.misc.TextureHandle;
 import ru.wexside.misc.ThemeColors;
 import ru.wexside.misc.ThemeManager;
+import ru.wexside.ui.HudEditorScreen;
 import ru.wexside.ui.HudElementLayout;
 import ru.wexside.util.ColorUtils;
 import ru.wexside.util.GuiDrawApi;
@@ -96,7 +97,7 @@ public abstract class AbstractHudElement {
     protected abstract float getWidth();
 
     protected boolean isEditorScreen() {
-        return class_310.method_1551().field_1755 instanceof class_408 || class_310.method_1551().field_1755 instanceof class_490;
+        return class_310.method_1551().field_1755 instanceof class_408 || class_310.method_1551().field_1755 instanceof class_490 || class_310.method_1551().field_1755 instanceof HudEditorScreen;
     }
 
     protected void updateLayout() {

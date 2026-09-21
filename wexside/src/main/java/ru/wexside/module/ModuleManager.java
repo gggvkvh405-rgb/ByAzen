@@ -34,6 +34,7 @@ import ru.wexside.module.hud.BetterChatModule;
 import ru.wexside.module.hud.CrosshairModule;
 import ru.wexside.module.hud.ExtraTabModule;
 import ru.wexside.module.hud.HUDModule;
+import ru.wexside.module.hud.HudEditorModule;
 import ru.wexside.module.hud.HealthHelperModule;
 import ru.wexside.module.hud.HotbarModule;
 import ru.wexside.module.hud.PositionModule;
@@ -221,6 +222,7 @@ public class ModuleManager {
         this.modules.add(new PositionModule(eventBus));
         this.modules.add(new ArrowsModule(eventBus));
         this.modules.add(new HUDModule(eventBus));
+        this.modules.add(new HudEditorModule(eventBus));
         this.modules.add(new AnimateModule(eventBus));
         this.modules.add(new BetterChatModule(eventBus));
         this.modules.add(new ExtraTabModule(eventBus));
