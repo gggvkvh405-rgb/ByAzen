@@ -28,6 +28,15 @@ public abstract class MultiPlayerGameModeMixin {
         }
     }
 
+    @Inject(method="breakBlock", at={@At(value="HEAD")}, require = 0)
+    private void byazen_postBlockBreak(net.minecraft.util.math.BlockPos blockPos, CallbackInfo ci) {
+        net.minecraft.client.MinecraftClient client = net.minecraft.client.MinecraftClient.getInstance();
+        if (client == null || client.world == null || blockPos == null) {
+            return;
+        }
+        EventBus.get().post(new rtx.byazen.api.events.impl.player.BlockBreakEvent(blockPos, client.world.getBlockState(blockPos)));
+    }
+
     @Inject(method="attackEntity", at={@At(value="HEAD")}, cancellable=true, require = 0)
     private void byazen_onAttack(PlayerEntity player, Entity target, CallbackInfo ci) {
         if (target instanceof CustomPetEntity) {
