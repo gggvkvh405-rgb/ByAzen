@@ -1,0 +1,8 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package ru.byazen.market;
+
+public record AuctionPrice(int totalPrice, int unitPrice) {
+}
+

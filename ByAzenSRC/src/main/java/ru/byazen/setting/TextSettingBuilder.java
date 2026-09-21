@@ -1,0 +1,45 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package ru.byazen.setting;
+
+import ru.byazen.misc.TextSettingLayout;
+import ru.byazen.setting.SettingBuilder;
+import ru.byazen.setting.TextSetting;
+
+public final class TextSettingBuilder
+extends SettingBuilder {
+    TextSettingLayout layout = TextSettingLayout.COMPACT;
+    String initialValue = "";
+    int maxLength = 16;
+
+    public TextSettingBuilder value(String value) {
+        this.initialValue = value;
+        return this;
+    }
+
+    public TextSetting build() {
+        return new TextSetting(this);
+    }
+
+    public TextSettingBuilder maxLength(int maxLength) {
+        this.maxLength = maxLength;
+        return this;
+    }
+
+    public TextSettingBuilder expanded() {
+        this.layout = TextSettingLayout.EXPANDED;
+        return this;
+    }
+
+    @Override
+    protected TextSettingBuilder self() {
+        return this;
+    }
+
+    public TextSettingBuilder compact() {
+        this.layout = TextSettingLayout.COMPACT;
+        return this;
+    }
+}
+

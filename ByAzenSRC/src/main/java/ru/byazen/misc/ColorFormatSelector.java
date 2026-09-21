@@ -1,0 +1,127 @@
+/*
+ * Decompiled with CFR 0.152.
+ * 
+ * Could not load the following classes:
+ *  org.joml.Matrix4f
+ *  org.joml.Matrix4fc
+ */
+package ru.byazen.misc;
+
+import java.util.Objects;
+import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
+import ru.byazen.misc.BoundsProvider;
+import ru.byazen.misc.CharacterInputHandler;
+import ru.byazen.misc.ColorTextFormat;
+import ru.byazen.misc.GuiRenderable;
+import ru.byazen.misc.KeyPressHandler;
+import ru.byazen.misc.LayoutUpdater;
+import ru.byazen.misc.MouseButtonHandler;
+import ru.byazen.misc.MouseScrollHandler;
+import ru.byazen.setting.ColorSetting;
+import ru.byazen.ui.GuiBounds;
+import ru.byazen.ui.GuiElement;
+import ru.byazen.util.ColorTextEditor;
+import ru.byazen.util.SegmentedControl;
+
+public final class ColorFormatSelector
+extends GuiElement
+implements CharacterInputHandler,
+MouseScrollHandler,
+LayoutUpdater,
+KeyPressHandler,
+GuiRenderable,
+MouseButtonHandler,
+BoundsProvider {
+    private final SegmentedControl segmentedControl;
+    private final float value;
+    private final ColorTextEditor colorTextEditor;
+    private final float value2;
+
+    public ColorFormatSelector(GuiBounds bounds2, ColorSetting colorSetting) {
+        super(bounds2);
+        this.value2 = 2.0f;
+        this.value = 12.0f;
+        this.segmentedControl = new SegmentedControl(new GuiBounds(0.0f, 0.0f, 0.0f, 12.0f), ColorTextFormat.HEX.title, ColorTextFormat.RGBA.title);
+        this.colorTextEditor = new ColorTextEditor(new GuiBounds(0.0f, 0.0f, 0.0f, 12.0f), colorSetting, ColorTextFormat.HEX);
+        this.segmentedControl.setIntConsumer(n -> this.colorTextEditor.setColorTextFormat(ColorTextFormat.fromIndex(n)));
+        this.addChild(this.segmentedControl);
+        this.addChild(this.colorTextEditor);
+        this.update4();
+    }
+
+    @Override
+    public void onMouseScroll(int n, int n2, double d) {
+    }
+
+    @Override
+    public void update() {
+        for (GuiElement element2 : this.children) {
+            element2.update();
+        }
+    }
+
+    @Override
+    public boolean onMousePressed(int n, int n2, int n3) {
+        int n4;
+        if (!this.getBounds().contains(n, n2)) {
+            return false;
+        }
+        int n5 = (int)((float)n - this.getBounds().getX());
+        return super.onMousePressed(n5, n4 = (int)((float)n2 - this.getBounds().getY()), n3) || this.getBounds().contains(n, n2);
+    }
+
+    @Override
+    public float render(float f, Matrix4f matrix4f) {
+        this.update4();
+        Matrix4f matrix4f2 = new Matrix4f((Matrix4fc)matrix4f).translate(this.getBounds().getX(), this.getBounds().getY(), 0.0f);
+        for (GuiElement element2 : this.children) {
+            element2.render(f, matrix4f2);
+        }
+        return this.getBounds().getY() + this.getBounds().getHeight();
+    }
+
+    @Override
+    public void onMouseReleased(int n, int n2, int n3) {
+        int n4 = (int)((float)n - this.getBounds().getX());
+        int n5 = (int)((float)n2 - this.getBounds().getY());
+        super.onMouseReleased(n4, n5, n3);
+    }
+
+    public float getFloatType() {
+        return this.segmentedControl.getSegmentedControlStyle().getFloatType5() * (float)ColorTextFormat.values().length + 2.0f + this.colorTextEditor.getFloatType();
+    }
+
+    public SegmentedControl getSegmentedControl() {
+        return this.segmentedControl;
+    }
+
+    public float getSpacing() {
+        Objects.requireNonNull(this);
+        return 2.0f;
+    }
+
+    public ColorTextEditor getColorTextEditor() {
+        return this.colorTextEditor;
+    }
+
+    public float getFloatType3() {
+        Objects.requireNonNull(this);
+        return 12.0f;
+    }
+
+    public float getFloatType2() {
+        return 12.0f;
+    }
+
+    private void update4() {
+        float f = this.segmentedControl.getSegmentedControlStyle().getFloatType5() * (float)ColorTextFormat.values().length;
+        float f2 = this.colorTextEditor.getFloatType();
+        this.segmentedControl.getBounds().setPosition(0.0f, 0.0f);
+        this.segmentedControl.getBounds().setSize(f, 12.0f);
+        this.colorTextEditor.getBounds().setPosition(f + 2.0f, 0.0f);
+        this.colorTextEditor.getBounds().setSize(f2, 12.0f);
+        this.getBounds().setSize(f + 2.0f + f2, 12.0f);
+    }
+}
+

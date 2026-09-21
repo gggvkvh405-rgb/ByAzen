@@ -1,0 +1,39 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package ru.byazen.misc;
+
+import ru.byazen.setting.BooleanSetting;
+import ru.byazen.setting.ColorSetting;
+import ru.byazen.setting.NumberSetting;
+
+public final class GlowEspSettings {
+    private final BooleanSetting enabled;
+    private final ColorSetting color;
+    private final NumberSetting maximumDistance;
+    private final NumberSetting radius;
+
+    public GlowEspSettings(BooleanSetting enabled, ColorSetting color, NumberSetting maximumDistance, NumberSetting radius) {
+        this.enabled = enabled;
+        this.color = color;
+        this.maximumDistance = maximumDistance;
+        this.radius = radius;
+    }
+
+    public boolean isEnabled() {
+        return this.enabled.isEnabled();
+    }
+
+    public double getMaximumDistance() {
+        return this.maximumDistance.getValue();
+    }
+
+    public float getRadius() {
+        return (float)this.radius.getValue();
+    }
+
+    public int getColor() {
+        return this.color.getColor();
+    }
+}
+

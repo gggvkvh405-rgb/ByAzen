@@ -1,0 +1,63 @@
+/*
+ * Decompiled with CFR 0.152.
+ */
+package ru.byazen.misc;
+
+import java.util.Objects;
+import ru.byazen.input.BindInput;
+import ru.byazen.misc.KeybindDescriptor;
+import ru.byazen.setting.SettingKeybind;
+
+public final class SettingKeybindAdapter
+implements KeybindDescriptor {
+    private final SettingKeybind settingKeybind;
+
+    public SettingKeybindAdapter(SettingKeybind settingKeybind) {
+        this.settingKeybind = settingKeybind;
+    }
+
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof SettingKeybindAdapter)) {
+            return false;
+        }
+        SettingKeybindAdapter settingKeybindAdapter = (SettingKeybindAdapter)object;
+        return Objects.equals(this.settingKeybind, settingKeybindAdapter.settingKeybind);
+    }
+
+    public String toString() {
+        String string = String.valueOf(this.settingKeybind);
+        return "OfSettingBinding[binding=" + string + "]";
+    }
+
+    public int hashCode() {
+        return Objects.hash(this.settingKeybind);
+    }
+
+    @Override
+    public String getString() {
+        return this.settingKeybind.getSetting().getDisplayName();
+    }
+
+    @Override
+    public String getString2() {
+        return this.settingKeybind.getSetting().getDescription();
+    }
+
+    public SettingKeybind getSettingKeybind() {
+        return this.settingKeybind;
+    }
+
+    @Override
+    public void setBindInput(BindInput bindInput) {
+        this.settingKeybind.setBindInput(bindInput);
+    }
+
+    @Override
+    public BindInput getBindInput() {
+        return this.settingKeybind.getBindInput();
+    }
+}
+

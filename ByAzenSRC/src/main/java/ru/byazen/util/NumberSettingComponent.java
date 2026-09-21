@@ -1,0 +1,219 @@
+/*
+ * Decompiled with CFR 0.152.
+ * 
+ * Could not load the following classes:
+ *  org.joml.Matrix4f
+ */
+package ru.byazen.util;
+
+import org.joml.Matrix4f;
+import ru.byazen.ByAzenClient;
+import ru.byazen.input.InputBindings;
+import ru.byazen.misc.BoundsProvider;
+import ru.byazen.misc.BoundsSupplier;
+import ru.byazen.misc.CharacterInputHandler;
+import ru.byazen.misc.FontRegistry;
+import ru.byazen.misc.FrameInterpolator;
+import ru.byazen.misc.GuiInteractionState;
+import ru.byazen.misc.GuiRenderable;
+import ru.byazen.misc.KeyPressHandler;
+import ru.byazen.misc.LayoutUpdater;
+import ru.byazen.misc.MouseButtonHandler;
+import ru.byazen.misc.MouseScrollHandler;
+import ru.byazen.misc.PopupManager;
+import ru.byazen.misc.PopupOwner;
+import ru.byazen.misc.ScaleSettings;
+import ru.byazen.misc.SingleNumberEditorPopup;
+import ru.byazen.misc.ThemeColors;
+import ru.byazen.setting.NumberSetting;
+import ru.byazen.ui.GuiBounds;
+import ru.byazen.ui.GuiElement;
+import ru.byazen.ui.PopupPanel;
+import ru.byazen.ui.SliderTrack;
+import ru.byazen.ui.setting.SettingComponent;
+import ru.byazen.util.GuiDrawApi;
+import ru.byazen.util.NumberFormatting;
+import ru.byazen.util.SliderRenderer;
+
+public final class NumberSettingComponent
+extends SettingComponent
+implements CharacterInputHandler,
+MouseScrollHandler,
+LayoutUpdater,
+KeyPressHandler,
+GuiRenderable,
+MouseButtonHandler,
+BoundsProvider,
+PopupOwner {
+    private final SingleNumberEditorPopup editorPopup;
+    private float value;
+    private final float value2;
+    private final SliderRenderer sliderRenderer = new SliderRenderer();
+    private PopupManager popupManager;
+    private float value3;
+    private float value4;
+    private boolean enabled2;
+
+    public NumberSettingComponent(NumberSetting numberSetting) {
+        super(new GuiBounds(0.0f, 0.0f, 110.0f, 0.0f), numberSetting);
+        this.value2 = 6.5f;
+        this.editorPopup = new SingleNumberEditorPopup(numberSetting);
+        this.getBounds().setSize(this.getBounds().getWidth(), this.getFloatType2());
+    }
+
+    @Override
+    public void onMouseScroll(int n, int n2, double d) {
+    }
+
+    @Override
+    public void update() {
+    }
+
+    @Override
+    public boolean onMousePressed(int n, int n2, int n3) {
+        if (!this.getBounds().contains(n, n2)) {
+            return false;
+        }
+        if (n3 == 1) {
+            if (this.popupManager != null) {
+                this.value3 = (float)GuiInteractionState.getInstance().getScaledMouseX() - GuiInteractionState.getInstance().getRootPanel().getBounds().getX();
+                this.popupManager.toggle(this);
+            }
+            return true;
+        }
+        if (n3 != 0) {
+            return true;
+        }
+        String string = NumberFormatting.format(((NumberSetting)this.getSetting()).getValue(), ((NumberSetting)this.getSetting()).getPrecision());
+        float f = FontRegistry.font2.process4(string, 6.5f);
+        SliderTrack track = this.sliderRenderer.process7(this.getBounds(), f);
+        if ((float)n2 < track.y() - 3.0f || (float)n2 > track.y() + this.sliderRenderer.getFloatType3() + 3.0f) {
+            return true;
+        }
+        this.enabled2 = true;
+        this.value = (float)GuiInteractionState.getInstance().getScaledMouseX() - ((float)n - this.getBounds().getX());
+        this.setFloatType(n);
+        return true;
+    }
+
+    @Override
+    public float render(float f, Matrix4f matrix4f) {
+        float f2;
+        GuiBounds bounds2 = this.getBounds();
+        GuiDrawApi drawApi = ByAzenClient.getGuiRenderer();
+        NumberSetting numberSetting = (NumberSetting)this.getSetting();
+        if (this.enabled2) {
+            if (!InputBindings.isMouseButtonPressed(0)) {
+                this.enabled2 = false;
+            } else {
+                f2 = this.getBounds().getX() + (float)GuiInteractionState.getInstance().getScaledMouseX() - this.value;
+                this.setFloatType(f2);
+            }
+        }
+        f2 = this.getNormalizedValue();
+        this.value4 = FrameInterpolator.lerpTowards(this.value4, f2, this.enabled2 ? 35.0f : 20.0f);
+        ScaleSettings scaleSettings = this.process4(numberSetting);
+        String string = NumberFormatting.format(numberSetting.getValue(), numberSetting.getPrecision());
+        float f3 = FontRegistry.font2.process4(string, 6.5f);
+        float f4 = bounds2.getY() + this.sliderRenderer.getFloatType2();
+        SliderTrack track = this.sliderRenderer.process7(bounds2, f3);
+        String string2 = NumberFormatting.unit(numberSetting);
+        float f5 = bounds2.getX() + bounds2.getWidth() - this.sliderRenderer.getFloatType() - FontRegistry.font2.process3(string2, 6.5f);
+        float f6 = track.x();
+        FontRegistry.font2.process2(matrix4f, drawApi, string2, f5, f4 - 3.0f, 6.5f, ThemeColors.accent());
+        FontRegistry.font2.process2(matrix4f, drawApi, string, f6, f4 - 3.0f, 6.5f, ThemeColors.textMuted());
+        int n = ThemeColors.borderSubtle();
+        int n2 = ThemeColors.textDisabled();
+        int n3 = ThemeColors.accent();
+        this.sliderRenderer.process2(matrix4f, drawApi, track, n);
+        this.sliderRenderer.renderTickMarks(matrix4f, drawApi, track, scaleSettings, n, n2);
+        float f7 = track.width() * this.sliderRenderer.process4(this.value4, scaleSettings);
+        float f8 = track.x() + f7;
+        float f9 = track.y() + this.sliderRenderer.getFloatType3() / 2.0f;
+        drawApi.drawRoundedRectangleGradient(matrix4f, track.x(), track.y(), f7, this.sliderRenderer.getFloatType3(), 2.0f, n3, n3, n3, n3);
+        this.sliderRenderer.process(matrix4f, drawApi, f8, f9, n3);
+        return bounds2.getY() + bounds2.getHeight();
+    }
+
+    @Override
+    public float getFloatType() {
+        return this.getBounds().getWidth();
+    }
+
+    public SingleNumberEditorPopup getEditorPopup() {
+        return this.editorPopup;
+    }
+
+    @Override
+    public PopupPanel getPopup() {
+        return this.editorPopup;
+    }
+
+    private ScaleSettings process4(NumberSetting numberSetting) {
+        return new ScaleSettings(numberSetting.getMinimum(), numberSetting.getMaximum(), numberSetting.getPrecision(), numberSetting.hasMarkers(), numberSetting.getMarkerStep(), numberSetting.getSnapStep());
+    }
+
+    private float getNormalizedValue() {
+        NumberSetting numberSetting = (NumberSetting)this.getSetting();
+        double d = numberSetting.getMaximum() - numberSetting.getMinimum();
+        if (d <= 0.0) {
+            return 0.0f;
+        }
+        return (float)((numberSetting.getValue() - numberSetting.getMinimum()) / d);
+    }
+
+    private GuiBounds getContainerBounds() {
+        for (GuiElement element2 = this.getParent(); element2 != null; element2 = element2.getParent()) {
+            if (!(element2 instanceof BoundsSupplier)) continue;
+            BoundsSupplier callback13 = (BoundsSupplier)((Object)element2);
+            return callback13.getBounds();
+        }
+        return null;
+    }
+
+    private void setFloatType(float f) {
+        GuiBounds bounds2 = this.getContainerBounds();
+        NumberSetting numberSetting = (NumberSetting)this.getSetting();
+        ScaleSettings scaleSettings = this.process4(numberSetting);
+        float f2 = bounds2.getX() + this.sliderRenderer.getFloatType();
+        float f3 = Math.max(1.0f, bounds2.getWidth() - this.sliderRenderer.getFloatType() * 2.0f);
+        float f4 = Math.max(0.0f, Math.min(f3, f - f2));
+        float f5 = f4 / f3;
+        double d = this.sliderRenderer.process3(f5, scaleSettings);
+        double d2 = numberSetting.getMinimum() + (numberSetting.getMaximum() - numberSetting.getMinimum()) * d;
+        if (numberSetting.hasSnapStep()) {
+            d2 = NumberFormatting.snap(d2, numberSetting.getMinimum(), numberSetting.getMaximum(), numberSetting.getSnapStep());
+        }
+        double d3 = NumberFormatting.round(d2, numberSetting.getPrecision());
+        double d4 = (d3 - numberSetting.getMinimum()) / (numberSetting.getMaximum() - numberSetting.getMinimum());
+        numberSetting.setNormalizedValue(Math.max(0.0, Math.min(1.0, d4)));
+    }
+
+    @Override
+    public boolean process6(int n, int n2) {
+        GuiBounds bounds2 = this.getBounds();
+        if (bounds2 != null) {
+            return new GuiBounds(bounds2.getX() + this.getBounds().getX(), bounds2.getY() + this.getBounds().getY(), this.getBounds().getWidth(), this.getBounds().getHeight()).contains(n, n2);
+        }
+        return new GuiBounds(this.getAbsoluteX(), this.getAbsoluteY(), this.getBounds().getWidth(), this.getBounds().getHeight()).contains(n, n2);
+    }
+
+    @Override
+    public void update2() {
+        GuiBounds bounds2 = this.getContainerBounds();
+        float f = this.value3;
+        float f2 = bounds2 != null ? bounds2.getY() + this.getBounds().getY() : this.getAbsoluteY() + this.getBounds().getHeight() + 1.0f;
+        this.editorPopup.getBounds().setPosition(f, f2);
+    }
+
+    @Override
+    public void setPopupManager(PopupManager popupManager) {
+        this.popupManager = popupManager;
+    }
+
+    @Override
+    public float getFloatType2() {
+        return this.sliderRenderer.process6(((NumberSetting)this.getSetting()).hasMarkers());
+    }
+}
+
