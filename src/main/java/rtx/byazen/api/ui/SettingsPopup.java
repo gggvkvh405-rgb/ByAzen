@@ -154,7 +154,7 @@ public final class SettingsPopup {
             if (f9 + f10 >= f3 - 6.0f && f9 <= f3 + this.bodyViewH + 6.0f) {
                 try {
                     setting.render(this.px + 5.0f, f9, this.width - 10.0f, f5);
-                    if (this.highlightName != null && this.highlightName.equals(setting.getName()) && l2 - this.highlightAt < 3000L) {
+                    if (this.highlightName != null && this.highlightName.equals(setting.name()) && l2 - this.highlightAt < 3000L) {
                         float pulse = 0.45f + 0.55f * (0.5f + 0.5f * (float) Math.sin((double) (l2 - this.highlightAt) / 160.0));
                         Render2D.outline(this.px + 4.0f, f9 - 1.0f, this.width - 8.0f, f10 + 2.0f, 6.0f, 1.2f,
                                 ClientAccent.accentBright(210.0f * pulse * f5));
@@ -275,7 +275,7 @@ public final class SettingsPopup {
                 if (!setting.isVisible()) continue;
                 float height = setting.height();
                 if (my >= y && my < y + height) {
-                    hint = setting.getDescription();
+                    hint = this.descriptionOf(setting);
                     break;
                 }
                 y += height + 4.0f;
@@ -299,6 +299,15 @@ public final class SettingsPopup {
         Render2D.popScissor(null);
     }
 
+    /** Описание настройки берём у её «бэкенда» - у окна настройки хранят только подпись и отрисовку. */
+    private String descriptionOf(Setting widget) {
+        if (this.module == null || widget == null) {
+            return "";
+        }
+        rtx.byazen.api.modules.settings.Setting backend = this.module.getSettings().get(widget.name());
+        return backend == null ? "" : backend.getDescription();
+    }
+
     /** Подсветить настройку и прокрутить к ней (используется поиском по настройкам и пресетами). */
     public void focusSetting(String name) {
         if (name == null) {
@@ -309,7 +318,7 @@ public final class SettingsPopup {
         float offset = 0.0f;
         for (Setting setting : this.widgets) {
             if (!setting.isVisible()) continue;
-            if (setting.getName().equalsIgnoreCase(name)) {
+            if (setting.name().equalsIgnoreCase(name)) {
                 break;
             }
             offset += setting.height() + 4.0f;

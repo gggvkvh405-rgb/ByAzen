@@ -26,7 +26,7 @@ extends InterfaceComponentModule {
     private final SeparatorSetting mainSeparator = new SeparatorSetting("Зелья");
     public final BooleanSetting potionAlarm = this.register(new BooleanSetting("Окончание зелья", "Предупреждать, когда действие зелья подходит к концу.", true));
     public final SliderSetting potionSeconds = this.register(new SliderSetting("Порог, сек", "За сколько секунд до конца предупреждать.").range(3.0f, 60.0f).increment(1.0f).setValue(10.0f)
-            .visibleWhen(this.potionAlarm::getValue));
+            .visible(this.potionAlarm::getValue));
     public final BooleanSetting onlyOwnBuffs = this.register(new BooleanSetting("Только полезные", "Не предупреждать про дебаффы (слабость, слепота и т.п.).", true)
             .visibleWhen(this.potionAlarm::getValue));
     public final BooleanSetting sound = this.register(new BooleanSetting("Звук", "Проигрывать короткий звук предупреждения.", true));
