@@ -50,6 +50,10 @@ dependencies {
     include "com.electronwill.night-config:core:3.8.3"
     include "com.electronwill.night-config:toml:3.8.3"
 
+    // JLayer - онлайн-декодер MP3 для встроенного музыкального плеера (делает стриминг без скачивания)
+    implementation "com.googlecode.soundlibs:jlayer:1.0.1.4"
+    include "com.googlecode.soundlibs:jlayer:1.0.1.4"
+
     // Local libraries from libs/
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 }

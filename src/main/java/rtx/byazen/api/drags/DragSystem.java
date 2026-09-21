@@ -27,6 +27,7 @@ import rtx.byazen.api.drags.components.HPFocusComp;
 import rtx.byazen.api.drags.components.HotKeysComp;
 import rtx.byazen.api.drags.components.InventoryComp;
 import rtx.byazen.api.drags.components.KeyStrokesComp;
+import rtx.byazen.api.drags.components.MusicComp;
 import rtx.byazen.api.drags.components.PotionsComp;
 import rtx.byazen.api.drags.components.TargetHudComp;
 import rtx.byazen.api.drags.components.WatermarkComp;
@@ -71,6 +72,7 @@ public final class DragSystem {
         this.register(new InventoryComp());
         this.register(new HPFocusComp());
         this.register(new KeyStrokesComp());
+        this.register(new MusicComp());
         new InfoHud();
         ConfigManager.applyActiveDrags();
         EventBus.get().subscribe(this);
