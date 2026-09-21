@@ -71,7 +71,7 @@ extends Module {
         double z = this.mc.player.getZ();
         String world = this.mc.world.getRegistryKey().getValue().getPath();
         String coords = Math.round(x) + " " + Math.round(y) + " " + Math.round(z);
-        DeathHistoryModule.Entry entry = new DeathHistoryModule.Entry(Math.round(x), Math.round(y), Math.round(z), world, System.currentTimeMillis());
+        DeathHistoryModule.Entry entry = new DeathHistoryModule.Entry((int) Math.round(x), (int) Math.round(y), (int) Math.round(z), world, System.currentTimeMillis());
         this.entries.add(0, entry);
         while (this.entries.size() > LIMIT) {
             this.entries.remove(this.entries.size() - 1);

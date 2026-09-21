@@ -57,6 +57,98 @@ public final class RadioCatalog {
         return Collections.unmodifiableList(new ArrayList<MusicTrack>(STATIONS));
     }
 
+    /** Станция по её названию (для подборок и настроек). */
+    public static MusicTrack byName(String name) {
+        if (name == null) {
+            return null;
+        }
+        for (MusicTrack track : STATIONS) {
+            if (track.title().equalsIgnoreCase(name)) {
+                return track;
+            }
+        }
+        return null;
+    }
+
+    /** Курируемые подборки ByAzen (идея №25). */
+    public static List<RadioCatalog.Collection> collections() {
+        ArrayList<RadioCatalog.Collection> list = new ArrayList<RadioCatalog.Collection>();
+        list.add(new RadioCatalog.Collection("Для PvP", "Ритм и драйв", new String[]{"Metal Detector", "DEF CON Radio", "cliqhop idm", "EBSM", "Beat Blender"}));
+        list.add(new RadioCatalog.Collection("Для фарма", "Ровный фон без слов", new String[]{"Drone Zone", "Deep Space One", "Space Station Soma", "Digitalis", "Fluid"}));
+        list.add(new RadioCatalog.Collection("Для релакса", "Спокойное и тёплое", new String[]{"Groove Salad", "Lush", "Illinois Street Lounge", "Folk Forward", "Sonic Universe"}));
+        list.add(new RadioCatalog.Collection("Ночная дорога", "Синтвейв и неон", new String[]{"Nightride FM", "Chillsynth FM", "Datawave", "Spacesynth", "Underground 80s"}));
+        list.add(new RadioCatalog.Collection("Новогодняя", "Праздничное настроение", new String[]{"Lush", "Indie Pop Rocks", "Illinois Street Lounge", "Chillsynth FM", "Groove Salad"}));
+        return list;
+    }
+
+    /** Треки подборки в виде очереди воспроизведения. */
+    public static List<MusicTrack> collectionTracks(RadioCatalog.Collection collection) {
+        ArrayList<MusicTrack> list = new ArrayList<MusicTrack>();
+        if (collection == null) {
+            return list;
+        }
+        for (String name : collection.stations) {
+            MusicTrack track = RadioCatalog.byName(name);
+            if (track != null) {
+                list.add(track);
+            }
+        }
+        return list;
+    }
+
+    /** «Моя волна»: станции, похожие на текущую по жанру (идея №13). */
+    public static List<MusicTrack> similar(MusicTrack source, int limit) {
+        ArrayList<MusicTrack> list = new ArrayList<MusicTrack>();
+        if (source == null) {
+            return list;
+        }
+        String[] tokens = RadioCatalog.tokens(source.subtitle());
+        for (MusicTrack track : STATIONS) {
+            if (track.key().equals(source.key()) || list.size() >= limit) {
+                continue;
+            }
+            int score = 0;
+            for (String token : RadioCatalog.tokens(track.subtitle())) {
+                for (String wanted : tokens) {
+                    if (token.startsWith(wanted) || wanted.startsWith(token)) {
+                        ++score;
+                    }
+                }
+            }
+            if (score > 0) {
+                list.add(track);
+            }
+        }
+        return list;
+    }
+
+    private static String[] tokens(String genre) {
+        if (genre == null || genre.isBlank()) {
+            return new String[0];
+        }
+        String cleaned = genre.toLowerCase(java.util.Locale.ROOT).replace('/', ' ').replaceAll("[^a-zа-я0-9 ]", " ");
+        ArrayList<String> tokens = new ArrayList<String>();
+        for (String token : cleaned.split("\\s+")) {
+            if (token.length() >= 4) {
+                tokens.add(token);
+            }
+        }
+        return tokens.toArray(new String[0]);
+    }
+
+    /** Курируемая подборка станций. */
+    public static final class Collection {
+        public final String name;
+        public final String hint;
+        public final String[] stations;
+
+        public Collection(String name, String hint, String[] stations) {
+            this.name = name;
+            this.hint = hint;
+            this.stations = stations;
+        }
+    }
+
     public static int size() {
         return STATIONS.size();
     }

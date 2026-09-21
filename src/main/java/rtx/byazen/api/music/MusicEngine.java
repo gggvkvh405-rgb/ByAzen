@@ -91,6 +91,7 @@ public final class MusicEngine {
     private volatile boolean stopping;
     private volatile long connectingSince;
     private volatile SourceDataLine line;
+    private volatile String nowPlaying = "";
     private volatile Repeat repeat = Repeat.ALL;
     private volatile boolean shuffle;
     private volatile boolean normalize = true;
@@ -116,6 +117,11 @@ public final class MusicEngine {
 
     public MusicTrack current() {
         return this.current;
+    }
+
+    /** Название трека, который прямо сейчас играет в эфире радиостанции (ICY-метаданные). */
+    public String nowPlaying() {
+        return this.nowPlaying;
     }
 
     public List<MusicTrack> queue() {
@@ -357,6 +363,7 @@ public final class MusicEngine {
         this.level = 0.0f;
         this.paused = false;
         this.detail = "";
+        this.nowPlaying = "";
         this.state = State.CONNECTING;
         this.connectingSince = System.currentTimeMillis();
         Thread thread = new Thread(() -> this.run(track, token), "byazen-music");
@@ -439,6 +446,7 @@ public final class MusicEngine {
                 HttpRequest.newBuilder(URI.create(url))
                         .header("User-Agent", USER_AGENT)
                         .header("Accept", "*/*")
+                        .header("Icy-MetaData", "1")
                         .GET()
                         .build(),
                 HttpResponse.BodyHandlers.ofInputStream());
@@ -449,6 +457,18 @@ public final class MusicEngine {
         if (!this.isCurrent(token)) {
             response.body().close();
             return null;
+        }
+        String icyHeader = response.headers().firstValue("icy-metaint").orElse("");
+        int metaint = IcyStream.metadataInterval(icyHeader);
+        if (metaint > 0 && track.isRadio()) {
+            // Радиостанция подмешивает в поток блоки с названием трека — вырезаем их
+            // и показываем «сейчас в эфире» (идея №1).
+            return new IcyStream(response.body(), metaint, title -> {
+                if (this.isCurrent(token)) {
+                    this.nowPlaying = title;
+                    this.detail = title;
+                }
+            });
         }
         return response.body();
     }

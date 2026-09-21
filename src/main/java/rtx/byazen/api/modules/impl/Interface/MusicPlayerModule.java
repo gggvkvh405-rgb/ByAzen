@@ -40,6 +40,7 @@ extends InterfaceComponentModule {
     private static final int DEFAULT_SEARCH_KEY = 71; // G
     private static final String[] STATION_OPTIONS;
     private static final String[] REPEAT_OPTIONS = {"Без повтора", "Повтор списка", "Повтор трека"};
+    public static final String[] VISUALIZER_OPTIONS = {"Столбики", "Волна", "Круг"};
 
     static {
         List<MusicTrack> stations = RadioCatalog.stations();
@@ -61,6 +62,21 @@ extends InterfaceComponentModule {
     public final BooleanSetting shuffleMode = this.register(new BooleanSetting("Перемешивание", "Играть треки и станции в случайном порядке.", false));
     public final BooleanSetting normalizeVolume = this.register(new BooleanSetting("Нормализация громкости", "Выравнивать громкость между станциями, чтобы не приходилось крутить ползунок.", true));
 
+    public final SeparatorSetting behaviourSeparator = this.register(new SeparatorSetting("Поведение"));
+    public final SelectSetting visualizerStyle = this.register(new SelectSetting("Визуализатор", "Стиль визуализации звука в окне плеера.")
+            .value(VISUALIZER_OPTIONS).selected(VISUALIZER_OPTIONS[0]));
+    public final BooleanSetting autoPause = this.register(new BooleanSetting("Автопауза", "Останавливать музыку, когда окно свёрнуто или игрок отошёл (AFK).", false));
+    public final SliderSetting sleepTimer = this.register(new SliderSetting("Таймер сна", "Через сколько минут плавно выключить музыку (0 — выключено).").range(0, 180).increment(5).setValue(0.0f));
+    public final BooleanSetting nowPlayingToast = this.register(new BooleanSetting("Эфир в уведомлении", "Показывать, что сейчас играет в эфире радиостанции (ICY-метаданные).", true));
+    public final BooleanSetting skipDisliked = this.register(new BooleanSetting("Пропускать «не нравится»", "Автоматически переключать треки, отмеченные значком «не нравится».", true));
+
+    public final SeparatorSetting keySeparator = this.register(new SeparatorSetting("Клавиши плеера"));
+    public final BindSetting playPauseKey = this.register(new BindSetting("Пауза / играть", "Свободная клавиша управления музыкой (по умолчанию не назначена)."));
+    public final BindSetting nextKey = this.register(new BindSetting("Следующий трек", "Свободная клавиша для переключения вперёд."));
+    public final BindSetting previousKey = this.register(new BindSetting("Предыдущий трек", "Свободная клавиша для переключения назад."));
+    public final BindSetting volumeUpKey = this.register(new BindSetting("Громче", "Прибавить громкость на 5%."));
+    public final BindSetting volumeDownKey = this.register(new BindSetting("Тише", "Убавить громкость на 5%."));
+
     public final SeparatorSetting startSeparator = this.register(new SeparatorSetting("Запуск"));
     public final BooleanSetting resumeOnJoin = this.register(new BooleanSetting("Возобновлять при входе", "Включать последний трек или станцию при заходе в мир.", false));
     public final SelectSetting defaultStation = this.register(new SelectSetting("Станция по умолчанию", "Что включать, если история ещё пустая.").value(STATION_OPTIONS).selected(STATION_OPTIONS[0]));
@@ -71,10 +87,22 @@ extends InterfaceComponentModule {
     private final MusicComp component = new MusicComp();
     private final Set<String> refreshedStations = ConcurrentHashMap.newKeySet();
     private final AtomicBoolean refreshRunning = new AtomicBoolean();
+    private final java.util.Set<String> pressedKeys = java.util.Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
     private boolean inWorld;
     private boolean menuKeyDown;
     private boolean searchKeyDown;
+    private boolean autoPaused;
+    private boolean fading;
+    private long focusedSince;
+    private long sleepStarted;
+    private double lastActivityX;
+    private double lastActivityY;
+    private double lastActivityZ;
+    private float lastActivityYaw;
+    private float lastActivityPitch;
+    private long lastActivityAt;
     private String lastTrackKey = "";
+    private String lastNowPlaying = "";
 
     public MusicPlayerModule() {
         super("Music Player", "Музыкальный плеер: интернет-радио и треки из онлайн-каталога прямо в игре, без скачивания файлов.");
@@ -121,6 +149,22 @@ extends InterfaceComponentModule {
         engine.setNormalize(value);
         this.normalizeVolume.setValue(value);
         NotificationsModule.notify(value ? "Нормализация громкости включена" : "Нормализация выключена", 1500L);
+    }
+
+    /** Индекс выбранного стиля визуализации (идея №22). */
+    public int visualizerIndex() {
+        String selected = this.visualizerStyle.getValue();
+        for (int i = 0; i < VISUALIZER_OPTIONS.length; ++i) {
+            if (VISUALIZER_OPTIONS[i].equals(selected)) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    public void cycleVisualizer() {
+        int next = (this.visualizerIndex() + 1) % VISUALIZER_OPTIONS.length;
+        this.visualizerStyle.setSelected(VISUALIZER_OPTIONS[next]);
     }
 
     private static String label(MusicEngine.Repeat repeat) {
@@ -197,7 +241,9 @@ extends InterfaceComponentModule {
     @Override
     protected void onEnable() {
         MusicEngine engine = MusicEngine.get();
-        engine.setVolume(this.volume());
+        if (!this.fading) {
+            engine.setVolume(this.volume());
+        }
         engine.setRepeat(this.repeatFromSettings());
         engine.setShuffle(this.shuffleFromSettings());
         engine.setNormalize(this.normalizeVolume.getValue());
@@ -219,6 +265,10 @@ extends InterfaceComponentModule {
         }
         if (client.player == null || client.world == null) {
             this.inWorld = false;
+            this.autoPaused = false;
+            this.lastActivityAt = 0L;
+            this.sleepStarted = 0L;
+            this.fading = false;
         }
         else if (!this.inWorld) {
             this.inWorld = true;
@@ -233,6 +283,10 @@ extends InterfaceComponentModule {
         this.handleMenuKey(client, engine);
         this.handleSearchKey(client);
         this.notifyTrackChange(engine);
+        this.notifyNowPlaying(engine);
+        this.handleTransportKeys(client, engine);
+        this.handleAutoPause(client, engine);
+        this.handleSleepTimer(engine);
         if (engine.connectingForMs() > 25000L) {
             engine.fail("Сервер не отвечает");
         }
@@ -293,6 +347,137 @@ extends InterfaceComponentModule {
         }
         this.lastTrackKey = track.key();
         NotificationsModule.notify("▶ " + track.title() + (track.subtitle().isBlank() ? "" : " — " + track.subtitle()), 2200L);
+    }
+
+    /** Автопауза при сворачивании окна и уходе в AFK (идея №7). */
+    private void handleAutoPause(MinecraftClient client, MusicEngine engine) {
+        if (!this.autoPause.getValue()) {
+            if (this.autoPaused) {
+                this.autoPaused = false;
+                engine.pause(false);
+            }
+            return;
+        }
+        boolean focused = org.lwjgl.glfw.GLFW.glfwGetWindowAttrib(client.getWindow().getHandle(), org.lwjgl.glfw.GLFW.GLFW_FOCUSED) == org.lwjgl.glfw.GLFW.GLFW_TRUE;
+        if (focused) {
+            this.focusedSince = System.currentTimeMillis();
+        }
+        if (client.player != null) {
+            double x = client.player.getX();
+            double y = client.player.getY();
+            double z = client.player.getZ();
+            float yaw = client.player.getYaw();
+            float pitch = client.player.getPitch();
+            if (Math.abs(x - this.lastActivityX) > 0.008 || Math.abs(y - this.lastActivityY) > 0.008
+                    || Math.abs(z - this.lastActivityZ) > 0.008 || Math.abs(yaw - this.lastActivityYaw) > 0.6f
+                    || Math.abs(pitch - this.lastActivityPitch) > 0.6f) {
+                this.lastActivityAt = System.currentTimeMillis();
+            }
+            this.lastActivityX = x;
+            this.lastActivityY = y;
+            this.lastActivityZ = z;
+            this.lastActivityYaw = yaw;
+            this.lastActivityPitch = pitch;
+        }
+        long now = System.currentTimeMillis();
+        boolean afk = this.lastActivityAt > 0L && now - this.lastActivityAt > 45000L;
+        boolean shouldPause = !focused || afk;
+        if (shouldPause && !this.autoPaused && engine.isPlaying()) {
+            this.autoPaused = true;
+            engine.pause(true);
+            return;
+        }
+        if (!shouldPause && this.autoPaused) {
+            this.autoPaused = false;
+            if (this.focusedSince == 0L || now - this.focusedSince > 300L) {
+                engine.pause(false);
+            }
+        }
+    }
+
+    /** Таймер сна: плавно гасит громкость и останавливает плеер (идея №12). */
+    private void handleSleepTimer(MusicEngine engine) {
+        int minutes = this.sleepTimer.getInt();
+        if (minutes <= 0 || !engine.isPlaying()) {
+            this.sleepStarted = 0L;
+            this.fading = false;
+            return;
+        }
+        long now = System.currentTimeMillis();
+        if (this.sleepStarted == 0L) {
+            this.sleepStarted = now;
+            return;
+        }
+        long target = (long) minutes * 60000L;
+        long passed = now - this.sleepStarted;
+        if (passed < target - 12000L) {
+            return;
+        }
+        this.fading = true;
+        float remaining = Math.max(0.0f, (float) (target - passed) / 12000.0f);
+        float base = this.volume();
+        engine.setVolume(0.02f + 0.98f * Math.max(0.0f, Math.min(1.0f, remaining)) * base);
+        if (passed >= target) {
+            engine.stop();
+            engine.setVolume(base);
+            this.sleepTimer.setValue(0.0f);
+            this.sleepStarted = 0L;
+            this.fading = false;
+            NotificationsModule.notify("Таймер сна: музыка выключена", 2500L);
+        }
+    }
+
+    /** Свободные клавиши управления музыкой (идея №16) и авто-пропуск «не нравится» (идея №10). */
+    private void handleTransportKeys(MinecraftClient client, MusicEngine engine) {
+        if (client.currentScreen != null) {
+            this.resetKeyEdges();
+            return;
+        }
+        long handle = client.getWindow().getHandle();
+        this.keyEdge(this.playPauseKey, handle, () -> {
+            if (engine.current() != null || !this.isEnabled()) {
+                engine.togglePause();
+            }
+        });
+        this.keyEdge(this.nextKey, handle, engine::next);
+        this.keyEdge(this.previousKey, handle, engine::previous);
+        this.keyEdge(this.volumeUpKey, handle, () -> this.setVolume(this.volume() + 0.05f));
+        this.keyEdge(this.volumeDownKey, handle, () -> this.setVolume(this.volume() - 0.05f));
+        if (this.skipDisliked.getValue()) {
+            MusicTrack current = engine.current();
+            if (current != null && MusicLibrary.get().isDisliked(current) && engine.isPlaying()) {
+                NotificationsModule.notify("Трек пропущен: отмечен как «не нравится»", 1500L);
+                engine.next();
+            }
+        }
+    }
+
+    private void keyEdge(BindSetting setting, long handle, Runnable action) {
+        boolean down = setting.isBound() && setting.getValue().isDown(handle);
+        String id = setting.getValue().getDisplayName();
+        if (down && this.pressedKeys.add(id)) {
+            action.run();
+            return;
+        }
+        if (!down) {
+            this.pressedKeys.remove(id);
+        }
+    }
+
+    private void resetKeyEdges() {
+        this.pressedKeys.clear();
+    }
+
+    /** Уведомление о смене трека в эфире (идеи №1 и №11). */
+    private void notifyNowPlaying(MusicEngine engine) {
+        String playing = engine.nowPlaying();
+        if (playing.isEmpty() || playing.equals(this.lastNowPlaying)) {
+            return;
+        }
+        this.lastNowPlaying = playing;
+        if (this.nowPlayingToast.getValue()) {
+            NotificationsModule.notify("♫ В эфире: " + playing, 3500L);
+        }
     }
 
     /** A curated station moved to another address - ask the radio directory for the current stream. */

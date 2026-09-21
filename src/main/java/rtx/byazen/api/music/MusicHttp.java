@@ -209,6 +209,54 @@ public final class MusicHttp {
         return null;
     }
 
+    /** Разбор M3U/M3U8-плейлиста в список станций (идея №20). */
+    public static List<MusicTrack> parseM3U(String body, String playlistName) {
+        ArrayList<MusicTrack> list = new ArrayList<MusicTrack>();
+        if (body == null || body.isBlank()) {
+            return list;
+        }
+        String pendingName = null;
+        for (String rawLine : body.split("\\r?\\n")) {
+            String line = rawLine.trim();
+            if (line.isEmpty()) {
+                continue;
+            }
+            if (line.startsWith("#EXTINF")) {
+                int comma = line.indexOf(',');
+                pendingName = comma >= 0 && comma + 1 < line.length() ? line.substring(comma + 1).trim() : null;
+                continue;
+            }
+            if (line.startsWith("#")) {
+                continue;
+            }
+            if (!line.startsWith("http")) {
+                continue;
+            }
+            String name = pendingName == null || pendingName.isBlank() ? MusicTrack.describeUrl(line) : pendingName;
+            list.add(new MusicTrack(MusicTrack.Kind.LINK, name,
+                    playlistName == null || playlistName.isBlank() ? "Плейлист M3U" : playlistName,
+                    line, null, "M3U", 0L));
+            pendingName = null;
+            if (list.size() >= 120) {
+                break;
+            }
+        }
+        return list;
+    }
+
+    /** Скачивает M3U-плейлист: блокирующий вызов, запускать из пула. */
+    public static List<MusicTrack> fetchM3U(String url) {
+        try {
+            String body = MusicHttp.get(url);
+            String name = MusicTrack.describeUrl(url);
+            return MusicHttp.parseM3U(body, name);
+        }
+        catch (Throwable throwable) {
+            ByAzen.LOGGER.warn("[ByAzen] M3U playlist failed ({}): {}", url, throwable.toString());
+            return new ArrayList<MusicTrack>();
+        }
+    }
+
     private static List<MusicTrack> parseRadioBrowser(String body) {
         ArrayList<MusicTrack> stations = new ArrayList<MusicTrack>();
         try {

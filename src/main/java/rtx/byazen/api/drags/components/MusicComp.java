@@ -8,8 +8,11 @@ import rtx.byazen.api.drags.Draggable;
 import rtx.byazen.api.drags.Position;
 import rtx.byazen.api.modules.ModuleManager;
 import rtx.byazen.api.modules.impl.Interface.MusicPlayerModule;
+import rtx.byazen.api.modules.impl.Interface.NotificationsModule;
 import rtx.byazen.api.music.MusicCovers;
 import rtx.byazen.api.music.MusicEngine;
+import rtx.byazen.api.music.MusicLibrary;
+import rtx.byazen.api.music.MusicShapes;
 import rtx.byazen.api.music.MusicTrack;
 import rtx.byazen.api.ui.settings.Setting;
 import rtx.byazen.api.ui.theme.AccentGradient;
@@ -42,6 +45,8 @@ extends Draggable {
     private static final float BAR_AREA_HEIGHT = 6.5f;
     private static final float BUTTON = 14.0f;
     private static final float BUTTON_Y = 38.0f;
+    private static final float SMALL_BUTTON = 12.0f;
+    private static final float SMALL_BUTTON_Y = 4.0f;
 
     private final float[] bars = new float[BARS];
     private final float[] weights = new float[BARS];
@@ -133,6 +138,23 @@ extends Draggable {
             return false;
         }
         MusicEngine engine = MusicEngine.get();
+        if (!onlyButtons) {
+            MusicTrack shown = engine.current() != null ? engine.current() : MusicComp.module().previewTrack();
+            if (shown != null && this.overDislike(mouseX, mouseY, x, y)) {
+                MusicLibrary.get().toggleDislike(shown);
+                boolean disliked = MusicLibrary.get().isDisliked(shown);
+                NotificationsModule.notify(disliked ? "Отмечено «не нравится» — трек будет пропускаться" : "Отметка «не нравится» снята", 1800L);
+                if (disliked && engine.isPlaying()) {
+                    engine.next();
+                }
+                return true;
+            }
+            if (shown != null && this.overFavorite(mouseX, mouseY, x, y)) {
+                MusicLibrary.get().toggleFavorite(shown);
+                NotificationsModule.notify(MusicLibrary.get().isFavorite(shown) ? "Добавлено в избранное" : "Убрано из избранного", 1600L);
+                return true;
+            }
+        }
         int index = MusicComp.buttonAt(mouseX, mouseY, x, y);
         switch (index) {
             case 0: {
@@ -164,6 +186,40 @@ extends Draggable {
             return true;
         }
         return false;
+    }
+
+    private boolean overFavorite(float mouseX, float mouseY, float x, float y) {
+        float bx = x + WIDTH - SMALL_BUTTON - 4.0f;
+        return mouseX >= bx - 2.0f && mouseX <= bx + SMALL_BUTTON + 2.0f && mouseY >= y + SMALL_BUTTON_Y - 2.0f
+                && mouseY <= y + SMALL_BUTTON_Y + SMALL_BUTTON + 2.0f;
+    }
+
+    private boolean overDislike(float mouseX, float mouseY, float x, float y) {
+        float bx = x + WIDTH - SMALL_BUTTON * 2.0f - 8.0f;
+        return mouseX >= bx - 2.0f && mouseX <= bx + SMALL_BUTTON + 2.0f && mouseY >= y + SMALL_BUTTON_Y - 2.0f
+                && mouseY <= y + SMALL_BUTTON_Y + SMALL_BUTTON + 2.0f;
+    }
+
+    /** Кнопки «в избранное» и «не нравится» в правом верхнем углу виджета. */
+    private void drawQuickButtons(float x, float y, float alpha, MusicTrack shown) {
+        float mouseX = Position.mouseX();
+        float mouseY = Position.mouseY();
+        boolean favorite = MusicLibrary.get().isFavorite(shown);
+        boolean disliked = MusicLibrary.get().isDisliked(shown);
+        float favoriteX = x + WIDTH - SMALL_BUTTON - 4.0f;
+        float dislikeX = x + WIDTH - SMALL_BUTTON * 2.0f - 8.0f;
+        boolean favoriteHot = this.overFavorite(mouseX, mouseY, x, y);
+        boolean dislikeHot = this.overDislike(mouseX, mouseY, x, y);
+        Render2D.rect(favoriteX, y + SMALL_BUTTON_Y, SMALL_BUTTON, SMALL_BUTTON, 4.0f,
+                MusicComp.color(255, 255, 255, (favoriteHot ? 34.0f : 16.0f) * alpha));
+        Render2D.rect(dislikeX, y + SMALL_BUTTON_Y, SMALL_BUTTON, SMALL_BUTTON, 4.0f,
+                MusicComp.color(255, 255, 255, (dislikeHot ? 34.0f : 16.0f) * alpha));
+        MusicShapes.bookmark(favoriteX + 0.5f, y + SMALL_BUTTON_Y + 0.5f, SMALL_BUTTON - 1.0f, favorite,
+                favorite ? ClientAccent.accent(245.0f * alpha)
+                        : MusicComp.color(224, 229, 238, (favoriteHot ? 235.0f : 150.0f) * alpha));
+        MusicShapes.ban(dislikeX + 1.0f, y + SMALL_BUTTON_Y + 1.0f, SMALL_BUTTON - 2.0f,
+                disliked ? MusicComp.color(232, 108, 108, 240.0f * alpha)
+                        : MusicComp.color(224, 229, 238, (dislikeHot ? 235.0f : 150.0f) * alpha));
     }
 
     /** Scroll wheel over the widget changes the volume. */
@@ -226,6 +282,7 @@ extends Draggable {
             this.drawTexts(drawContext, x, y, a, track, engine, delta);
             this.drawSpectrum(x, y, a, engine, delta);
             this.drawControls(x, y, a, engine, mouseX, mouseY);
+            this.drawQuickButtons(x, y, a, track);
         }
         this.drawProgress(x, y, a, track, engine, delta);
         Render2D.flush();
@@ -312,6 +369,10 @@ extends Draggable {
         }
         String base = track.subtitle().isBlank() ? track.badge() : track.subtitle();
         if (track.isRadio()) {
+            String nowPlaying = engine.nowPlaying();
+            if (!nowPlaying.isBlank()) {
+                return nowPlaying;
+            }
             return "В эфире" + (base.isBlank() ? "" : " • " + base);
         }
         return base;

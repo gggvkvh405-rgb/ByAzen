@@ -25,6 +25,7 @@ public final class MusicLibrary {
     private final List<MusicTrack> favorites = new ArrayList<MusicTrack>();
     private final List<MusicTrack> custom = new ArrayList<MusicTrack>();
     private final List<MusicTrack> recent = new ArrayList<MusicTrack>();
+    private final List<MusicTrack> disliked = new ArrayList<MusicTrack>();
     private final Map<String, String> resolvedStreams = new LinkedHashMap<String, String>();
     private volatile MusicTrack lastPlayed;
 
@@ -63,6 +64,39 @@ public final class MusicLibrary {
 
     public List<MusicTrack> recent() {
         return Collections.unmodifiableList(new ArrayList<MusicTrack>(this.recent));
+    }
+
+    /** Треки, которые игрок отметил как «не нравится» (идея №10). */
+    public List<MusicTrack> disliked() {
+        return Collections.unmodifiableList(new ArrayList<MusicTrack>(this.disliked));
+    }
+
+    public boolean isDisliked(MusicTrack track) {
+        if (track == null) {
+            return false;
+        }
+        for (MusicTrack disliked : this.disliked) {
+            if (disliked.key().equals(track.key())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void toggleDislike(MusicTrack track) {
+        if (track == null || track.url() == null || track.url().isBlank()) {
+            return;
+        }
+        for (int i = 0; i < this.disliked.size(); ++i) {
+            if (this.disliked.get(i).key().equals(track.key())) {
+                this.disliked.remove(i);
+                this.save();
+                return;
+            }
+        }
+        this.disliked.add(track);
+        this.favorites.removeIf(favorite -> favorite.key().equals(track.key()));
+        this.save();
     }
 
     /** Stream url of a station after it was refreshed through the radio catalogue. */
@@ -128,6 +162,22 @@ public final class MusicLibrary {
         this.save();
     }
 
+    /** Импорт M3U-плейлиста: все станции попадают в «Свои ссылки» (идея №20). */
+    public int importPlaylist(List<MusicTrack> playlist) {
+        if (playlist == null || playlist.isEmpty()) {
+            return 0;
+        }
+        int added = 0;
+        for (MusicTrack track : playlist) {
+            if (track == null || track.url() == null || track.url().isBlank()) {
+                continue;
+            }
+            this.addCustom(track.url(), track.title());
+            ++added;
+        }
+        return added;
+    }
+
     public void removeCustom(String url) {
         if (url == null) {
             return;
@@ -189,6 +239,7 @@ public final class MusicLibrary {
             readTracks(root.getAsJsonArray("favorites"), this.favorites);
             readTracks(root.getAsJsonArray("custom"), this.custom);
             readTracks(root.getAsJsonArray("recent"), this.recent);
+            readTracks(root.getAsJsonArray("disliked"), this.disliked);
             if (root.has("resolved") && root.get("resolved").isJsonObject()) {
                 for (Map.Entry<String, JsonElement> entry : root.getAsJsonObject("resolved").entrySet()) {
                     if (entry.getValue().isJsonPrimitive()) {
@@ -261,6 +312,7 @@ public final class MusicLibrary {
             root.add("favorites", writeTracks(this.favorites));
             root.add("custom", writeTracks(this.custom));
             root.add("recent", writeTracks(this.recent));
+            root.add("disliked", writeTracks(this.disliked));
             JsonObject resolved = new JsonObject();
             for (Map.Entry<String, String> entry : this.resolvedStreams.entrySet()) {
                 resolved.addProperty(entry.getKey(), entry.getValue());

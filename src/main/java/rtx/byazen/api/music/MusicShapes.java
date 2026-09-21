@@ -71,6 +71,40 @@ public final class MusicShapes {
         Render2D.circle(x + size * 0.68f, y + size * 0.72f, size * 0.17f, color);
     }
 
+    /** Значок «не нравится»: перечёркнутый круг, нарисованный дугами окружности. */
+    public static void ban(float x, float y, float size, int color) {
+        Render2D.circleOutline(x + size * 0.5f, y + size * 0.5f, size * 0.44f, 1.15f, color);
+        Render2D.line(x + size * 0.22f, y + size * 0.78f, x + size * 0.78f, y + size * 0.22f, 1.15f, color);
+    }
+
+    /** Динамик рядом с ползунком громкости. */
+    public static void speaker(float x, float y, float size, int color) {
+        float box = size * 0.4f;
+        Render2D.rect(x + size * 0.06f, y + size * 0.33f, box, size * 0.38f, size * 0.08f, color);
+        MusicShapes.triangle(x + size * 0.3f, y + size * 0.16f, size * 0.46f, false, color);
+        Render2D.rect(x + size * 0.78f, y + size * 0.3f, size * 0.1f, size * 0.44f, size * 0.05f, color);
+    }
+
+    /** Крестик «закрыть». */
+    public static void close(float x, float y, float size, int color) {
+        float thickness = Math.max(1.0f, size * 0.13f);
+        Render2D.line(x, y, x + size, y + size, thickness, color);
+        Render2D.line(x + size, y, x, y + size, thickness, color);
+    }
+
+    /** Точка-маркер для радиальных визуализаций. */
+    public static void radialBar(float centerX, float centerY, float angle, float inner, float outer, float thickness, int color) {
+        float cos = (float) Math.cos(angle);
+        float sin = (float) Math.sin(angle);
+        int steps = 5;
+        float length = Math.max(0.5f, outer - inner);
+        float step = length / (float) steps;
+        for (int i = 0; i < steps; ++i) {
+            float radius = inner + step * (float) i;
+            Render2D.circle(centerX + cos * radius, centerY + sin * radius, thickness, color);
+        }
+    }
+
     /** Live level meter for the "now playing" row: three animated bars. */
     public static void equalizer(float x, float y, float size, float level, int color) {
         float phase = (float) (System.nanoTime() % 2000000000L) / 2.0E9f * 6.2831855f;

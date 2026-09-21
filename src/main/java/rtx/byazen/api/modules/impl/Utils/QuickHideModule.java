@@ -43,7 +43,7 @@ extends Module {
         boolean down = this.keybind.isBound() && this.keybind.getValue().isDown(this.mc.getWindow().getHandle());
         if (down && !this.keyDown) {
             this.keyDown = true;
-            this.toggle();
+            this.toggleHud();
             return;
         }
         if (!down) {
@@ -52,7 +52,7 @@ extends Module {
     }
 
     /** Скрыть или вернуть HUD. */
-    public void toggle() {
+    public void toggleHud() {
         if (this.hidden) {
             for (Draggable draggable : DragSystem.get().getAll()) {
                 Boolean visible = this.previous.get(draggable.getId());
@@ -78,7 +78,7 @@ extends Module {
 
     public void show() {
         if (this.hidden) {
-            this.toggle();
+            this.toggleHud();
         }
     }
 
