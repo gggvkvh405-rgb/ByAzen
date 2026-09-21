@@ -28,6 +28,7 @@ extends Draggable {
     private static final float PAD = 7.0f;
 
     private float alpha;
+    private long lastFrameNs;
     private float[] points = new float[32];
 
     public PerfGraphComp() {
@@ -131,5 +132,12 @@ extends Draggable {
             previousY = pointY;
         }
         Render2D.flush();
+    }
+
+    private float deltaSeconds() {
+        long now = System.nanoTime();
+        float delta = this.lastFrameNs == 0L ? 0.016f : (float) (now - this.lastFrameNs) / 1.0E9f;
+        this.lastFrameNs = now;
+        return Math.max(0.001f, Math.min(0.1f, delta));
     }
 }

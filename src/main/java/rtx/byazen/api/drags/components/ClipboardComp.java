@@ -157,4 +157,11 @@ extends Draggable {
         }
         Render2D.flush();
     }
+
+    private float deltaSeconds() {
+        long now = System.nanoTime();
+        float delta = this.lastFrameNs == 0L ? 0.016f : (float) (now - this.lastFrameNs) / 1.0E9f;
+        this.lastFrameNs = now;
+        return Math.max(0.001f, Math.min(0.1f, delta));
+    }
 }
