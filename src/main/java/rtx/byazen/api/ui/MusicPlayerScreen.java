@@ -11,8 +11,6 @@ import net.minecraft.client.input.CharInput;
 import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Text;
 import rtx.byazen.api.drags.Position;
-import rtx.byazen.api.modules.ModuleManager;
-import rtx.byazen.api.modules.impl.Interface.MusicPlayerModule;
 import rtx.byazen.api.music.MusicCovers;
 import rtx.byazen.api.music.MusicEngine;
 import rtx.byazen.api.music.MusicHttp;
@@ -84,9 +82,6 @@ extends BaseScreen {
     private float closeHover;
     private float progressHover;
     private final float[] modeHover = new float[3];
-    private final float[] chipHover = new float[7];
-    private final float[] spectrum = new float[48];
-    private float visualizerHover;
     private boolean draggingScroll;
     private boolean draggingVolume;
     private float scrollGrabOffset;
@@ -99,7 +94,6 @@ extends BaseScreen {
     private volatile boolean searching;
     private volatile String searchedQuery = "";
     private boolean popularLoaded;
-    private int libraryChip;
 
     public MusicPlayerScreen(Screen parent) {
         super(Text.literal("Музыкальный плеер"));
@@ -136,84 +130,7 @@ extends BaseScreen {
     }
 
     private float listTop() {
-        return panelY() + 74.0f + (this.tab == Tab.SEARCH || this.tab == Tab.LINKS ? FIELD_H + 8.0f : this.tab == Tab.LIBRARY ? CHIP_H + 8.0f : 0.0f);
-    }
-
-    /** Полка чипов вкладки «Библиотека»: все станции, недавние и курируемые подборки. */
-    private static final String[] CHIPS = {"Всё", "Недавние", "PvP", "Фарм", "Релакс", "Ночь", "Праздник"};
-    private static final float CHIP_H = 18.0f;
-
-    private List<MusicTrack> libraryRows() {
-        switch (this.libraryChip) {
-            case 1: {
-                return new ArrayList<MusicTrack>(this.library.recent());
-            }
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6: {
-                List<RadioCatalog.Collection> collections = RadioCatalog.collections();
-                int index = this.libraryChip - 2;
-                return index < collections.size() ? RadioCatalog.collectionTracks(collections.get(index)) : new ArrayList<MusicTrack>();
-            }
-            default: {
-                return new ArrayList<MusicTrack>(this.library.all());
-            }
-        }
-    }
-
-    private float chipWidth(int index) {
-        return Render2D.msdfWidth(FONT_SEMI, CHIPS[index], 5.6f) + 16.0f;
-    }
-
-    private void drawLibraryChips(float x, float y, float a, float mx, float my, float dt) {
-        if (this.tab != Tab.LIBRARY) {
-            return;
-        }
-        float cursor = x + PAD;
-        float chipY = y + 74.0f;
-        for (int i = 0; i < CHIPS.length; ++i) {
-            float width = this.chipWidth(i);
-            boolean hot = mx >= cursor && mx <= cursor + width && my >= chipY && my <= chipY + CHIP_H;
-            this.chipHover[i] += ((hot ? 1.0f : 0.0f) - this.chipHover[i]) * Math.min(1.0f, dt * 13.0f);
-            boolean active = i == this.libraryChip;
-            int fill = active
-                    ? ClientAccent.accentSoft(48.0f * a)
-                    : MusicPlayerScreen.rgba(255, 255, 255, (9.0f + 12.0f * this.chipHover[i]) * a);
-            Render2D.rect(cursor, chipY, width, CHIP_H, 5.5f, fill);
-            if (active) {
-                Render2D.outline(cursor, chipY, width, CHIP_H, 5.5f, 0.9f, ClientAccent.accentSoft(120.0f * a));
-            }
-            int color = active
-                    ? MusicPlayerScreen.rgba(255, 255, 255, 245.0f * a)
-                    : MusicPlayerScreen.rgba(196, 203, 216, (140.0f + 80.0f * this.chipHover[i]) * a);
-            MusicPlayerScreen.text(FONT_SEMI, CHIPS[i], cursor + 8.0f, chipY + CHIP_H * 0.5f, 5.6f, color);
-            cursor += width + 5.0f;
-        }
-    }
-
-    private boolean handleChipClick(float mx, float my, float x, float y) {
-        if (this.tab != Tab.LIBRARY) {
-            return false;
-        }
-        float cursor = x + PAD;
-        float chipY = y + 74.0f;
-        if (my < chipY - 2.0f || my > chipY + CHIP_H + 2.0f) {
-            return false;
-        }
-        for (int i = 0; i < CHIPS.length; ++i) {
-            float width = this.chipWidth(i);
-            if (mx >= cursor && mx <= cursor + width) {
-                this.libraryChip = i;
-                this.scroll = 0.0f;
-                this.scrollTarget = 0.0f;
-                Sounds.play("select_category");
-                return true;
-            }
-            cursor += width + 5.0f;
-        }
-        return false;
+        return panelY() + 74.0f + (this.tab == Tab.SEARCH || this.tab == Tab.LINKS ? FIELD_H + 8.0f : 0.0f);
     }
 
     private float listHeight() {
@@ -235,8 +152,8 @@ extends BaseScreen {
                 return found.size() > MAX_ROWS_PER_TAB ? found.subList(0, MAX_ROWS_PER_TAB) : found;
             }
             default: {
-                List<MusicTrack> source = this.libraryRows();
-                return source.size() > MAX_ROWS_PER_TAB ? source.subList(0, MAX_ROWS_PER_TAB) : source;
+                List<MusicTrack> all = new ArrayList<MusicTrack>(this.library.all());
+                return all.size() > MAX_ROWS_PER_TAB ? all.subList(0, MAX_ROWS_PER_TAB) : all;
             }
         }
     }
@@ -273,9 +190,7 @@ extends BaseScreen {
         RectUtil.drawClientRect(x, y, W, H, 12.0f, a);
         Render2D.outline(x, y, W, H, 12.0f, 1.0f, ClientAccent.accentSoft(38.0f * a));
         this.drawHeader(x, y, a, mx, my);
-        this.drawVisualizer(x, y, a, mx, my, delta);
         this.drawTabs(x, y, a, mx, my, dt);
-        this.drawLibraryChips(x, y, a, mx, my, dt);
         this.drawContent(drawContext, x, y, a, mx, my, dt);
         this.drawFooter(drawContext, x, y, a, mx, my, dt);
         this.drawToast(x, y, a, dt);
@@ -303,85 +218,6 @@ extends BaseScreen {
         float inset = 5.4f;
         Render2D.line(bx + inset, by + inset, bx + size - inset, by + size - inset, 1.4f, ink);
         Render2D.line(bx + size - inset, by + inset, bx + inset, by + size - inset, 1.4f, ink);
-    }
-
-    /** Визуализатор звука в шапке окна: столбики, волна или радиальный круг (идея №22). */
-    private void drawVisualizer(float x, float y, float a, float mx, float my, float delta) {
-        float width = 118.0f;
-        float height = 26.0f;
-        float vx = x + W - PAD - 24.0f - width;
-        float vy = y + 12.0f;
-        MusicEngine engine = MusicEngine.get();
-        float level = engine.state() == MusicEngine.State.PLAYING && !engine.isPaused() ? engine.level() : 0.0f;
-        System.arraycopy(this.spectrum, 0, this.spectrum, 1, this.spectrum.length - 1);
-        this.spectrum[0] = level;
-        boolean hot = mx >= vx && mx <= vx + width && my >= vy && my <= vy + height;
-        this.visualizerHover += ((hot ? 1.0f : 0.0f) - this.visualizerHover) * Math.min(1.0f, delta * 12.0f);
-        Render2D.rect(vx, vy, width, height, 7.0f, MusicPlayerScreen.rgba(255, 255, 255, (6.0f + 14.0f * this.visualizerHover) * a));
-        int accent = ClientAccent.accentSoft(210.0f * a);
-        int soft = ClientAccent.accentSoft(110.0f * a);
-        int style = this.visualizerStyle();
-        if (style == 1) {
-            this.drawWave(vx, vy, width, height, accent);
-        }
-        else if (style == 2) {
-            this.drawRadial(vx, vy, width, height, accent, soft);
-        }
-        else {
-            this.drawBars(vx, vy, width, height, accent, soft);
-        }
-        if (this.visualizerHover > 0.05f) {
-            String hint = MusicPlayerModule.VISUALIZER_OPTIONS[style];
-            float hintWidth = Render2D.msdfWidth(FONT_TEXT, hint, 5.2f);
-            MusicPlayerScreen.text(FONT_TEXT, hint, vx + width - hintWidth - 4.0f, vy + height - 7.0f, 5.2f,
-                    MusicPlayerScreen.rgba(255, 255, 255, 200.0f * this.visualizerHover * a));
-        }
-    }
-
-    private int visualizerStyle() {
-        rtx.byazen.api.modules.impl.Interface.MusicPlayerModule module =
-                rtx.byazen.api.modules.ModuleManager.get().get(rtx.byazen.api.modules.impl.Interface.MusicPlayerModule.class);
-        return module == null ? 0 : module.visualizerIndex();
-    }
-
-    private void drawBars(float vx, float vy, float width, float height, int accent, int soft) {
-        int bars = 24;
-        float step = width / (float) bars;
-        for (int i = 0; i < bars; ++i) {
-            float value = this.spectrum[Math.min(this.spectrum.length - 1, i * 2)];
-            float barHeight = 2.0f + (height - 8.0f) * Math.max(0.0f, Math.min(1.0f, value * 1.35f));
-            Render2D.rect(vx + (float) i * step + step * 0.18f, vy + height - 3.0f - barHeight,
-                    step * 0.64f, barHeight, step * 0.32f, i % 2 == 0 ? accent : soft);
-        }
-    }
-
-    private void drawWave(float vx, float vy, float width, float height, int accent) {
-        float middle = vy + height * 0.5f;
-        float previousX = vx + 2.0f;
-        float previousY = middle;
-        int points = 32;
-        for (int i = 1; i <= points; ++i) {
-            float value = this.spectrum[Math.min(this.spectrum.length - 1, i)] * 2.0f - 1.0f;
-            float px = vx + 2.0f + width * 0.96f * (float) i / (float) points;
-            float py = middle + Math.max(-1.0f, Math.min(1.0f, value)) * (height * 0.36f);
-            Render2D.line(previousX, previousY, px, py, 1.4f, accent);
-            previousX = px;
-            previousY = py;
-        }
-    }
-
-    private void drawRadial(float vx, float vy, float width, float height, int accent, int soft) {
-        float cx = vx + width * 0.5f;
-        float cy = vy + height * 0.5f;
-        float inner = height * 0.22f;
-        Render2D.circleOutline(cx, cy, inner, 0.9f, soft);
-        int bars = 28;
-        for (int i = 0; i < bars; ++i) {
-            float angle = (float) i / (float) bars * 6.2831855f - 1.5707964f;
-            float value = this.spectrum[Math.min(this.spectrum.length - 1, i)];
-            float outer = inner + 1.5f + (height * 0.5f - inner - 2.0f) * Math.max(0.05f, Math.min(1.0f, value * 1.4f));
-            MusicShapes.radialBar(cx, cy, angle, inner + 1.0f, outer, 0.85f, i % 2 == 0 ? accent : soft);
-        }
     }
 
     private void drawTabs(float x, float y, float a, float mx, float my, float dt) {
@@ -529,18 +365,8 @@ extends BaseScreen {
                 break;
             }
             default: {
-                if (this.libraryChip == 1) {
-                    message = "Вы ещё ничего не слушали";
-                    hint = "Недавние треки появятся здесь";
-                }
-                else if (this.libraryChip > 1) {
-                    message = "В подборке нет станций";
-                    hint = "Выберите другую подборку";
-                }
-                else {
-                    message = "Библиотека загружается";
-                    hint = "";
-                }
+                message = "Библиотека загружается";
+                hint = "";
                 break;
             }
         }
@@ -905,18 +731,6 @@ extends BaseScreen {
                 this.updateVolumeFromMouse(mx, x);
                 return true;
             }
-            if (this.handleChipClick(mx, my, x, y)) {
-                return true;
-            }
-            float visualizerX = x + W - PAD - 24.0f - 118.0f;
-            if (mx >= visualizerX && mx <= visualizerX + 118.0f && my >= y + 12.0f && my <= y + 38.0f) {
-                MusicPlayerModule module = ModuleManager.get().get(MusicPlayerModule.class);
-                if (module != null) {
-                    module.cycleVisualizer();
-                    this.toast("Визуализатор: " + MusicPlayerModule.VISUALIZER_OPTIONS[module.visualizerIndex()]);
-                }
-                return true;
-            }
             if (this.handleModeClick(mx, my, x, y)) {
                 return true;
             }
@@ -1147,19 +961,6 @@ extends BaseScreen {
         }
         if (!url.startsWith("http://") && !url.startsWith("https://")) {
             url = "https://" + url;
-        }
-        String lower = url.toLowerCase(java.util.Locale.ROOT);
-        if (lower.endsWith(".m3u") || lower.endsWith(".m3u8") || lower.contains(".m3u?")) {
-            // Импорт чужого плейлиста одним файлом (идея №20).
-            String playlistUrl = url;
-            this.toast("Загружаем плейлист…");
-            MusicHttp.submit(() -> {
-                List<MusicTrack> playlist = MusicHttp.fetchM3U(playlistUrl);
-                int added = this.library.importPlaylist(playlist);
-                this.toast(added > 0 ? "Импортировано станций: " + added : "В плейлисте не нашлось ссылок");
-            });
-            this.linkField.setText("");
-            return;
         }
         this.library.addCustom(url, MusicTrack.describeUrl(url));
         this.linkField.setText("");

@@ -14,12 +14,16 @@ import rtx.byazen.ByAzen;
 import rtx.byazen.api.chat.commands.Command;
 import rtx.byazen.api.chat.commands.impl.BindCommand;
 import rtx.byazen.api.chat.commands.impl.ConfigCommand;
+import rtx.byazen.api.chat.commands.impl.CoordsCommand;
+import rtx.byazen.api.chat.commands.impl.CraftCommand;
 import rtx.byazen.api.chat.commands.impl.HelpCommand;
 import rtx.byazen.api.chat.commands.impl.IrcCommand;
+import rtx.byazen.api.chat.commands.impl.NoteCommand;
 import rtx.byazen.api.chat.commands.impl.MacroCommand;
 import rtx.byazen.api.chat.commands.impl.PartyChatCommand;
 import rtx.byazen.api.chat.commands.impl.PartyCommand;
 import rtx.byazen.api.chat.commands.impl.PrefixCommand;
+import rtx.byazen.api.chat.commands.impl.RemindCommand;
 import rtx.byazen.api.chat.commands.impl.ViewModelCommand;
 import rtx.byazen.utils.chat.ChatMessage;
 import rtx.byazen.utils.sounds.Sounds;
@@ -66,6 +70,10 @@ public final class CommandManager {
         this.register(new PartyCommand());
         this.register(new PartyChatCommand());
         this.register(new ViewModelCommand());
+        this.register(new CoordsCommand());
+        this.register(new CraftCommand());
+        this.register(new NoteCommand());
+        this.register(new RemindCommand());
         ByAzen.LOGGER.info("[CommandManager] Initialized with {} commands, prefix '{}'", (Object)this.commands.size(), (Object)this.prefix);
     }
 
