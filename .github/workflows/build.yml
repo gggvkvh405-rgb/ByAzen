@@ -28,8 +28,21 @@ jobs:
         with:
           gradle-version: '9.5.1'
 
-      - name: Generate Gradle wrapper
+      - name: Prepare Gradle wrapper
         run: gradle wrapper --gradle-version 9.5.1 --distribution-type bin
+
+      - name: Audio smoke test (MP3 декодируется как в игре)
+        run: |
+          set -e
+          mkdir -p tools/build
+          curl -sSfL -o tools/build/jlayer.jar \
+            https://repo1.maven.org/maven2/com/googlecode/soundlibs/jlayer/1.0.1.4/jlayer-1.0.1.4.jar
+          curl -sSfL -o tools/build/fixture.mp3 \
+            -H "Authorization: Bearer ${{ github.token }}" \
+            -H "Accept: application/vnd.github.raw" \
+            https://api.github.com/repos/mpatric/mp3agic/contents/src/test/resources/obsolete-noimage.mp3
+          javac -cp tools/build/jlayer.jar -d tools/build tools/AudioSmokeTest.java
+          java -cp "tools/build/jlayer.jar:tools/build" AudioSmokeTest tools/build/fixture.mp3
 
       - name: Build ByAzen
         run: |
@@ -58,6 +71,9 @@ jobs:
           name: byazen-build
           path: build/libs/*.jar
           if-no-files-found: error
+
+      - name: Verify built jar
+        run: python3 tools/verify_jar.py
 
       - name: Publish jar into repository
         run: |
