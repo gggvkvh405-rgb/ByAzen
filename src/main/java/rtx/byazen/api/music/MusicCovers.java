@@ -118,8 +118,10 @@ public final class MusicCovers {
                 if (image.getWidth() > 320 || image.getHeight() > 320) {
                     image = MusicCovers.scale(image, Math.min(320, Math.max(image.getWidth(), image.getHeight())));
                 }
+                int[] palette = MusicCovers.extractPalette(image);
                 synchronized (cover) {
                     cover.decoded = image;
+                    cover.palette = palette;
                     cover.state = MusicCovers.State.DECODED;
                 }
             }
@@ -132,6 +134,98 @@ public final class MusicCovers {
         }, "byazen-music-cover");
         thread.setDaemon(true);
         thread.start();
+    }
+
+    /**
+     * Две доминирующие краски обложки (тёмная и яркая) - для виджета «плашка под музыку»
+     * и анимированного градиента (идея №26 из IDEAS.md). Может вернуть null, пока обложка грузится.
+     */
+    public static int[] paletteFor(String url) {
+        if (url == null || url.isBlank()) {
+            return null;
+        }
+        MusicCovers.Cover cover;
+        synchronized (CACHE) {
+            cover = CACHE.get(url);
+        }
+        if (cover == null) {
+            MusicCovers.textureFor(url);
+            return null;
+        }
+        synchronized (cover) {
+            return cover.palette;
+        }
+    }
+
+    /** Квантование цветов обложки: считаем гистограмму по сетке 5x5x5 и берём два лучших тона. */
+    private static int[] extractPalette(BufferedImage image) {
+        if (image == null) {
+            return null;
+        }
+        int size = 5;
+        int[] buckets = new int[size * size * size];
+        long[] sums = new long[buckets.length * 3];
+        int stepX = Math.max(1, image.getWidth() / 24);
+        int stepY = Math.max(1, image.getHeight() / 24);
+        for (int y = 0; y < image.getHeight(); y += stepY) {
+            for (int x = 0; x < image.getWidth(); x += stepX) {
+                int argb = image.getRGB(x, y);
+                int alpha = argb >>> 24 & 0xFF;
+                if (alpha < 160) {
+                    continue;
+                }
+                int r = argb >> 16 & 0xFF;
+                int g = argb >> 8 & 0xFF;
+                int b = argb & 0xFF;
+                int ri = Math.min(size - 1, r * size / 256);
+                int gi = Math.min(size - 1, g * size / 256);
+                int bi = Math.min(size - 1, b * size / 256);
+                int index = (ri * size + gi) * size + bi;
+                ++buckets[index];
+                sums[index * 3] += r;
+                sums[index * 3 + 1] += g;
+                sums[index * 3 + 2] += b;
+            }
+        }
+        int first = -1;
+        int second = -1;
+        for (int i = 0; i < buckets.length; ++i) {
+            if (buckets[i] <= 0) {
+                continue;
+            }
+            if (first < 0 || buckets[i] > buckets[first]) {
+                second = first;
+                first = i;
+                continue;
+            }
+            if (second < 0 || buckets[i] > buckets[second]) {
+                second = i;
+            }
+        }
+        if (first < 0) {
+            return null;
+        }
+        int main = MusicCovers.bucketColor(sums, buckets, first);
+        int accent = second < 0 ? MusicCovers.brighten(main, 1.35f) : MusicCovers.bucketColor(sums, buckets, second);
+        if (accent == main) {
+            accent = MusicCovers.brighten(main, 1.35f);
+        }
+        return new int[]{main, accent};
+    }
+
+    private static int bucketColor(long[] sums, int[] buckets, int index) {
+        int count = Math.max(1, buckets[index]);
+        int r = (int)(sums[index * 3] / (long)count);
+        int g = (int)(sums[index * 3 + 1] / (long)count);
+        int b = (int)(sums[index * 3 + 2] / (long)count);
+        return (r & 0xFF) << 16 | (g & 0xFF) << 8 | (b & 0xFF);
+    }
+
+    private static int brighten(int color, float factor) {
+        int r = Math.min(255, Math.round((color >> 16 & 0xFF) * factor));
+        int g = Math.min(255, Math.round((color >> 8 & 0xFF) * factor));
+        int b = Math.min(255, Math.round((color & 0xFF) * factor));
+        return r << 16 | g << 8 | b;
     }
 
     private static BufferedImage scale(BufferedImage source, int size) {
@@ -200,6 +294,7 @@ public final class MusicCovers {
         private Identifier identifier;
         private String textureId;
         private BufferedImage decoded;
+        private int[] palette;
     }
 
     public static final class CoverTexture

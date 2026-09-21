@@ -302,7 +302,7 @@ public final class Render2D {
     }
 
     private static int normalizeTextColor(int n) {
-        return n;
+        return rtx.byazen.api.ui.theme.SurfaceTheme.ink(n);
     }
 
     private static HalfIconRectangleRenderer halfIconRectangle() {
@@ -599,9 +599,34 @@ public final class Render2D {
         Render2D.text().enqueue(new BuiltText(string, string2, f, f2, f3, n).withHorizontalFade(f4, f5, f6, f7, f8));
     }
 
+    private static volatile float textScale = 1.0f;
+
+    /** Общий масштаб текста интерфейса (идея №195: крупный текст и лучшее чтение). */
+    public static void setTextScale(float f) {
+        Render2D.textScale = Math.max(0.8f, Math.min(1.4f, f));
+    }
+
+    public static float textScale() {
+        return Render2D.textScale;
+    }
+
+    private static float scaledText(float f) {
+        return Render2D.textScale == 1.0f ? f : f * Render2D.textScale;
+    }
+
+    /** Свой шрифт пользователя, если он включён и подходит для этой надписи (идея №49). */
+    private static String customFont(String string) {
+        return rtx.byazen.utils.render.render2d.font.CustomFonts.substitute(string);
+    }
+
     public static void msdfText(String string, String string2, float f, float f2, float f3, int n, int n2, int n3, int n4) {
+        String string3 = Render2D.customFont(string);
+        if (string3 != null) {
+            Render2D.text(string3, string2, f, f2, Render2D.scaledText(f3), n);
+            return;
+        }
         Render2D.imageBarrier();
-        Render2D.msdf().enqueue(new BuiltMsdfText(string, string2, f, f2, f3, Render2D.normalizeTextColor(n), Render2D.normalizeTextColor(n2), Render2D.normalizeTextColor(n3), Render2D.normalizeTextColor(n4)));
+        Render2D.msdf().enqueue(new BuiltMsdfText(string, string2, f, f2, Render2D.scaledText(f3), Render2D.normalizeTextColor(n), Render2D.normalizeTextColor(n2), Render2D.normalizeTextColor(n3), Render2D.normalizeTextColor(n4)));
     }
 
     public static void msdfText(BuiltMsdfText builtMsdfText) {
@@ -613,17 +638,31 @@ public final class Render2D {
     }
 
     public static void msdfText(String string, String string2, float f, float f2, float f3, int n, float f4, float f5, float f6) {
+        String string3 = Render2D.customFont(string);
+        if (string3 != null) {
+            Render2D.text(string3, string2, f, f2, Render2D.scaledText(f3), n);
+            return;
+        }
         Render2D.imageBarrier();
-        Render2D.msdf().enqueue(new BuiltMsdfText(string, string2, f, f2, f3, Render2D.normalizeTextColor(n), f4, f5, f6));
+        Render2D.msdf().enqueue(new BuiltMsdfText(string, string2, f, f2, Render2D.scaledText(f3), Render2D.normalizeTextColor(n), f4, f5, f6));
     }
 
     public static void msdfText(String string, String string2, float f, float f2, float f3, int n) {
+        String string3 = Render2D.customFont(string);
+        if (string3 != null) {
+            Render2D.text(string3, string2, f, f2, Render2D.scaledText(f3), n);
+            return;
+        }
         Render2D.imageBarrier();
-        Render2D.msdf().enqueue(new BuiltMsdfText(string, string2, f, f2, f3, Render2D.normalizeTextColor(n)));
+        Render2D.msdf().enqueue(new BuiltMsdfText(string, string2, f, f2, Render2D.scaledText(f3), Render2D.normalizeTextColor(n)));
     }
 
     public static float msdfWidth(String string, String string2, float f) {
-        return Render2D.msdf().width(string, string2, f);
+        String string3 = Render2D.customFont(string);
+        if (string3 != null) {
+            return Render2D.textWidth(string3, string2, Render2D.scaledText(f));
+        }
+        return Render2D.msdf().width(string, string2, Render2D.scaledText(f));
     }
 
     private static float endFade(float f, float f2, float f3) {

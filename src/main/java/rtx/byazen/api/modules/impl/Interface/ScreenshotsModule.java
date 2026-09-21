@@ -16,6 +16,7 @@ import rtx.byazen.api.modules.settings.impl.ButtonSetting;
 import rtx.byazen.api.modules.settings.impl.SeparatorSetting;
 import rtx.byazen.api.ui.GalleryScreen;
 import rtx.byazen.api.ui.UI;
+import rtx.byazen.utils.lang.Lang;
 
 /**
  * Скриншоты и галерея (идея №45 из IDEAS.md): быстрый просмотр снимков прямо в игре, уведомление
@@ -136,7 +137,8 @@ extends InterfaceComponentModule {
                 if (newest == null || !newest.equals(name)) {
                     continue;
                 }
-                String text = "Новый скриншот: " + name + (this.hintForF2.getValue() ? " (галерея — в модуле Screenshots)" : "");
+                String text = Lang.t("Новый скриншот: ", "New screenshot: ") + name
+                    + (this.hintForF2.getValue() ? Lang.t(" (галерея — в модуле Screenshots)", " (gallery: module Screenshots)") : "");
                 NotificationsModule.notify(text, 2600L);
                 rtx.byazen.utils.chat.ChatMessage.brandmessage(text);
             }

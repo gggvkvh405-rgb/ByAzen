@@ -28,6 +28,7 @@ import rtx.byazen.utils.render.LocalImages;
 import rtx.byazen.utils.render.others.RectUtil;
 import rtx.byazen.utils.render.render2d.Render2D;
 import rtx.byazen.utils.sounds.Sounds;
+import rtx.byazen.utils.lang.Lang;
 
 /**
  * Галерея скриншотов (идея №45 из IDEAS.md): сетка превью, просмотр на весь экран, удаление,
@@ -62,7 +63,7 @@ extends BaseScreen {
     private String footer = "";
 
     public GalleryScreen(Screen parent) {
-        super(Text.literal("Галерея скриншотов"));
+        super(Text.literal(Lang.t("Галерея скриншотов", "Screenshot gallery")));
         this.parent = parent;
         this.reload();
     }
@@ -90,7 +91,7 @@ extends BaseScreen {
                     .forEach(this.files::add);
         }
         catch (IOException exception) {
-            this.footer = "Папка со скриншотами недоступна";
+            this.footer = Lang.t("Папка со скриншотами недоступна", "Screenshot folder is unavailable");
         }
     }
 
@@ -181,13 +182,13 @@ extends BaseScreen {
         Render2D.blur(x, y, W, H, 12.0f, 14.0f, a, -1);
         RectUtil.drawClientRect(x, y, W, H, 12.0f, a);
         Render2D.outline(x, y, W, H, 12.0f, 1.0f, ClientAccent.accentSoft(38.0f * a));
-        Render2D.msdfText(FONT_TITLE, "Галерея скриншотов", x + PAD, y + 20.0f, 12.0f, GalleryScreen.rgba(255, 255, 255, 245.0f * a));
+        Render2D.msdfText(FONT_TITLE, Lang.t("Галерея скриншотов", "Screenshot gallery"), x + PAD, y + 20.0f, 12.0f, GalleryScreen.rgba(255, 255, 255, 245.0f * a));
         String subtitle = this.files.isEmpty()
-                ? "В папке screenshots пока пусто — сделайте снимок по F2"
-                : "Снимков: " + this.files.size() + "  •  " + GalleryScreen.screenshotDirectory();
+                ? Lang.t("В папке screenshots пока пусто — сделайте снимок по F2", "The screenshots folder is empty — press F2 in game")
+                : Lang.t("Снимков: ", "Shots: ") + this.files.size() + "  •  " + GalleryScreen.screenshotDirectory();
         Render2D.msdfText(FONT_TEXT, GalleryScreen.trim(subtitle, 78), x + PAD, y + 33.0f, 6.0f,
                 GalleryScreen.rgba(196, 202, 214, 140.0f * a));
-        Render2D.msdfText(FONT_TEXT, "ЛКМ — открыть, ПКМ — меню, Ctrl+ЛКМ — открыть папку, колесо — прокрутка",
+        Render2D.msdfText(FONT_TEXT, Lang.t("ЛКМ — открыть, ПКМ — меню, Ctrl+ЛКМ — открыть папку, колесо — прокрутка", "LMB — open, RMB — menu, Ctrl+LMB — open folder, wheel — scroll"),
                 x + PAD, y + 47.0f, 5.6f, GalleryScreen.rgba(170, 176, 190, 120.0f * a));
         float closeSize = 18.0f;
         float closeX = x + W - PAD - closeSize;
@@ -222,7 +223,7 @@ extends BaseScreen {
             }
             else {
                 Render2D.rect(cx, cy, this.cellWidth(), this.cellHeight(), 7.0f, GalleryScreen.rgba(18, 20, 26, 200.0f * a));
-                Render2D.msdfText(FONT_TEXT, "загрузка превью…", cx + 8.0f, cy + this.cellHeight() * 0.5f - 3.0f, 5.8f,
+                Render2D.msdfText(FONT_TEXT, Lang.t("загрузка превью…", "loading preview…"), cx + 8.0f, cy + this.cellHeight() * 0.5f - 3.0f, 5.8f,
                         GalleryScreen.rgba(190, 196, 208, 140.0f * a));
             }
             Render2D.msdfText(FONT_SEMI, this.name(file), cx + 2.0f, cy + this.cellHeight() + 4.0f, 5.4f,
@@ -232,7 +233,7 @@ extends BaseScreen {
                     cy + this.cellHeight() + 4.0f, 5.2f, GalleryScreen.rgba(176, 182, 196, 150.0f * a));
             if (this.pendingDelete == i) {
                 Render2D.rect(cx, cy, this.cellWidth(), this.cellHeight(), 7.0f, GalleryScreen.rgba(120, 20, 30, 190.0f * a));
-                Render2D.msdfText(FONT_SEMI, "Удалить? ЛКМ — да, ПКМ — нет", cx + 8.0f, cy + this.cellHeight() * 0.5f - 3.0f, 5.8f,
+                Render2D.msdfText(FONT_SEMI, Lang.t("Удалить? ЛКМ — да, ПКМ — нет", "Delete? LMB — yes, RMB — no"), cx + 8.0f, cy + this.cellHeight() * 0.5f - 3.0f, 5.8f,
                         GalleryScreen.rgba(255, 235, 235, 240.0f * a));
             }
         }
@@ -255,7 +256,7 @@ extends BaseScreen {
         RectUtil.drawClientRect(x, y, W, H, 12.0f, a);
         Render2D.outline(x, y, W, H, 12.0f, 1.0f, ClientAccent.accentSoft(38.0f * a));
         Render2D.msdfText(FONT_SEMI, this.name(file), x + PAD, y + 20.0f, 8.0f, GalleryScreen.rgba(255, 255, 255, 240.0f * a));
-        Render2D.msdfText(FONT_TEXT, "← → листать • C — копировать путь • O — открыть папку • Delete — удалить • Esc — назад",
+        Render2D.msdfText(FONT_TEXT, Lang.t("← → листать • C — копировать путь • O — открыть папку • Delete — удалить • Esc — назад", "← → browse • C — copy path • O — open folder • Delete — remove • Esc — back"),
                 x + PAD, y + 31.0f, 5.6f, GalleryScreen.rgba(180, 186, 200, 140.0f * a));
         float imageLeft = x + PAD;
         float imageTop = y + 40.0f;
@@ -268,7 +269,7 @@ extends BaseScreen {
                     GalleryScreen.rgba(255, 255, 255, 255.0f * a));
         }
         else {
-            Render2D.msdfText(FONT_TEXT, "Открываем снимок…", imageLeft + 10.0f, imageTop + 10.0f, 6.4f,
+            Render2D.msdfText(FONT_TEXT, Lang.t("Открываем снимок…", "Opening screenshot…"), imageLeft + 10.0f, imageTop + 10.0f, 6.4f,
                     GalleryScreen.rgba(200, 206, 218, 170.0f * a));
         }
         String counter = (this.previewIndex + 1) + " / " + this.files.size();
@@ -279,7 +280,7 @@ extends BaseScreen {
             float bx = x + (W - width) * 0.5f;
             float by = y + H - 46.0f;
             Render2D.rect(bx, by, width, 20.0f, 7.0f, GalleryScreen.rgba(120, 20, 30, 220.0f * a));
-            Render2D.msdfText(FONT_SEMI, "Удалить снимок? ЛКМ — да, ПКМ — отмена", bx + 8.0f, by + 6.0f, 5.8f,
+            Render2D.msdfText(FONT_SEMI, Lang.t("Удалить снимок? ЛКМ — да, ПКМ — отмена", "Delete the screenshot? LMB — yes, RMB — cancel"), bx + 8.0f, by + 6.0f, 5.8f,
                     GalleryScreen.rgba(255, 235, 235, 240.0f * a));
         }
     }
@@ -429,8 +430,8 @@ extends BaseScreen {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client != null) {
             client.keyboard.setClipboard(file.toAbsolutePath().toString());
-            this.footer = "Путь скопирован";
-            NotificationsModule.notify("Путь к снимку скопирован", 1600L);
+            this.footer = Lang.t("Путь скопирован", "Path copied");
+            NotificationsModule.notify(Lang.t("Путь к снимку скопирован", "Screenshot path copied"), 1600L);
         }
     }
 
@@ -438,10 +439,10 @@ extends BaseScreen {
         Path directory = GalleryScreen.screenshotDirectory();
         try {
             net.minecraft.util.Util.getOperatingSystem().open(directory.toFile());
-            this.footer = "Открываю папку…";
+            this.footer = Lang.t("Открываю папку…", "Opening folder…");
         }
         catch (Throwable throwable) {
-            this.footer = "Не удалось открыть папку";
+            this.footer = Lang.t("Не удалось открыть папку", "Could not open the folder");
         }
     }
 
@@ -461,13 +462,13 @@ extends BaseScreen {
             this.previewIndex = Math.max(0, Math.min(this.previewIndex, this.files.size() - 1));
             if (this.files.isEmpty()) {
                 this.previewIndex = -1;
-                this.footer = "Снимков больше нет";
+                this.footer = Lang.t("Снимков больше нет", "No screenshots left");
             }
             Sounds.play("gui_close");
-            ChatMessage.brandmessage("Снимок перемещён в " + trash.getFileName());
+            ChatMessage.brandmessage(Lang.t("Снимок перемещён в ", "Screenshot moved to ") + trash.getFileName());
         }
         catch (IOException exception) {
-            this.footer = "Не удалось удалить: " + exception.getClass().getSimpleName();
+            this.footer = Lang.t("Не удалось удалить: ", "Could not delete: ") + exception.getClass().getSimpleName();
             Sounds.play("command_error");
         }
     }

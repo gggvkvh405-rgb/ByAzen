@@ -17,6 +17,7 @@ import rtx.byazen.api.chat.commands.impl.ConfigCommand;
 import rtx.byazen.api.chat.commands.impl.CoordsCommand;
 import rtx.byazen.api.chat.commands.impl.CraftCommand;
 import rtx.byazen.api.chat.commands.impl.FindCommand;
+import rtx.byazen.api.chat.commands.impl.FontsCommand;
 import rtx.byazen.api.chat.commands.impl.HelpCommand;
 import rtx.byazen.api.chat.commands.impl.HistoryCommand;
 import rtx.byazen.api.chat.commands.impl.IrcCommand;
@@ -77,6 +78,7 @@ public final class CommandManager {
         this.register(new NoteCommand());
         this.register(new RemindCommand());
         this.register(new FindCommand());
+        this.register(new FontsCommand());
         this.register(new HistoryCommand());
         ByAzen.LOGGER.info("[CommandManager] Initialized with {} commands, prefix '{}'", (Object)this.commands.size(), (Object)this.prefix);
     }

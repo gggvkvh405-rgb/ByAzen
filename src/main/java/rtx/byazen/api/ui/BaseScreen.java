@@ -51,9 +51,22 @@ extends Screen {
     }
 
     public final void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+        float uiScale = rtx.byazen.utils.ui.UiScale.screenScale();
+        boolean scaled = uiScale != 1.0f;
+        if (scaled) {
+            float centerX = rtx.byazen.api.drags.Position.screenWidthRaw() * 0.5f;
+            float centerY = rtx.byazen.api.drags.Position.screenHeightRaw() * 0.5f;
+            context.getMatrices().pushMatrix();
+            context.getMatrices().translate(centerX, centerY);
+            context.getMatrices().scale(uiScale, uiScale);
+            context.getMatrices().translate(-centerX, -centerY);
+        }
         Render2D.beginFrame(context);
         this.renderScreen(context, mouseX, mouseY, deltaTicks);
         Render2D.flush();
+        if (scaled) {
+            context.getMatrices().popMatrix();
+        }
         GuiLayerBlurRenderer.markPanelEnd(context);
     }
 

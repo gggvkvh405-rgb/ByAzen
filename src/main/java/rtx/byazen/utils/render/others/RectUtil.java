@@ -508,6 +508,8 @@ public final class RectUtil {
         }
         float f15 = RectUtil.updateSecondColorBlend(bl3);
         int n2 = ColorUtil.lerpColor(n, lastSecondColor, f15);
+        n = rtx.byazen.api.ui.theme.SurfaceTheme.tintPanel(n);
+        n2 = rtx.byazen.api.ui.theme.SurfaceTheme.tintPanel(n2);
         float f16 = RectUtil.updateColorOffset(interfaceModule != null && interfaceModule.clientColorMovement());
         float f17 = interfaceModule == null ? 0.18f : interfaceModule.rectEdgeStrength.getFloat();
         float f18 = interfaceModule == null ? 55.0f : interfaceModule.rectEdgeSharpness.getFloat();

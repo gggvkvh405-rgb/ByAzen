@@ -56,6 +56,14 @@ extends InterfaceComponentModule {
     public final SliderSetting volume = this.register(new SliderSetting("Громкость", "Громкость интернет-радио и треков в процентах.").range(0.0f, 100.0f).increment(1.0f).setValue(70.0f));
     public final BooleanSetting showWidget = this.register(new BooleanSetting("Виджет в HUD", "Показывать компактный виджет плеера (перетаскивается в редакторе интерфейса).", true));
 
+    public final SeparatorSetting pillSeparator = this.register(new SeparatorSetting("Плашка под музыку"));
+    public final BooleanSetting pillWidget = this.register(new BooleanSetting("Плашка в HUD", "Виджет «сейчас играет» с анимированным градиентом (перетаскивается в редакторе интерфейса).", false));
+    public final SelectSetting pillStyle = this.register(new SelectSetting("Цвет плашки", "Краски плашки: по обложке трека (с плавным переливом) или по теме клиента.")
+            .value(new String[]{"Обложка", "Тема"}).selected("Обложка").visible(() -> this.pillWidget.getValue()));
+    public final BooleanSetting pillCover = this.register(new BooleanSetting("Обложка трека", "Показывать миниатюру обложки в плашке.", true).visible(this.pillWidget::getValue));
+    public final BooleanSetting pillProgress = this.register(new BooleanSetting("Полоса прогресса", "Показывать прогресс трека в правом нижнем углу плашки.", true).visible(this.pillWidget::getValue));
+    public final BooleanSetting pillBars = this.register(new BooleanSetting("Эквалайзер", "Живые полоски уровня звука рядом с названием.", true).visible(this.pillWidget::getValue));
+
     public final SeparatorSetting queueSeparator = this.register(new SeparatorSetting("Очередь"));
     public final SelectSetting repeatMode = this.register(new SelectSetting("Повтор", "Что делать, когда трек закончился.")
             .value(REPEAT_OPTIONS).selected(REPEAT_OPTIONS[1]));

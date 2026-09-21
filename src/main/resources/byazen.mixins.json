@@ -116,6 +116,7 @@
     "geckolib.common.SynchronizedRemoteSlotMixin"
   ],
   "client": [
+    "VanillaScreenThemeMixin",
     "compat.KillEffectSpawnMixin",
     "AnimatedChatHeaderMixin",
     "RecentChatPersistMixin",

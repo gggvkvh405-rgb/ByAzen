@@ -69,6 +69,11 @@ implements AutoCloseable {
     }
 
     @Override
+    /** Подключение внешнего шрифта (свои TTF, идея №49). */
+    public void registerFont(String name, java.util.function.Supplier<java.awt.Font> supplier) {
+        this.fontManager.registerExternal(name, supplier);
+    }
+
     public void close() {
         this.activeGraphics = null;
         this.frameBatches.clear();

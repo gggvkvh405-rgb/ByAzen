@@ -78,6 +78,8 @@ public final class DragSystem {
         this.register(new HPFocusComp());
         this.register(new KeyStrokesComp());
         this.register(new MusicComp());
+        this.register(new rtx.byazen.api.drags.components.MusicPillComp());
+        this.register(new rtx.byazen.api.drags.components.NextEventComp());
         this.register(new ClockComp());
         this.register(new TextComp());
         this.register(new SessionStatsComp());
@@ -255,6 +257,12 @@ public final class DragSystem {
             object = draggable.getDrag();
             if (((DragController)object).isDragging() || mitosisController.isSplitting(draggable)) continue;
             ((DragController)object).applyScreenClamp(draggable.width(), draggable.height());
+        }
+        try {
+            rtx.byazen.api.drags.HudGroupRenderer.render(drawContext, this.elements);
+        }
+        catch (Throwable throwable) {
+            ByAzen.LOGGER.error("[DragSystem] \u0413\u0440\u0443\u043f\u043f\u044b \u0432\u0438\u0434\u0436\u0435\u0442\u043e\u0432: \u043e\u0448\u0438\u0431\u043a\u0430 \u043e\u0442\u0440\u0438\u0441\u043e\u0432\u043a\u0438", throwable);
         }
         for (Draggable draggable : this.elements) {
             if (!draggable.isVisible() || mitosisController.isSplitting(draggable)) continue;

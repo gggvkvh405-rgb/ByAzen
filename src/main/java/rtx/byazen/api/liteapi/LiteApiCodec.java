@@ -16,6 +16,7 @@ public final class LiteApiCodec {
         }
     }
     public record Request(String id, String json) {}
+    public record Event(String name, String detail, long atMs, boolean recurring) {}
 
     private LiteApiCodec() {}
 
@@ -65,6 +66,66 @@ public final class LiteApiCodec {
         root.addProperty("method", "checkFeatures");
         root.add("payload", payload);
         return new Request(reqId, root.toString());
+    }
+
+    /** Запрос «следующий ивент сервера» (идея №37 из IDEAS.md). */
+    public static Request nextEvent(String clientName, long nowMs) {
+        String reqId = UUID.randomUUID().toString();
+        JsonObject payload = new JsonObject();
+        payload.addProperty("client", clientName);
+        payload.addProperty("now", nowMs);
+        payload.addProperty("zone", java.util.TimeZone.getDefault().getID());
+        JsonObject root = new JsonObject();
+        root.addProperty("id", reqId);
+        root.addProperty("method", "nextEvent");
+        root.add("payload", payload);
+        return new Request(reqId, root.toString());
+    }
+
+    private static long num(JsonObject jsonObject, String string) {
+        if (jsonObject == null || !jsonObject.has(string) || !jsonObject.get(string).isJsonPrimitive()) {
+            return 0L;
+        }
+        try {
+            return jsonObject.get(string).getAsLong();
+        }
+        catch (RuntimeException runtimeException) {
+            return 0L;
+        }
+    }
+
+    private static boolean bool(JsonObject jsonObject, String string) {
+        return jsonObject != null && jsonObject.has(string) && jsonObject.get(string).isJsonPrimitive() && jsonObject.get(string).getAsBoolean();
+    }
+
+    /** Разбор ответа сервера: имя ивента, подробности и время начала. */
+    public static Event parseEvent(JsonObject jsonObject) {
+        JsonObject jsonObject2 = LiteApiCodec.obj(jsonObject, "event");
+        if (jsonObject2 == null) {
+            jsonObject2 = jsonObject;
+        }
+        if (jsonObject2 == null) {
+            return null;
+        }
+        String name = LiteApiCodec.str(jsonObject2, "name");
+        if (name == null) {
+            name = LiteApiCodec.str(jsonObject2, "title");
+        }
+        if (name == null || name.isBlank()) {
+            return null;
+        }
+        String detail = LiteApiCodec.str(jsonObject2, "detail");
+        if (detail == null) {
+            detail = LiteApiCodec.str(jsonObject2, "subtitle");
+        }
+        long at = LiteApiCodec.num(jsonObject2, "at");
+        if (at <= 0L) {
+            long l = LiteApiCodec.num(jsonObject2, "in");
+            if (l > 0L) {
+                at = System.currentTimeMillis() + l * 1000L;
+            }
+        }
+        return new Event(name, detail, at, LiteApiCodec.bool(jsonObject2, "recurring"));
     }
 
     public static List<String> blocklist(JsonObject jsonObject) {

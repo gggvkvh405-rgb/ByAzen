@@ -106,6 +106,11 @@ implements AutoCloseable {
         this.families.put(FontManager.normalizeName(string), new FontFamily(FontManager.normalizeName(string), supplier, this.unicodeFallbacks, this::lazyUnicodeFallbacks));
     }
 
+    /** Регистрация шрифта, загруженного во время игры (свои TTF). */
+    void registerExternal(String string, Supplier<Font> supplier) {
+        this.register(string, supplier);
+    }
+
     FontFamily family(String string) {
         FontFamily fontFamily = this.families.get(FontManager.normalizeName(string));
         if (fontFamily != null) {
