@@ -40,7 +40,7 @@ jobs:
           curl -sSfL -o tools/build/fixture.mp3 \
             -H "Authorization: Bearer ${{ github.token }}" \
             -H "Accept: application/vnd.github.raw" \
-            https://api.github.com/repos/mpatric/mp3agic/contents/src/test/resources/obsolete-noimage.mp3
+            https://api.github.com/repos/mpatric/mp3agic/contents/src/test/resources/obsolete.mp3
           javac -cp tools/build/jlayer.jar -d tools/build tools/AudioSmokeTest.java
           java -cp "tools/build/jlayer.jar:tools/build" AudioSmokeTest tools/build/fixture.mp3 | tee tools/build/audio-smoke.txt
 
