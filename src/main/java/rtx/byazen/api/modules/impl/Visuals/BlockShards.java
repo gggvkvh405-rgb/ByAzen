@@ -16,7 +16,7 @@ import rtx.byazen.api.modules.settings.impl.ColorSetting;
 import rtx.byazen.api.modules.settings.impl.ModeSetting;
 import rtx.byazen.api.modules.settings.impl.SeparatorSetting;
 import rtx.byazen.api.modules.settings.impl.SliderSetting;
-import rtx.byazen.utils.render.world.MinimapColors;
+import rtx.byazen.utils.world.MinimapColors;
 import rtx.byazen.utils.render.world.SimpleParticles;
 
 /**
