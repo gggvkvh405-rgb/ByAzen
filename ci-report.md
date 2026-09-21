@@ -1,18 +1,18 @@
 # Отчёт CI по сборке ByAzen
 
-Коммит: 1b1dee6e2919fb8aef07c489f2524bed15dc97c1
+Коммит: 2309686485975fd0be680b5f461397d17ea61827
 
 ## Аудио-тракт (MP3 -> PCM, как в игре)
 ```
-frames   = 4
-samples  = 9216
+frames   = 12
+samples  = 27648
 rate     = 44100 Hz
 channels = 2
-длит.    = 0.104 c
-PCM      = 18432 байт
+длит.    = 0.313 c
+PCM      = 55296 байт
 peak     = 0.0001
-rms      = 0.0744
-silent   = 9171 сэмплов нуля
+rms      = 0.0869
+silent   = 27469 сэмплов нуля
 AUDIO SMOKE: OK
 ```
 
