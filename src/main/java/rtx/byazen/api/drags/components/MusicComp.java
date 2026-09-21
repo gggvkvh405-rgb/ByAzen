@@ -153,6 +153,11 @@ extends Draggable {
         if (onlyButtons) {
             return false;
         }
+        // Клик по верхней части виджета (обложка, название, спектр) открывает окно плеера,
+        // нижний ряд занимают кнопки, поэтому он не перехватывает клики мимо управления.
+        if (mouseY > y + BUTTON_Y - 1.0f) {
+            return false;
+        }
         MusicPlayerModule module = MusicComp.module();
         if (module != null) {
             module.openScreen();
@@ -260,7 +265,7 @@ extends Draggable {
         Fonts font = Fonts.MONTSERRAT_SEMIBOLD;
         font.draw("Музыка", cx, y + MusicComp.textY(TITLE_Y, TITLE_SIZE), TITLE_SIZE, MusicComp.color(255, 255, 255, 235.0f * alpha));
         Fonts.MONTSERRAT_MEDIUM.draw("Плеер не активен", cx, y + MusicComp.textY(SUBTITLE_Y, SUBTITLE_SIZE), SUBTITLE_SIZE, MusicComp.color(200, 205, 215, 150.0f * alpha));
-        String hint = "Нажмите, чтобы открыть библиотеку";
+        String hint = "Нажмите — откроется библиотека";
         Fonts.MONTSERRAT_MEDIUM.draw(hint, cx, y + MusicComp.textY(36.0f, 5.6f), 5.6f, MusicComp.color(160, 168, 180, 120.0f * alpha));
     }
 
