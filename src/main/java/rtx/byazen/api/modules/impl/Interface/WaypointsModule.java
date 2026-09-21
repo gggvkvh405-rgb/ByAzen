@@ -3,6 +3,7 @@ package rtx.byazen.api.modules.impl.Interface;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.MinecraftClient;
+import rtx.byazen.api.events.EventHandler;
 import rtx.byazen.api.modules.settings.impl.BindSetting;
 import rtx.byazen.api.modules.settings.impl.BooleanSetting;
 import rtx.byazen.api.modules.settings.impl.SeparatorSetting;
