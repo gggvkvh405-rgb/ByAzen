@@ -4,6 +4,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import rtx.byazen.api.modules.impl.Visuals.Ambience;
+import rtx.byazen.api.modules.impl.Visuals.NightVision;
 
 @Mixin(net.minecraft.client.render.LightmapTextureManager.class)
 
@@ -15,9 +16,15 @@ public abstract class LightTextureAmbienceMixin {
         if (ambience != null && ambience.isEnabled()) {
             float brightness = ambience.getBrightnessValue();
             if (brightness >= 0.0f) {
-                return Math.max(baseValue, brightness * 10.0f);
+                baseValue = Math.max(baseValue, brightness * 10.0f);
             }
-            return Math.max(baseValue * (1.0f + brightness), 0.08f);
+            else {
+                baseValue = Math.max(baseValue * (1.0f + brightness), 0.08f);
+            }
+        }
+        float nightVision = NightVision.gammaOverride();
+        if (nightVision > 0.0f) {
+            baseValue = Math.max(baseValue, nightVision);
         }
         return baseValue;
     }

@@ -80,6 +80,8 @@ public final class DragSystem {
         this.register(new MusicComp());
         this.register(new rtx.byazen.api.drags.components.MusicPillComp());
         this.register(new rtx.byazen.api.drags.components.NextEventComp());
+        this.register(new rtx.byazen.api.drags.components.MinimapComp());
+        this.register(new rtx.byazen.api.drags.components.WaypointsComp());
         this.register(new ClockComp());
         this.register(new TextComp());
         this.register(new SessionStatsComp());
