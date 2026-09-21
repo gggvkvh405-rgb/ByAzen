@@ -8,19 +8,16 @@ import net.minecraft.util.Formatting;
 import rtx.byazen.api.chat.commands.Command;
 import rtx.byazen.api.modules.ModuleManager;
 import rtx.byazen.api.modules.impl.Utils.NotesModule;
-import rtx.byazen.utils.chat.ChatMessage;
 
 /**
- * Заметки с привязкой к координатам (идея №108 из IDEAS.md).
- * <p>
- * {@code note <текст>} — записать заметку в текущей точке, {@code note list} — показать список,
- * {@code note del <номер>} — удалить одну, {@code note clear} — очистить всё.
+ * Заметки с привязкой к координатам (идея №108 из IDEAS.md):
+ * {@code note <текст>}, {@code note list}, {@code note del <номер>}, {@code note clear}.
  */
 public final class NoteCommand
 extends Command {
 
     public NoteCommand() {
-        super("note", "Заметки с координатами", "notes", "заметка");
+        super("note", "Заметки с координатами", "notes");
     }
 
     private NotesModule module() {
@@ -38,33 +35,37 @@ extends Command {
             module.printList();
             return;
         }
-        String first = args[0].toLowerCase(Locale.ROOT);
-        if (first.equals("list") || first.equals("список")) {
-            module.printList();
-            return;
-        }
-        if (first.equals("clear") || first.equals("очистить")) {
-            module.clear();
-            return;
-        }
-        if (first.equals("del") || first.equals("delete") || first.equals("удалить")) {
-            if (args.length < 2) {
-                this.logDirect("Укажите номер заметки: note del 2", Formatting.RED);
+        String action = args[0].toLowerCase(Locale.ROOT);
+        switch (action) {
+            case "list":
+            case "список": {
+                module.printList();
                 return;
             }
-            try {
-                int index = Integer.parseInt(args[1]) - 1;
-                if (module.removeAt(index)) {
-                    this.logDirect("Заметка удалена.", Formatting.GREEN);
-                }
-                else {
-                    this.logDirect("Заметки с таким номером нет.", Formatting.RED);
-                }
+            case "clear":
+            case "очистить": {
+                module.clear();
+                return;
             }
-            catch (NumberFormatException numberFormatException) {
-                this.logDirect("Номер должен быть числом: note del 2", Formatting.RED);
+            case "del":
+            case "delete":
+            case "удалить": {
+                if (args.length < 2) {
+                    this.logDirect("Укажите номер: note del 2", Formatting.RED);
+                    return;
+                }
+                try {
+                    int index = Integer.parseInt(args[1]) - 1;
+                    this.logDirect(module.removeAt(index) ? "Заметка удалена." : "Заметки с таким номером нет.", Formatting.GREEN);
+                }
+                catch (NumberFormatException numberFormatException) {
+                    this.logDirect("Номер должен быть числом: note del 2", Formatting.RED);
+                }
+                return;
             }
-            return;
+            default: {
+                break;
+            }
         }
         String text = String.join(" ", args).trim();
         if (text.isEmpty()) {
@@ -82,7 +83,7 @@ extends Command {
             world = this.mc.world.getRegistryKey().getValue().getPath();
         }
         NotesModule.Note note = module.add(text, x, y, z, world);
-        ChatMessage.brandmessage("Заметка сохранена: " + note.text + " (" + x + " " + y + " " + z + ")");
+        this.logDirect("Заметка сохранена: " + note.text + " (" + x + " " + y + " " + z + ")", Formatting.GREEN);
     }
 
     @Override
@@ -91,7 +92,7 @@ extends Command {
                 "", "Использование:",
                 "> note найти базу у горы",
                 "> note list",
-                "> note del 1",
+                "> note del 2",
                 "> note clear");
     }
 

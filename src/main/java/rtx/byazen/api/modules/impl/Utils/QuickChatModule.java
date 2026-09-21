@@ -1,6 +1,5 @@
 package rtx.byazen.api.modules.impl.Utils;
 
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -79,29 +78,22 @@ extends Module {
         this.send(this.replyAsWhisper.getValue() ? "/r " + text.trim() : text.trim());
     }
 
-    /** Отправляет сообщение или команду; команды уходят через сетевой обработчик. */
+    /** Отправляет сообщение или команду: клиентские команды, серверные команды и обычный чат. */
     public void send(String text) {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null || client.player == null || client.player.networkHandler == null || text == null || text.isBlank()) {
             return;
         }
         String value = text.trim();
+        rtx.byazen.api.chat.commands.CommandManager manager = rtx.byazen.api.chat.commands.CommandManager.get();
+        if (manager != null && manager.isClientCommand(value)) {
+            manager.executeRaw(value.substring(manager.getPrefix().length()));
+            return;
+        }
         if (value.startsWith("/")) {
-            if (QuickChatModule.sendCommand(client, value.substring(1))) {
-                return;
-            }
+            client.player.networkHandler.sendChatCommand(value.substring(1));
+            return;
         }
         client.player.networkHandler.sendChatMessage(value);
-    }
-
-    private static boolean sendCommand(MinecraftClient client, String command) {
-        try {
-            Method method = client.player.networkHandler.getClass().getMethod("sendChatCommand", String.class);
-            method.invoke(client.player.networkHandler, command);
-            return true;
-        }
-        catch (Throwable throwable) {
-            return false;
-        }
     }
 }

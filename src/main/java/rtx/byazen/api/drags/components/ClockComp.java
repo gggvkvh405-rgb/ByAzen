@@ -75,6 +75,7 @@ extends Draggable {
             list.add(new BoolSetting(module.h24));
             list.add(new BoolSetting(module.seconds));
             list.add(new BoolSetting(module.showDate));
+            list.add(new rtx.byazen.api.ui.settings.impl.SelectSetting(module.icon));
         }
         return list;
     }
@@ -95,9 +96,12 @@ extends Draggable {
         String date = ClockComp.date(now);
         boolean withDate = module.showDate.getValue();
 
+        String icon = module.icon.getValue();
+        float iconSize = icon == null || "Нет".equalsIgnoreCase(icon) ? 0.0f : TIME_SIZE * 1.25f;
+        float iconGap = iconSize > 0.0f ? iconSize + 5.0f : 0.0f;
         float timeWidth = Render2D.msdfWidth(FONT_TIME, time, TIME_SIZE);
         float dateWidth = withDate ? Render2D.msdfWidth(FONT_DATE, date, DATE_SIZE) : 0.0f;
-        float width = Math.max(timeWidth, dateWidth) + PAD_X * 2.0f;
+        float width = Math.max(timeWidth + iconGap, dateWidth) + PAD_X * 2.0f;
         float height = withDate ? PAD_Y * 2.0f + TIME_SIZE + LINE_GAP + DATE_SIZE - 2.0f : TIME_SIZE + PAD_Y * 2.0f - 2.0f;
         this.currentWidth = width;
         this.currentHeight = height;
@@ -107,7 +111,11 @@ extends Draggable {
         float a = this.alpha;
         Render2D.beginFrame(drawContext);
         RectUtil.drawClientRect(x, y, width, height, 6.0f, a);
-        Render2D.msdfText(FONT_TIME, time, x + (width - timeWidth) * 0.5f, y + PAD_Y, TIME_SIZE, ClientAccent.accent(242.0f * a));
+        if (iconSize > 0.0f) {
+            rtx.byazen.utils.render.icons.IconLibrary.draw(icon, x + PAD_X, y + PAD_Y + (TIME_SIZE - iconSize) * 0.5f + 1.5f, iconSize,
+                    ClientAccent.accentSoft(230.0f * a));
+        }
+        Render2D.msdfText(FONT_TIME, time, x + PAD_X + iconGap + (Math.max(timeWidth, dateWidth) - timeWidth) * 0.5f, y + PAD_Y, TIME_SIZE, ClientAccent.accent(242.0f * a));
         if (withDate) {
             Render2D.msdfText(FONT_DATE, date, x + (width - dateWidth) * 0.5f, y + PAD_Y + TIME_SIZE + LINE_GAP, DATE_SIZE,
                     ClientAccent.accentSoft(190.0f * a));

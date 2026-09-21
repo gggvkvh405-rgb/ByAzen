@@ -462,7 +462,13 @@ public final class RectUtil {
             RectUtil.drawGlow(interfaceModule, splitOverrideChildX, splitOverrideChildY, splitOverrideChildW, splitOverrideChildH, splitOverrideChildRadius, f11, n2, n3, f15);
         }
         BuiltGlass builtGlass = new BuiltGlass(f, f2, f3, f4, f12, f12, f12, f12, n2, f11 * 1.0f, f17, n2, 1.0f, true, f16, f18, 0.5f, 0.0f).withBlurRadius(f13).withSecondColor(n3, f15).withSplitIndex(bl ? -n : n);
+        if (rtx.byazen.api.modules.impl.Interface.HudStyleModule.shadowEnabled()) {
+            Render2D.rect(f - 1.5f, f2 + 2.0f, f3 + 3.0f, f4 + 3.0f, f10 + 1.5f, 0x36000000);
+        }
         Render2D.glass(builtGlass);
+        if (rtx.byazen.api.modules.impl.Interface.HudStyleModule.outlineEnabled()) {
+            Render2D.outline(f, f2, f3, f4, f10, rtx.byazen.api.modules.impl.Interface.HudStyleModule.outlineWidth(), 0x40FFFFFF);
+        }
     }
 
     /** Множитель прозрачности всех клиентских панелей: используется для плавного появления HUD (идея №32). */
@@ -478,6 +484,7 @@ public final class RectUtil {
 
     private static void drawClientRectImpl(float f, float f2, float f3, float f4, float f5, float f6, float f7, boolean bl, boolean bl2) {
         f6 *= RectUtil.globalAlpha;
+        f6 *= rtx.byazen.api.modules.impl.Interface.HudStyleModule.alphaMultiplier();
         boolean bl3;
         if (f3 <= 0.0f || f4 <= 0.0f || f6 <= 0.0f) {
             return;
@@ -488,6 +495,7 @@ public final class RectUtil {
         InterfaceModule interfaceModule = InterfaceModule.getInstance();
         float f8 = RectUtil.clamp(f6);
         float f9 = (bl2 || interfaceModule == null ? f5 : interfaceModule.rectCornerRadius.getFloat()) + f7;
+        f9 += rtx.byazen.api.modules.impl.Interface.HudStyleModule.radiusAdd();
         float f10 = Math.max(0.0f, Math.min(f9, Math.min(f3, f4) * 0.5f));
         float f11 = interfaceModule == null ? 18.0f : interfaceModule.rectBackdropBlur.getFloat();
         float f12 = 1.0f;

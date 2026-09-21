@@ -4,6 +4,7 @@ import java.util.Locale;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.PlayerListEntry;
 import rtx.byazen.api.modules.settings.impl.BooleanSetting;
+import rtx.byazen.api.modules.settings.impl.SelectSetting;
 import rtx.byazen.api.modules.settings.impl.SeparatorSetting;
 import rtx.byazen.api.modules.settings.impl.SliderSetting;
 import rtx.byazen.api.modules.settings.impl.TextSetting;
@@ -28,6 +29,8 @@ extends InterfaceComponentModule {
     public boolean defaultEnabled() {
         return false;
     }
+
+    public final SelectSetting icon = this.register(new SelectSetting("Иконка", "Векторная иконка перед текстом (идея №35).").value(rtx.byazen.utils.render.icons.IconLibrary.NAMES).selected(rtx.byazen.utils.render.icons.IconLibrary.NAMES[0]));
 
     public CustomTextModule() {
         super("Custom Text", "Свой текст в HUD с плейсхолдерами: %fps%, %ping%, %coords%, %world%, %speed%, %memory%, %time%, %date%.");

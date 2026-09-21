@@ -8,19 +8,16 @@ import net.minecraft.util.Formatting;
 import rtx.byazen.api.chat.commands.Command;
 import rtx.byazen.api.modules.ModuleManager;
 import rtx.byazen.api.modules.impl.Utils.RemindersModule;
-import rtx.byazen.utils.chat.ChatMessage;
 
 /**
- * Планировщик напоминаний (идея №103 из IDEAS.md).
- * <p>
- * {@code remind 30 выпить воды} — напомнить через 30 минут, {@code remind list} — список,
- * {@code remind clear} — удалить все.
+ * Планировщик напоминаний (идея №103 из IDEAS.md):
+ * {@code remind 30 выпить воды}, {@code remind list}, {@code remind clear}.
  */
 public final class RemindCommand
 extends Command {
 
     public RemindCommand() {
-        super("remind", "Напоминания через N минут", "timer", "напомни");
+        super("remind", "Напоминания через N минут", "timer");
     }
 
     private RemindersModule module() {
@@ -39,22 +36,19 @@ extends Command {
             this.logDirect("Пример: remind 30 выпить воды", Formatting.GRAY);
             return;
         }
-        String first = args[0].toLowerCase(Locale.ROOT);
-        if (first.equals("list") || first.equals("список")) {
+        String action = args[0].toLowerCase(Locale.ROOT);
+        if (action.equals("list") || action.equals("список")) {
             List<RemindersModule.Entry> entries = module.entries();
             if (entries.isEmpty()) {
-                ChatMessage.brandmessage("Активных напоминаний нет.");
+                this.logDirect("Активных напоминаний нет.", Formatting.GRAY);
                 return;
             }
-            ChatMessage.brandmessage("Напоминания (" + entries.size() + "):");
-            for (int i = 0; i < entries.size(); ++i) {
-                RemindersModule.Entry entry = entries.get(i);
-                ChatMessage.brandmessage(net.minecraft.text.Text.literal("  " + (i + 1) + ". через " + entry.minutesLeft() + " мин — " + entry.text)
-                        .formatted(Formatting.GRAY));
+            for (RemindersModule.Entry entry : entries) {
+                this.logDirect("через " + entry.minutesLeft() + " мин — " + entry.text + (entry.minutes > 0 ? " (поставлено на " + entry.minutes + " мин)" : ""), Formatting.GRAY);
             }
             return;
         }
-        if (first.equals("clear") || first.equals("очистить")) {
+        if (action.equals("clear") || action.equals("очистить")) {
             module.clear();
             return;
         }
@@ -66,26 +60,26 @@ extends Command {
             this.logDirect("Первым аргументом должно быть число минут: remind 30 выпить воды", Formatting.RED);
             return;
         }
-        StringBuilder text = new StringBuilder();
-        for (int i = 1; i < args.length; ++i) {
-            if (text.length() > 0) {
-                text.append(' ');
-            }
-            text.append(args[i]);
-        }
-        if (text.length() == 0) {
+        if (args.length < 2) {
             this.logDirect("Добавьте текст напоминания: remind " + minutes + " выпить воды", Formatting.RED);
             return;
         }
-        module.add(minutes, text.toString());
+        StringBuilder builder = new StringBuilder();
+        for (int i = 1; i < args.length; ++i) {
+            if (builder.length() > 0) {
+                builder.append(' ');
+            }
+            builder.append(args[i]);
+        }
+        module.add(minutes, builder.toString());
     }
 
     @Override
     public List<String> getLongDesc() {
-        return Arrays.asList("Напоминает о чём угодно через заданное число минут.",
+        return Arrays.asList("Напоминает о чём угодно через заданное число минут: вода, разминка, проверка AFK.",
                 "", "Использование:",
                 "> remind 30 выпить воды",
-                "> remind 5 проверить рынок",
+                "> remind 60 размяться",
                 "> remind list",
                 "> remind clear");
     }

@@ -68,6 +68,7 @@ extends Draggable {
             list.add(new SliderSetting(module.size));
             list.add(new BoolSetting(module.background));
             list.add(new BoolSetting(module.shadow));
+            list.add(new rtx.byazen.api.ui.settings.impl.SelectSetting(module.icon));
         }
         return list;
     }
@@ -92,6 +93,10 @@ extends Draggable {
         for (String line : lines) {
             width = Math.max(width, Render2D.msdfWidth(FONT, line, size));
         }
+        String icon = module.icon.getValue();
+        float iconSize = icon == null || "Нет".equalsIgnoreCase(icon) ? 0.0f : size * 1.4f;
+        float iconGap = iconSize > 0.0f ? iconSize + 4.0f : 0.0f;
+        width += iconGap;
         float lineHeight = size + 2.0f;
         boolean background = module.background.getValue();
         float boxWidth = width + PAD_X * 2.0f;
@@ -109,9 +114,13 @@ extends Draggable {
         for (int i = 0; i < lines.size(); ++i) {
             float lineY = y + PAD_Y + (float) i * lineHeight;
             if (module.shadow.getValue()) {
-                Render2D.msdfText(FONT, lines.get(i), x + PAD_X + 1.0f, lineY + 1.0f, size, TextComp.shadow(a));
+                Render2D.msdfText(FONT, lines.get(i), x + PAD_X + iconGap + 1.0f, lineY + 1.0f, size, TextComp.shadow(a));
             }
-            Render2D.msdfText(FONT, lines.get(i), x + PAD_X, lineY, size, TextComp.ink(a));
+            Render2D.msdfText(FONT, lines.get(i), x + PAD_X + iconGap, lineY, size, TextComp.ink(a));
+        }
+        if (iconSize > 0.0f) {
+            rtx.byazen.utils.render.icons.IconLibrary.draw(icon, x + PAD_X, y + PAD_Y + (size - iconSize) * 0.5f + 0.5f, iconSize,
+                    rtx.byazen.utils.color.ColorUtil.rgba(232, 237, 246, Math.round(215.0f * a)));
         }
         Render2D.flush();
     }
