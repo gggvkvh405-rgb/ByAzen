@@ -14,7 +14,9 @@ public final class ParticleConstants {
         new ParticleTexture("Ромб", Identifier.of("byazen", "textures/features/particles/rhombus.png")),
         new ParticleTexture("Доллар", Identifier.of("byazen", "textures/features/particles/dollar.png")),
         new ParticleTexture("Снежинка", Identifier.of("byazen", "textures/features/particles/snowflake.png")),
-        new ParticleTexture("Треугольник", Identifier.of("byazen", "textures/features/particles/triangle.png"))
+        new ParticleTexture("Треугольник", Identifier.of("byazen", "textures/features/particles/triangle.png")),
+        new ParticleTexture("Свечение", Identifier.of("byazen", "textures/features/particles/glow.png")),
+        new ParticleTexture("Искра", Identifier.of("byazen", "textures/features/particles/spark.png"))
     };
 
     private ParticleConstants() {}
