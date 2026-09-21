@@ -1,6 +1,6 @@
 # Отчёт CI по сборке ByAzen
 
-Коммит: 89d0cd523dab56cf7e25ff074c162489f22b58fd
+Коммит: 1fb0e7741c084af2c38219962a46101bc0394b69
 
 ## Аудио-тракт (MP3 -> PCM, как в игре)
 ```
@@ -18,9 +18,9 @@ AUDIO SMOKE: OK
 
 ## Проверка собранного jar
 ```
-файл:             /home/runner/work/ByAzen/ByAzen/build/libs/ByAzen-1.4.1.jar
+файл:             /home/runner/work/ByAzen/ByAzen/build/libs/ByAzen-1.5.0.jar
 mod id:           byazen
-версия в jar:     1.4.1 (ожидается 1.4.1)
+версия в jar:     1.5.0 (ожидается 1.5.0)
 объявлено jar:    6
 лежит в jar:      6
 entrypoints:      client,main
