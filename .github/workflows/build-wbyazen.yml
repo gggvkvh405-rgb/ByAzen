@@ -2,6 +2,13 @@ name: Build wByAzen
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - arena/01a0c264-byazen
+    paths:
+      - 'wexside/**'
+      - '.github/workflows/build-wbyazen.yml'
+      - '.build-trigger'
 
 permissions:
   contents: write
