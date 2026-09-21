@@ -39,16 +39,17 @@ public final class MusicCovers {
         if (url == null || url.isBlank()) {
             return null;
         }
-        MusicCovers.Cover cover;
+        MusicCovers.Cover found;
         synchronized (CACHE) {
-            cover = CACHE.get(url);
-            if (cover == null) {
-                cover = new MusicCovers.Cover();
-                CACHE.put(url, cover);
+            found = CACHE.get(url);
+            if (found == null) {
+                found = new MusicCovers.Cover();
+                CACHE.put(url, found);
                 MusicCovers.evict();
-                MusicCovers.download(url, cover);
+                MusicCovers.download(url, found);
             }
         }
+        MusicCovers.Cover cover = found;
         synchronized (cover) {
             if (cover.decoded != null) {
                 BufferedImage image = cover.decoded;

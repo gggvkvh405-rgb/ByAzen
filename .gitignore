@@ -5,6 +5,9 @@ out/
 run/
 *.log
 
+# --- CI ---
+build-log.txt
+
 # --- IDE ---
 .idea/
 *.iml
