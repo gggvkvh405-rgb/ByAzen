@@ -26,6 +26,7 @@ import rtx.byazen.utils.color.ColorUtil;
 import rtx.byazen.utils.key.KeyBind;
 import rtx.byazen.utils.render.fonts.Fonts;
 import rtx.byazen.utils.render.others.RoundedScissor;
+import rtx.byazen.utils.config.ModuleFavorites;
 import rtx.byazen.utils.render.render2d.Render2D;
 
 public final class ModuleListRenderer {
@@ -52,6 +53,7 @@ public final class ModuleListRenderer {
     private static final float GEAR_GAP = 7.0f;
     private static final float GEAR_SIZE = 7.0f;
     private static final String GEAR_GLYPH = "f";
+    private static final float STAR_SIZE = 9.0f;
     private static final float CHECK_SIZE = 8.5f;
     private static final float CHECK_SCALE = 0.425f;
     private static final float CHECK_RADIUS = 2.9750001f;
@@ -67,6 +69,7 @@ public final class ModuleListRenderer {
     private final Map<String, Decelerate> enableAnims = new HashMap<String, Decelerate>();
     private final Map<String, Float> hoverAnims = new HashMap<String, Float>();
     private final Map<String, Float> gearHoverAnims = new HashMap<String, Float>();
+    private final Map<String, Float> favoriteAnims = new HashMap<String, Float>();
     private final Map<String, Float> gearOpenAnims = new HashMap<String, Float>();
     private final Map<String, List<String>> descLinesCache = new HashMap<String, List<String>>();
     private final Map<String, Float> baseHeightCache = new HashMap<String, Float>();
@@ -288,6 +291,28 @@ public final class ModuleListRenderer {
             if (ServerRestrictions.isHiddenBy(module, enumSet)) continue;
             arrayList.add(module);
         }
+        // Избранные модули поднимаются наверх, остальные сохраняют исходный порядок (идея №41).
+        boolean hasFavorite = false;
+        for (Module module : arrayList) {
+            if (ModuleFavorites.isFavorite(module)) {
+                hasFavorite = true;
+                break;
+            }
+        }
+        if (hasFavorite) {
+            Map<String, Integer> order = new HashMap<String, Integer>();
+            for (int i = 0; i < arrayList.size(); ++i) {
+                order.put(arrayList.get(i).getName(), i);
+            }
+            arrayList.sort((left, right) -> {
+                boolean leftFav = ModuleFavorites.isFavorite(left);
+                boolean rightFav = ModuleFavorites.isFavorite(right);
+                if (leftFav != rightFav) {
+                    return leftFav ? -1 : 1;
+                }
+                return Integer.compare(order.getOrDefault(left.getName(), 0), order.getOrDefault(right.getName(), 0));
+            });
+        }
         return arrayList;
     }
 
@@ -347,6 +372,41 @@ public final class ModuleListRenderer {
         float f7 = Fonts.BYAZEN.msdfWidth(GEAR_GLYPH, 7.0f);
         float f8 = f6 - 7.0f - f7;
         return f >= f8 - 3.5f && f <= f8 + f7 + 3.5f && f2 >= f4 + 3.5f && f2 <= f4 + 18.0f;
+    }
+
+    /** Область звёздочки «в избранное» на карточке модуля (идея №41). */
+    public float[] favoriteRect(Module module, float cardX, float cardY, float cardW) {
+        float gearWidth = Fonts.BYAZEN.msdfWidth(GEAR_GLYPH, GEAR_SIZE);
+        float checkX = cardX + cardW - TOGGLE_RIGHT_PAD - CHECK_SIZE;
+        float gearX = checkX - GEAR_GAP - gearWidth;
+        float starX = gearX - 11.0f;
+        float cardH = this.baseCardHeight(module, cardW);
+        return new float[]{starX, cardY + cardH * 0.5f - 4.5f, 9.0f, 9.0f};
+    }
+
+    /** Рисует звёздочку избранного и возвращает её прозрачность (для подсветки при наведении). */
+    private float drawFavorite(Module module, float cardX, float cardY, float cardW, float alpha, float hoverT) {
+        float[] rect = this.favoriteRect(module, cardX, cardY, cardW);
+        boolean favorite = ModuleFavorites.isFavorite(module);
+        float hover = this.favoriteAnims.getOrDefault(module.getName(), Float.valueOf(0.0f)).floatValue();
+        hover += ((hoverT - hover) * 0.25f);
+        this.favoriteAnims.put(module.getName(), Float.valueOf(hover));
+        int accent = ClientAccent.gradientA((60.0f + 120.0f * hover) * alpha);
+        float inset = 0.6f + 0.2f * hover;
+        float cx = rect[0] + rect[2] * 0.5f;
+        float cy = rect[1] + rect[3] * 0.5f;
+        int color = favorite
+                ? ClientAccent.accentBright((210.0f + 45.0f * hover) * alpha)
+                : ModuleListRenderer.rgba(226, 230, 238, (favorite ? 200.0f : 90.0f + 90.0f * hover) * alpha);
+        // пятиконечная звезда: два треугольника + ромб из ромбовидных полос
+        for (int i = 0; i < 5; ++i) {
+            double angle = -Math.PI / 2.0 + (double) i * (Math.PI * 2.0 / 5.0);
+            float px = cx + (float) Math.cos(angle) * (rect[2] * 0.5f - inset);
+            float py = cy + (float) Math.sin(angle) * (rect[3] * 0.5f - inset);
+            Render2D.circle(px, py, 1.35f, color);
+        }
+        Render2D.rect(cx - 0.8f, cy - 1.0f, 1.6f, 2.6f, 0.8f, color);
+        return hover;
     }
 
     public boolean scrollbarGrab(float f, float f2) {
@@ -526,6 +586,10 @@ public final class ModuleListRenderer {
             f15 = f25 + 10.75f - 4.25f;
             boolean bl8 = bl5 && f12 >= f16 - 2.0f && f12 <= f16 + 8.5f + 2.0f && f13 >= f15 - 2.0f && f13 <= f15 + 8.5f + 2.0f;
             ModuleListRenderer.drawModuleCheck(f16, f15, f35, f21, bl8);
+            float[] favoriteRect = this.favoriteRect(module, f23, f25, f4);
+            boolean favoriteHot = bl5 && f12 >= favoriteRect[0] - 2.0f && f12 <= favoriteRect[0] + favoriteRect[2] + 2.0f
+                    && f13 >= favoriteRect[1] - 2.0f && f13 <= favoriteRect[1] + favoriteRect[3] + 2.0f;
+            this.drawFavorite(module, f23, f25, f4, f21, favoriteHot ? 1.0f : 0.0f);
             if (!module.getSettings().all().isEmpty()) {
                 boolean bl9 = UI.isSettingsOpenFor(module.getName());
                 float f40 = Fonts.BYAZEN.msdfWidth(GEAR_GLYPH, 7.0f);

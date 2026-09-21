@@ -30,6 +30,7 @@ import rtx.byazen.api.modules.Module;
 import rtx.byazen.api.modules.ModuleManager;
 import rtx.byazen.api.modules.impl.Interface.ClickGui;
 import rtx.byazen.api.modules.impl.Interface.InterfaceModule;
+import rtx.byazen.api.modules.impl.Interface.NotificationsModule;
 import rtx.byazen.api.modules.impl.Utils.guishare.GuiShareCloseState;
 import rtx.byazen.api.modules.impl.Utils.guishare.GuiShareLocalSnapshot;
 import rtx.byazen.api.modules.impl.Utils.guishare.GuiSharePopupRow;
@@ -65,6 +66,7 @@ import rtx.byazen.utils.render.post.guilayerblur.GuiCapture;
 import rtx.byazen.utils.render.post.guilayerblur.GuiCapture.Source;
 import rtx.byazen.utils.render.post.guilayerblur.GuiLayerBlurRenderer;
 import rtx.byazen.utils.render.post.guimotionblur.GuiMotionBlurRenderer;
+import rtx.byazen.utils.config.ModuleFavorites;
 import rtx.byazen.utils.render.render2d.Render2D;
 import rtx.byazen.utils.render.render2d.Render2DCoordinateSpace;
 import rtx.byazen.utils.render.render2d.blur.BlurFramebuffer;
@@ -111,6 +113,7 @@ implements GuiCapture.Source {
     private final SearchField search = new SearchField();
     private final BindPopup bindPopup = new BindPopup();
     private final SettingsPopup settingsPopup = new SettingsPopup();
+    private final SettingsSearchPalette settingsPalette = new SettingsSearchPalette();
     private final ThemesRenderer themesRenderer = new ThemesRenderer();
     private final EventsRenderer eventsRenderer = new EventsRenderer();
     private final GuiMotionAnimation screenAnim = new GuiMotionAnimation();
@@ -283,6 +286,14 @@ implements GuiCapture.Source {
     public boolean keyPressed(KeyInput input) {
         int n;
         Setting setting;
+        if (this.settingsPalette.isOpen() && this.settingsPalette.keyPressed(input)) {
+            return true;
+        }
+        if (UI.ctrlHeld() && input.key() == 70 && this.screenAnim.canInteract()) {
+            this.settingsPalette.openPalette();
+            Sounds.play("settings_open");
+            return true;
+        }
         if (this.screenAnim.isClosing()) {
             int n2;
             ClickGui clickGui = ModuleManager.get().get(ClickGui.class);
@@ -368,6 +379,9 @@ implements GuiCapture.Source {
         if (!this.screenAnim.canInteract()) {
             return true;
         }
+        if (this.settingsPalette.isOpen() && this.settingsPalette.mouseClicked(click)) {
+            return true;
+        }
         float f = 430.0f;
         float f2 = 290.0f;
         float f3 = Position.screenWidth() / 2.0f - f / 2.0f;
@@ -430,6 +444,14 @@ implements GuiCapture.Source {
                         float f13 = fArray[2];
                         float f14 = fArray[3];
                         if (!(f5 >= f11) || !(f5 <= f11 + f13) || !(f6 >= f12) || !(f6 <= f12 + f14)) continue;
+                        float[] fArray2 = this.moduleList.favoriteRect(module, f11, f12, f13);
+                        if (click.button() == 0 && f5 >= fArray2[0] - 2.0f && f5 <= fArray2[0] + fArray2[2] + 2.0f
+                                && f6 >= fArray2[1] - 2.0f && f6 <= fArray2[1] + fArray2[3] + 2.0f) {
+                            boolean bl4 = ModuleFavorites.toggle(module);
+                            Sounds.play(bl4 ? "gui_open" : "gui_close");
+                            NotificationsModule.notify((bl4 ? "В избранном: " : "Убрано из избранного: ") + module.getDisplayName(), 1600L);
+                            return true;
+                        }
                         if (click.button() == 1) {
                             if (!module.getSettings().all().isEmpty()) {
                                 boolean bl2 = this.settingsPopup.toggle(module, f5, f6, f7, f8, f9, f10);
@@ -491,6 +513,9 @@ implements GuiCapture.Source {
         if (!this.screenAnim.canInteract()) {
             return true;
         }
+        if (this.settingsPalette.mouseScrolled(verticalAmount)) {
+            return true;
+        }
         if (this.bindPopup.isOpen()) {
             this.bindPopup.close();
             return true;
@@ -525,6 +550,7 @@ implements GuiCapture.Source {
         if (this.screenAnim.isClosing()) {
             return true;
         }
+        this.settingsPalette.mouseReleased(click.button());
         if (click.button() == 0) {
             this.settingsPopup.releaseDrags();
             this.bindPopup.releaseDrag();
@@ -537,6 +563,9 @@ implements GuiCapture.Source {
 
     public boolean charTyped(CharInput input) {
         if (this.screenAnim.isClosing()) {
+            return true;
+        }
+        if (this.settingsPalette.charTyped(input)) {
             return true;
         }
         if (this.bindPopup.isOpen()) {
@@ -1140,6 +1169,47 @@ implements GuiCapture.Source {
     @Override
     protected void renderScreen(DrawContext drawContext, int n, int n2, float f) {
         this.renderPanel(drawContext);
+        this.settingsPalette.render(drawContext, this.screenAnim.alpha());
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        this.settingsPalette.tick();
+    }
+
+    /** Открывает окно настроек модуля (при необходимости с подсветкой конкретной настройки). */
+    public static void openModuleSettings(Module module, String settingName) {
+        if (module == null) {
+            return;
+        }
+        UI uI = UI.INSTANCE;
+        if (!uI.settingsPopup.isOpenFor(module.getName())) {
+            float f = Position.mouseX();
+            float f2 = Position.mouseY();
+            uI.settingsPopup.toggle(module, f, f2, f, f2, 300.0f, 250.0f);
+        }
+        if (settingName != null) {
+            uI.settingsPopup.focusSetting(settingName);
+        }
+    }
+
+    /** Открывает ClickGui и подсвечивает нужный модуль (идея №189: «где это найти»). */
+    public static void focusModuleInGui(Module module) {
+        if (module == null) {
+            return;
+        }
+        UI uI = UI.INSTANCE;
+        Category category = module.getCategory();
+        if (uI.contentCategory != category) {
+            if (category == Category.THEMES) {
+                uI.selectCategory(category);
+            }
+            else {
+                uI.selectCategory(category);
+            }
+        }
+        uI.moduleList.focusModule(module.getName());
     }
 
     private void renderModuleHeaderPanel(float f, float f2, float f3, float f4, float f5) {

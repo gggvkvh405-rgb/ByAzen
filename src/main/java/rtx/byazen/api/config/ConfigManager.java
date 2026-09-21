@@ -424,7 +424,7 @@ public final class ConfigManager {
         return ConfigManager.profilesDirectory().resolve(ConfigManager.sanitizeProfileName(string) + PREVIOUS_CONFIG_EXTENSION);
     }
 
-    private static void resetSetting(Setting setting) {
+    public static void resetSetting(Setting setting) {
         try {
             if (setting instanceof BooleanSetting) {
                 BooleanSetting booleanSetting = (BooleanSetting)setting;
@@ -480,7 +480,7 @@ public final class ConfigManager {
         }
     }
 
-    private static void applySetting(Setting setting, JsonElement jsonElement) {
+    public static void applySetting(Setting setting, JsonElement jsonElement) {
         try {
             Setting setting2;
             if (setting instanceof BooleanSetting) {
@@ -565,7 +565,7 @@ public final class ConfigManager {
         }
     }
 
-    private static JsonElement serializeSetting(Setting setting) {
+    public static JsonElement serializeSetting(Setting setting) {
         if (setting instanceof BooleanSetting) {
             BooleanSetting booleanSetting = (BooleanSetting)setting;
             return GSON.toJsonTree((Object)booleanSetting.getValue());

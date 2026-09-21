@@ -7,6 +7,7 @@ import rtx.byazen.api.modules.Category;
 import rtx.byazen.api.modules.restrict.ServerRestrictions;
 import rtx.byazen.api.modules.settings.Setting;
 import rtx.byazen.api.modules.settings.SettingRepository;
+import rtx.byazen.utils.config.ChangeLog;
 import rtx.byazen.utils.key.KeyBind;
 
 public abstract class Module {
@@ -34,14 +35,20 @@ public abstract class Module {
     }
 
     protected final <T extends Setting> T register(T t) {
-        t.setChangeListener(ConfigManager::markDirty);
+        t.setChangeListener(() -> {
+            ConfigManager.markDirty();
+            ChangeLog.record(this, t);
+        });
         this.settings.add(t);
         return t;
     }
 
     protected final void register(Setting ... settingArray) {
         for (Setting setting : settingArray) {
-            setting.setChangeListener(ConfigManager::markDirty);
+            setting.setChangeListener(() -> {
+                ConfigManager.markDirty();
+                ChangeLog.record(this, setting);
+            });
         }
         this.settings.add(settingArray);
     }
