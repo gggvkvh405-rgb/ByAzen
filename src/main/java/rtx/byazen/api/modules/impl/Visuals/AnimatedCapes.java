@@ -156,7 +156,7 @@ extends Module {
             module.strafeFactor.setValue(3.0f);
         }
         module.apply();
-        CosmeticSounds.playSet(flavor, 0.85f);
+        CosmeticSounds.playSet("winter".equals(flavor) ? "snow" : flavor, 0.85f);
         if (!module.isEnabled()) {
             module.enable();
         }
