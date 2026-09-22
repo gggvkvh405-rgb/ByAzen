@@ -1,5 +1,9 @@
 {
   "code_sizes": {
+    "ByAzenHubScreen.java": [
+      600,
+      340
+    ],
     "CloudConfigsScreen.java": [
       520,
       300
