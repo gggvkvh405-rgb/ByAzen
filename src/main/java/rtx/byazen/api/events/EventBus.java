@@ -30,6 +30,10 @@ public final class EventBus {
     }
 
     public <E extends Event> E post(E e) {
+        if (rtx.byazen.utils.perf.ModuleProfiler.enabled()
+                && e instanceof rtx.byazen.api.events.impl.render.HudRenderEvent) {
+            rtx.byazen.utils.perf.ModuleProfiler.frame();
+        }
         List<EventBus.Binding> list = this.bindings.get(e.getClass());
         if (list == null || list.isEmpty()) {
             return e;
@@ -93,12 +97,19 @@ public final class EventBus {
 
     public record Binding(Object owner, MethodHandle handle, Priority priority, int order) {
         public void invoke(Event event) {
+            boolean measure = rtx.byazen.utils.perf.ModuleProfiler.enabled();
+            long begin = measure ? System.nanoTime() : 0L;
             try {
                 this.handle.invoke(event);
             } catch (Throwable throwable) {
                 String string = this.owner.getClass().getName() + "|" + event.getClass().getName() + "|" + throwable.getClass().getName();
                 if (EventBus.REPORTED_FAILURES.add(string)) {
                     ByAzen.LOGGER.error("[EventBus] Exception in event handler {} for {} (further identical errors suppressed)", this.owner.getClass().getSimpleName(), event.getClass().getSimpleName(), throwable);
+                }
+            }
+            finally {
+                if (measure) {
+                    rtx.byazen.utils.perf.ModuleProfiler.record(this.owner, System.nanoTime() - begin);
                 }
             }
         }

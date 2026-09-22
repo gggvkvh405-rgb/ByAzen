@@ -198,6 +198,13 @@ public final class ConfigManager {
 
     private static void applyModuleRoot(JsonObject jsonObject) {
         JsonObject jsonObject2;
+        // старый файл сначала приводим к текущему формату (идея №160)
+        rtx.byazen.utils.config.ConfigMigrations.Report migrationReport =
+                rtx.byazen.utils.config.ConfigMigrations.migrate(jsonObject);
+        if (migrationReport.changed()) {
+            rtx.byazen.utils.logs.ClientLog.info("настройки мигрированы: " + migrationReport.summary());
+            rtx.byazen.utils.config.ChangeLog.recordNote("ByAzen", migrationReport.summary());
+        }
         ConfigManager.INSTANCE.activeRoot = jsonObject;
         if (jsonObject.has("theme") && jsonObject.get("theme").isJsonPrimitive()) {
             try {
@@ -237,6 +244,7 @@ public final class ConfigManager {
     private static JsonObject buildModuleRoot() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("version", (Number)1);
+        jsonObject.addProperty("format", (Number)rtx.byazen.utils.config.ConfigMigrations.CURRENT_FORMAT);
         jsonObject.addProperty("theme", ThemeManager.current().name());
         JsonObject jsonObject2 = new JsonObject();
         for (Module module : ModuleManager.get().getAll()) {

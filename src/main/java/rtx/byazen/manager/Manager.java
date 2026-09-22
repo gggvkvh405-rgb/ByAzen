@@ -28,6 +28,7 @@ import rtx.byazen.utils.render.render2d.gif.GifRenderer;
 import rtx.byazen.utils.render.warmup.Load;
 import rtx.byazen.utils.render.warmup.Render2DWarmup;
 import rtx.byazen.utils.sounds.SoundManager;
+import rtx.byazen.utils.startup.LazyTasks;
 import rtx.byazen.utils.storage.macro.MacroHandler;
 
 public final class Manager {
@@ -58,17 +59,19 @@ public final class Manager {
         SoundManager.init();
         LiteApiClient.INSTANCE.start();
         ClientLifecycleEvents.CLIENT_STOPPING.register(minecraftClient -> Manager.shutdown());
-        WaveyCapesMod.INSTANCE.init();
-        ShulkerViewMod.init();
-        ChatHeads.init();
-        ChatAnimationMod.init();
+        // тяжёлые интеграции готовятся не на старте, а при входе в мир (идея №165)
+        LazyTasks.submit("Косые плащи", () -> WaveyCapesMod.INSTANCE.init());
+        LazyTasks.submit("Просмотр шалкеров", ShulkerViewMod::init);
+        LazyTasks.submit("Головы в чате", ChatHeads::init);
+        LazyTasks.submit("Анимации чата", ChatAnimationMod::init);
+        net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.END_CLIENT_TICK.register(LazyTasks::tick);
         Thread thread = new Thread(DiscordRPCManager::start, "ByAzen-Discord-RPC-Init");
         thread.setDaemon(true);
         thread.start();
         MinecraftClient minecraftClient2 = MinecraftClient.getInstance();
         Runnable runnable = () -> {
-            GifRenderer.preload("byazen:gif/kity.gif");
-            Load.runStartupWarmup();
+            LazyTasks.submit("Первый GIF клиента", () -> GifRenderer.preload("byazen:gif/kity.gif"));
+            LazyTasks.submit("Прогрев отрисовки", Load::runStartupWarmup);
         };
         if (minecraftClient2 != null) {
             minecraftClient2.execute(runnable);

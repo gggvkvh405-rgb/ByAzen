@@ -74,6 +74,55 @@ public final class ChangeLog {
         return list;
     }
 
+    public static int count() {
+        return ChangeLog.entries().size();
+    }
+
+    /** Сколько записей появилось с указанного времени (например, за сутки). */
+    public static int countSince(long time) {
+        int count = 0;
+        for (ChangeLog.Entry entry : ChangeLog.entries()) {
+            if (entry.time() >= time) {
+                ++count;
+            }
+        }
+        return count;
+    }
+
+    /** Текст журнала для буфера обмена и выгрузки: «время — модуль → настройка = значение». */
+    public static String markdown(int max) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("# Журнал настроек ByAzen\n\n");
+        builder.append("Записей: ").append(ChangeLog.count()).append("\n\n");
+        int shown = 0;
+        for (ChangeLog.Entry entry : ChangeLog.entries()) {
+            if (shown++ >= max) {
+                builder.append("\n…и ещё ").append(ChangeLog.count() - max).append(" записей\n");
+                break;
+            }
+            builder.append("* ").append(entry.timeText()).append(" — ").append(entry.module())
+                    .append(" → ").append(entry.setting()).append(" = ").append(ChangeLog.shortValue(entry.value())).append('\n');
+        }
+        return builder.toString();
+    }
+
+    /** Значение в читаемом виде: без кавычек и лишней длины. */
+    public static String shortValue(String value) {
+        String text = value == null ? "" : value.replace("\"", "");
+        return text.length() <= 48 ? text : text.substring(0, 47) + "…";
+    }
+
+    /** Записывает событие миграции настроек: журнал знает не только про настройки. */
+    public static void recordNote(String module, String note) {
+        ChangeLog.load();
+        ENTRIES.add(0, new Entry(System.currentTimeMillis(), module, "миграция", note));
+        while (ENTRIES.size() > LIMIT) {
+            ENTRIES.remove(ENTRIES.size() - 1);
+        }
+        dirty = true;
+        ChangeLog.save();
+    }
+
     public static void clear() {
         ChangeLog.load();
         ENTRIES.clear();

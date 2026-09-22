@@ -186,7 +186,7 @@ extends Command {
         if (stringArray.length == 2 && stringArray[0].equalsIgnoreCase("load")) {
             return new TabCompleteHelper().append(ConfigManager.listProfiles().toArray(new String[0])).filterPrefix(stringArray[1]).stream();
         }
-        if (stringArray.length == 2 && (stringArray[0].equalsIgnoreCase("reset") || stringArray[0].equalsIgnoreCase("doctor"))) {
+        if (stringArray.length == 2 && stringArray[0].equalsIgnoreCase("reset")) {
             java.util.List<String> names = new java.util.ArrayList<String>();
             for (Module module : ModuleManager.get().getAll()) {
                 names.add(module.getName());

@@ -32,7 +32,8 @@ import org.w3c.dom.Node;
 import rtx.byazen.utils.render.render2d.Render2D;
 
 public final class GifRenderer {
-    private static final Map<String, GifAnimation> CACHE = new HashMap<>();
+    private static int cacheLimit = 24;
+    private static final Map<String, GifAnimation> CACHE = new java.util.LinkedHashMap<String, GifAnimation>(16, 0.75f, true);
     private static final AtomicInteger ID_COUNTER = new AtomicInteger(0);
     private static final ExecutorService LOADER = Executors.newSingleThreadExecutor(runnable -> {
         Thread thread = new Thread(runnable, "byazen-gif-loader");
@@ -46,6 +47,56 @@ public final class GifRenderer {
             gifAnimation.dispose();
         }
         CACHE.clear();
+    }
+
+    /** Предел числа держимых GIF: идея №164 — кэш не растёт бесконечно. */
+    public static synchronized void setCacheLimit(int limit) {
+        cacheLimit = Math.max(4, Math.min(512, limit));
+        evict();
+    }
+
+    public static int cacheLimit() {
+        return cacheLimit;
+    }
+
+    public static synchronized int cacheSize() {
+        return CACHE.size();
+    }
+
+    public static synchronized void clear() {
+        for (GifAnimation animation : CACHE.values()) {
+            animation.dispose();
+        }
+        CACHE.clear();
+    }
+
+    /** Сколько памяти занято кадрами: в памяти и в видеопамяти по 4 байта на пиксель. */
+    public static synchronized long cacheBytes() {
+        long bytes = 0L;
+        for (GifAnimation animation : CACHE.values()) {
+            for (BufferedImage image : animation.rawFrames) {
+                bytes += (long)image.getWidth() * (long)image.getHeight() * 4L * 2L;
+            }
+        }
+        return bytes;
+    }
+
+    /** Вытесняет самые старые анимации: те, что не рисовались дольше всех. */
+    private static synchronized void evict() {
+        while (CACHE.size() > cacheLimit) {
+            java.util.Iterator<Map.Entry<String, GifAnimation>> iterator = CACHE.entrySet().iterator();
+            if (!iterator.hasNext()) {
+                return;
+            }
+            GifAnimation victim = iterator.next().getValue();
+            iterator.remove();
+            try {
+                victim.dispose();
+            }
+            catch (Throwable ignored) {
+                // вытеснение не должно ломать отрисовку
+            }
+        }
     }
 
     private static int parseInt(String string, int n) {
@@ -86,19 +137,31 @@ public final class GifRenderer {
     }
 
     public static void preload(String string2) {
-        CACHE.computeIfAbsent(string2, string -> {
-            GifAnimation anim = new GifAnimation();
-            anim.startLoad(string);
-            return anim;
-        });
+        synchronized (CACHE) {
+            CACHE.computeIfAbsent(string2, string -> {
+                GifAnimation anim = new GifAnimation();
+                anim.startLoad(string);
+                return anim;
+            });
+        }
+        evict();
     }
 
     public static void draw(DrawContext drawContext, float f, float f2, float f3, float f4, float f5, String string2, float f6) {
-        GifAnimation anim = CACHE.computeIfAbsent(string2, string -> {
-            GifAnimation a = new GifAnimation();
-            a.startLoad(string);
-            return a;
-        });
+        GifAnimation anim;
+        boolean fresh = false;
+        synchronized (CACHE) {
+            anim = CACHE.get(string2);
+            if (anim == null) {
+                anim = new GifAnimation();
+                anim.startLoad(string2);
+                CACHE.put(string2, anim);
+                fresh = true;
+            }
+        }
+        if (fresh) {
+            evict();
+        }
         if (anim.state != State.GPU_READY) {
             return;
         }

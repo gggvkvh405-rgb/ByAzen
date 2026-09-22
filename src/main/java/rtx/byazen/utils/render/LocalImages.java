@@ -28,7 +28,7 @@ import rtx.byazen.ByAzen;
  */
 public final class LocalImages {
 
-    private static final int CACHE_LIMIT = 72;
+    private static int cacheLimit = 72;
     private static final AtomicInteger ID = new AtomicInteger();
     private static final Map<String, LocalImages.Entry> CACHE = new LinkedHashMap<String, LocalImages.Entry>();
 
@@ -73,8 +73,26 @@ public final class LocalImages {
         }
     }
 
+    /** Предел кэша настраивается из окна «Диагностика» (идея №164). */
+    public static void setCacheLimit(int limit) {
+        cacheLimit = Math.max(4, Math.min(512, limit));
+        synchronized (CACHE) {
+            evict();
+        }
+    }
+
+    public static int cacheLimit() {
+        return cacheLimit;
+    }
+
+    public static int cacheSize() {
+        synchronized (CACHE) {
+            return CACHE.size();
+        }
+    }
+
     private static void evict() {
-        while (CACHE.size() > CACHE_LIMIT) {
+        while (CACHE.size() > cacheLimit) {
             String oldest = CACHE.keySet().iterator().next();
             LocalImages.destroy(CACHE.remove(oldest));
         }
