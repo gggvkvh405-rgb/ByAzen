@@ -1,16 +1,16 @@
 {
-  "version": "1.9.1",
-  "jar": "ByAzen-1.9.1.jar",
-  "url": "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.1.jar",
+  "version": "1.9.2",
+  "jar": "ByAzen-1.9.2.jar",
+  "url": "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.2.jar",
   "urls": [
-    "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.1.jar"
+    "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.2.jar"
   ],
-  "sha256": "0d5088ddbb342d4d372381dd36306908f4813b8d931f7fcb617f8406eb329412",
-  "size": 80954148,
+  "sha256": "f8a720dbb36c9d1fe65bad7624ae331383d605ffe6f2982b457bcd9bc7bbc455",
+  "size": 80958241,
   "released": "2026-09-22",
   "minecraft": "1.21.11",
   "loader": "0.19.3",
   "java": 21,
-  "notes": "Preflight-проверки проекта (№201). Скрипт tools/repo_checks.py запускается локально и в CI",
-  "generated": "локально"
+  "notes": "Манифест обновлений (№206). В репозитории появился update.json, но главное — он больше не",
+  "generated": "CI"
 }
