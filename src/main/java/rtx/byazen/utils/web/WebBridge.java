@@ -53,7 +53,7 @@ public final class WebBridge {
     }
 
     /** Страница просит действие: кладём в очередь, выполняем в игровом потоке. */
-    public synchronized JsonObject request(String action, String query) {
+    public static synchronized JsonObject request(String action, String query) {
         JsonObject result = new JsonObject();
         if (action == null || action.isEmpty()) {
             result.addProperty("ok", false);
@@ -61,10 +61,10 @@ public final class WebBridge {
             return result;
         }
         Map<String, String> params = WebBridge.params(query);
-        this.actions.add(new String[]{action, params.getOrDefault("do", params.getOrDefault("value", ""))});
+        INSTANCE.actions.add(new String[]{action, params.getOrDefault("do", params.getOrDefault("value", ""))});
         result.addProperty("ok", true);
         result.addProperty("queued", action);
-        result.addProperty("pending", this.actions.size());
+        result.addProperty("pending", INSTANCE.actions.size());
         return result;
     }
 
@@ -151,7 +151,7 @@ public final class WebBridge {
         }
         root.add("fps", fps);
         root.add("memory", memory);
-        root.add("samples", WebBridge.seriesCount());
+        root.addProperty("samples", WebBridge.seriesCount());
         JsonObject rating = RepositoryStorage.readObject("web_sessions");
         root.add("rating", rating.has("sessions") ? rating.getAsJsonArray("sessions") : new JsonArray());
         JsonObject togglesJson = new JsonObject();
