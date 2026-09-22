@@ -26,20 +26,20 @@ extends Module {
 
     private final SeparatorSetting followSeparator = this.register(new SeparatorSetting("Плавное следование"));
     public final BooleanSetting smooth = this.register(new BooleanSetting("Плавное следование", "Взгляд мягко догоняет поворот: при резких движениях мыши камера слегка отстаёт и догоняет.", true));
-    public final SliderSetting smoothStrength = this.register(new SliderSetting("Сила сглаживания, %", "Насколько заметно отставание камеры.", 35.0f, 5.0f, 100.0f, 5.0f)).visible(this.smooth::getValue);
-    public final SliderSetting smoothSpeed = this.register(new SliderSetting("Скорость догона", "Как быстро камера догоняет поворот.", 45.0f, 10.0f, 100.0f, 5.0f)).visible(this.smooth::getValue);
+    public final SliderSetting smoothStrength = this.register(new SliderSetting("Сила сглаживания, %", "Насколько заметно отставание камеры.").range(5.0f, 100.0f).increment(5.0f).setValue(35.0f)).visible(this.smooth::getValue);
+    public final SliderSetting smoothSpeed = this.register(new SliderSetting("Скорость догона", "Как быстро камера догоняет поворот.").range(10.0f, 100.0f).increment(5.0f).setValue(45.0f)).visible(this.smooth::getValue);
     public final BooleanSetting lean = this.register(new BooleanSetting("Крен в движении", "Камера наклоняется в сторону при быстром стрейфе — как в кинематографе.", true));
-    public final SliderSetting leanStrength = this.register(new SliderSetting("Сила крена, %", "Насколько сильно камера наклоняется в движении.", 60.0f, 10.0f, 150.0f, 5.0f)).visible(this.lean::getValue);
+    public final SliderSetting leanStrength = this.register(new SliderSetting("Сила крена, %", "Насколько сильно камера наклоняется в движении.").range(10.0f, 150.0f).increment(5.0f).setValue(60.0f)).visible(this.lean::getValue);
 
     private final SeparatorSetting recoilSeparator = this.register(new SeparatorSetting("Отдача"));
     public final BooleanSetting recoil = this.register(new BooleanSetting("Отдача при ударе", "При вашем ударе камеру коротко подбрасывает: кик по высоте, крен и мягкое сжатие зума.", true));
-    public final SliderSetting recoilStrength = this.register(new SliderSetting("Сила отдачи, %", "Насколько заметен кик камеры.", 90.0f, 20.0f, 200.0f, 10.0f)).visible(this.recoil::getValue);
-    public final SliderSetting recoilSpeed = this.register(new SliderSetting("Затухание отдачи", "Как быстро камера возвращается на место.", 55.0f, 10.0f, 100.0f, 5.0f)).visible(this.recoil::getValue);
+    public final SliderSetting recoilStrength = this.register(new SliderSetting("Сила отдачи, %", "Насколько заметен кик камеры.").range(20.0f, 200.0f).increment(10.0f).setValue(90.0f)).visible(this.recoil::getValue);
+    public final SliderSetting recoilSpeed = this.register(new SliderSetting("Затухание отдачи", "Как быстро камера возвращается на место.").range(10.0f, 100.0f).increment(5.0f).setValue(55.0f)).visible(this.recoil::getValue);
 
     private final SeparatorSetting cinemaSeparator = this.register(new SeparatorSetting("Кинематографический режим"));
     public final BooleanSetting cinematic = this.register(new BooleanSetting("Кинематограф", "Плавное «дыхание» зума, лёгкое покачивание и крен кадра.", false));
-    public final SliderSetting cinemaSpeed = this.register(new SliderSetting("Скорость кадра", "Как быстро движется кинематографическое покачивание.", 30.0f, 10.0f, 100.0f, 5.0f)).visible(this.cinematic::getValue);
-    public final SliderSetting cinemaZoom = this.register(new SliderSetting("Дыхание зума, %", "Насколько заметно плавное изменение зума.", 40.0f, 0.0f, 100.0f, 5.0f)).visible(this.cinematic::getValue);
+    public final SliderSetting cinemaSpeed = this.register(new SliderSetting("Скорость кадра", "Как быстро движется кинематографическое покачивание.").range(10.0f, 100.0f).increment(5.0f).setValue(30.0f)).visible(this.cinematic::getValue);
+    public final SliderSetting cinemaZoom = this.register(new SliderSetting("Дыхание зума, %", "Насколько заметно плавное изменение зума.").range(0.0f, 100.0f).increment(5.0f).setValue(40.0f)).visible(this.cinematic::getValue);
 
     private boolean primed;
     private float laggedYaw;

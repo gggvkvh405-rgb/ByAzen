@@ -48,9 +48,9 @@ extends Module {
 
     private final SeparatorSetting mainSeparator = this.register(new SeparatorSetting("Эффект"));
     public final ModeSetting effect = this.register(new ModeSetting("Эффект", "Какой эффект играет при убийстве.", FX_SPACE, FX_SPACE, FX_DRAGON, FX_WATER, FX_STORM, FX_AURORA));
-    public final SliderSetting duration = this.register(new SliderSetting("Длительность, мс", "Сколько живёт эффект.", 1500.0f, 600.0f, 3000.0f, 100.0f));
-    public final SliderSetting size = this.register(new SliderSetting("Размер, %", "Общий размер эффекта.", 100.0f, 50.0f, 200.0f, 5.0f));
-    public final SliderSetting density = this.register(new SliderSetting("Плотность частиц, %", "Сколько частиц рождает эффект.", 100.0f, 20.0f, 250.0f, 10.0f));
+    public final SliderSetting duration = this.register(new SliderSetting("Длительность, мс", "Сколько живёт эффект.").range(600.0f, 3000.0f).increment(100.0f).setValue(1500.0f));
+    public final SliderSetting size = this.register(new SliderSetting("Размер, %", "Общий размер эффекта.").range(50.0f, 200.0f).increment(5.0f).setValue(100.0f));
+    public final SliderSetting density = this.register(new SliderSetting("Плотность частиц, %", "Сколько частиц рождает эффект.").range(20.0f, 250.0f).increment(10.0f).setValue(100.0f));
 
     private final SeparatorSetting lookSeparator = this.register(new SeparatorSetting("Вид"));
     public final BooleanSetting rings = this.register(new BooleanSetting("Кольца и лучи", "Рисовать геометрию эффекта: кольца, крылья, молнию, занавесы.", true));

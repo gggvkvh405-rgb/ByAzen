@@ -49,12 +49,12 @@ extends Module {
             .selected(WHO_FLUIDS, WHO_PISTONS, WHO_FALLING));
 
     private final SeparatorSetting scanSeparator = this.register(new SeparatorSetting("Поиск"));
-    public final SliderSetting radius = this.register(new SliderSetting("Радиус поиска", "В каком радиусе искать блоки для предсказания.", 20.0f, 6.0f, 48.0f, 2.0f));
-    public final SliderSetting limit = this.register(new SliderSetting("Максимум блоков", "Сколько блоков показывать одновременно.", 48.0f, 8.0f, 200.0f, 4.0f));
-    public final SliderSetting layers = this.register(new SliderSetting("Слоёв за тик", "Сколько слоёв по высоте проверять за один тик.", 6.0f, 1.0f, 16.0f, 1.0f));
+    public final SliderSetting radius = this.register(new SliderSetting("Радиус поиска", "В каком радиусе искать блоки для предсказания.").range(6.0f, 48.0f).increment(2.0f).setValue(20.0f));
+    public final SliderSetting limit = this.register(new SliderSetting("Максимум блоков", "Сколько блоков показывать одновременно.").range(8.0f, 200.0f).increment(4.0f).setValue(48.0f));
+    public final SliderSetting layers = this.register(new SliderSetting("Слоёв за тик", "Сколько слоёв по высоте проверять за один тик.").range(1.0f, 16.0f).increment(1.0f).setValue(6.0f));
 
     private final SeparatorSetting lookSeparator = this.register(new SeparatorSetting("Вид"));
-    public final SliderSetting opacity = this.register(new SliderSetting("Прозрачность, %", "Насколько плотные подсказки.", 42.0f, 10.0f, 85.0f, 1.0f));
+    public final SliderSetting opacity = this.register(new SliderSetting("Прозрачность, %", "Насколько плотные подсказки.").range(10.0f, 85.0f).increment(1.0f).setValue(42.0f));
     public final BooleanSetting pulse = this.register(new BooleanSetting("Пульс", "Подсказки плавно дышат, чтобы не сливаться с миром.", true));
     public final ColorSetting fluidColor = this.register(new ColorSetting("Цвет воды", "Оттенок предсказания для воды.", new java.awt.Color(90, 170, 255, 255)));
     public final ColorSetting lavaColor = this.register(new ColorSetting("Цвет лавы", "Оттенок предсказания для лавы.", new java.awt.Color(255, 138, 60, 255)));

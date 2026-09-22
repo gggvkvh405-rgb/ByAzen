@@ -30,12 +30,12 @@ extends Module {
 
     private final SeparatorSetting mainSeparator = this.register(new SeparatorSetting("Сглаживание"));
     public final ModeSetting quality = this.register(new ModeSetting("Качество", "Сколько выборок делает сглаживание. Выше — мягче края и чуть дороже кадр.", MODE_MEDIUM, MODE_LOW, MODE_MEDIUM, MODE_HIGH, MODE_MORPH));
-    public final SliderSetting threshold = this.register(new SliderSetting("Порог края, %", "Насколько сильным должен быть перепад яркости, чтобы это считалось краем.", 25.0f, 3.0f, 40.0f, 1.0f));
-    public final SliderSetting strength = this.register(new SliderSetting("Сила, %", "Насколько сильно подмешивать сглаженный пиксель.", 80.0f, 20.0f, 100.0f, 5.0f));
-    public final SliderSetting subpixel = this.register(new SliderSetting("Субпиксельная мягкость, %", "Убирает остаточное дрожание тонких линий и далёких блоков.", 45.0f, 0.0f, 100.0f, 5.0f));
+    public final SliderSetting threshold = this.register(new SliderSetting("Порог края, %", "Насколько сильным должен быть перепад яркости, чтобы это считалось краем.").range(3.0f, 40.0f).increment(1.0f).setValue(25.0f));
+    public final SliderSetting strength = this.register(new SliderSetting("Сила, %", "Насколько сильно подмешивать сглаженный пиксель.").range(20.0f, 100.0f).increment(5.0f).setValue(80.0f));
+    public final SliderSetting subpixel = this.register(new SliderSetting("Субпиксельная мягкость, %", "Убирает остаточное дрожание тонких линий и далёких блоков.").range(0.0f, 100.0f).increment(5.0f).setValue(45.0f));
 
     private final SeparatorSetting detailSeparator = this.register(new SeparatorSetting("Детализация"));
-    public final SliderSetting sharpen = this.register(new SliderSetting("Резкость, %", "Лёгкое подчёркивание деталей после сглаживания. 0 — выключено.", 0.0f, 0.0f, 60.0f, 5.0f));
+    public final SliderSetting sharpen = this.register(new SliderSetting("Резкость, %", "Лёгкое подчёркивание деталей после сглаживания. 0 — выключено.").range(0.0f, 60.0f).increment(5.0f).setValue(0.0f));
     public final BooleanSetting skipGui = this.register(new BooleanSetting("Не трогать интерфейс", "Сглаживание применяется только к миру, меню остаётся как есть.", true));
 
     public AntiAliasing() {
