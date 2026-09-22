@@ -17,6 +17,10 @@ import rtx.byazen.api.chat.commands.CommandManager;
 import rtx.byazen.api.chat.commands.helpers.CommandDividers;
 import rtx.byazen.api.chat.commands.helpers.TabCompleteHelper;
 import rtx.byazen.api.config.ConfigManager;
+import rtx.byazen.api.modules.Module;
+import rtx.byazen.api.modules.ModuleManager;
+import rtx.byazen.api.modules.settings.Setting;
+import rtx.byazen.utils.config.ConfigDoctor;
 
 public final class ConfigCommand
 extends Command {
@@ -75,11 +79,24 @@ extends Command {
                 break;
             }
             case "reset": {
-                this.reset();
+                if (stringArray.length > 1) {
+                    this.resetTarget(stringArray);
+                }
+                else {
+                    this.reset();
+                }
                 break;
             }
             case "list": {
                 this.list(string);
+                break;
+            }
+            case "check": {
+                this.check();
+                break;
+            }
+            case "readable": {
+                this.readable();
                 break;
             }
             case "dir": {
@@ -102,18 +119,79 @@ extends Command {
         this.logDirect("Config '" + string + "' saved.", Formatting.GREEN);
     }
 
+    /** Проверка настроек с исправлением: идея №157. */
+    private void check() {
+        ConfigDoctor.Report report = ConfigDoctor.check(true);
+        this.logDirect("Config check: " + report.summary(), report.issues.isEmpty() ? Formatting.GREEN : Formatting.YELLOW);
+        int shown = 0;
+        for (ConfigDoctor.Issue issue : report.issues) {
+            if (shown++ >= 6) {
+                this.logDirect("...and " + (report.issues.size() - 6) + " more", Formatting.GRAY);
+                break;
+            }
+            this.logDirect("- " + issue.where + ": " + issue.what + " (" + issue.fix + ")", Formatting.GRAY);
+        }
+    }
+
+    /** Читаемый JSON рядом с конфигом: идея №157. */
+    private void readable() {
+        String path = ConfigDoctor.writeReadable(ConfigManager.buildModuleSnapshot());
+        if (path.isEmpty()) {
+            this.logDirect("Failed to write readable config.", Formatting.RED);
+            return;
+        }
+        this.logDirect("Readable config written: " + path, Formatting.GREEN);
+    }
+
+    /** Точечный сброс: модуль целиком или одна настройка по имени — идея №158. */
+    private void resetTarget(String[] stringArray) {
+        String moduleName = stringArray[1];
+        Module module = ModuleManager.get().findByName(moduleName);
+        if (module == null) {
+            this.logDirect("Module '" + moduleName + "' not found.", Formatting.RED);
+            return;
+        }
+        if (stringArray.length >= 3) {
+            String wanted = stringArray[2];
+            Setting target = null;
+            for (Setting setting : module.getSettings().all()) {
+                if (setting.getName().equalsIgnoreCase(wanted) || setting.getName().toLowerCase(Locale.ROOT).contains(wanted.toLowerCase(Locale.ROOT))) {
+                    target = setting;
+                    break;
+                }
+            }
+            if (target == null) {
+                this.logDirect("Setting '" + wanted + "' not found in " + module.getDisplayName() + ".", Formatting.RED);
+                return;
+            }
+            ConfigManager.resetSetting(target);
+            ConfigManager.markDirty();
+            this.logDirect("Setting '" + target.getName() + "' of " + module.getDisplayName() + " reset.", Formatting.GREEN);
+            return;
+        }
+        int changed = ConfigManager.resetModule(module, true);
+        this.logDirect("Module " + module.getDisplayName() + " reset: changed " + changed + " settings, bind and mode restored.", Formatting.GREEN);
+    }
+
     @Override
     public List<String> getLongDesc() {
-        return Arrays.asList("Saves, loads or resets the client configuration.", "Usage:", "> config save <name>", "> config load <name>", "> config list", "> config reset", "> config dir");
+        return Arrays.asList("Saves, loads or resets the client configuration.", "Usage:", "> config save <name>", "> config load <name>", "> config list", "> config reset [module] [setting]", "> config check", "> config readable", "> config dir");
     }
 
     @Override
     public Stream<String> tabComplete(String string, String[] stringArray) {
         if (stringArray.length == 1) {
-            return new TabCompleteHelper().append(new String[]{"save", "load", "list", "reset", "dir"}).sortAlphabetically().filterPrefix(stringArray[0]).stream();
+            return new TabCompleteHelper().append(new String[]{"save", "load", "list", "reset", "check", "readable", "dir"}).sortAlphabetically().filterPrefix(stringArray[0]).stream();
         }
         if (stringArray.length == 2 && stringArray[0].equalsIgnoreCase("load")) {
             return new TabCompleteHelper().append(ConfigManager.listProfiles().toArray(new String[0])).filterPrefix(stringArray[1]).stream();
+        }
+        if (stringArray.length == 2 && (stringArray[0].equalsIgnoreCase("reset") || stringArray[0].equalsIgnoreCase("doctor"))) {
+            java.util.List<String> names = new java.util.ArrayList<String>();
+            for (Module module : ModuleManager.get().getAll()) {
+                names.add(module.getName());
+            }
+            return new TabCompleteHelper().append(names.toArray(new String[0])).filterPrefix(stringArray[1]).stream();
         }
         return Stream.empty();
     }

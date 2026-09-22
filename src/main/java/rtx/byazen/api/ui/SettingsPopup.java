@@ -7,6 +7,7 @@ import java.util.Set;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import rtx.byazen.ByAzen;
+import rtx.byazen.api.config.ConfigManager;
 import rtx.byazen.api.drags.DragController;
 import rtx.byazen.api.drags.Position;
 import rtx.byazen.api.modules.Module;
@@ -217,8 +218,8 @@ public final class SettingsPopup {
         this.headerHover = -1.0f;
         float mx = Position.mouseX();
         float my = Position.mouseY();
-        for (int i = 0; i < 3; ++i) {
-            float bx2 = bx - (float) (3 - i) * (size + 3.0f);
+        for (int i = 0; i < 4; ++i) {
+            float bx2 = bx - (float) (4 - i) * (size + 3.0f);
             boolean hot = mx >= bx2 && mx <= bx2 + size && my >= y && my <= y + size;
             if (hot) {
                 this.headerHover = (float) i;
@@ -242,10 +243,17 @@ public final class SettingsPopup {
                     Render2D.outline(bx2 + size * 0.42f, y + size * 0.22f, size * 0.4f, size * 0.44f, 1.4f, 1.1f, ink);
                     break;
                 }
-                default: {
+                case 2: {
                     // вставить: планшет с зажимом
                     Render2D.outline(bx2 + size * 0.24f, y + size * 0.22f, size * 0.52f, size * 0.56f, 1.6f, 1.1f, ink);
                     Render2D.rect(bx2 + size * 0.4f, y + size * 0.16f, size * 0.2f, size * 0.12f, 0.8f, ink);
+                    break;
+                }
+                default: {
+                    // сброс модуля целиком: кольцо со стрелкой и вторая дуга
+                    Render2D.circleOutline(bx2 + size * 0.5f, y + size * 0.5f, size * 0.3f, 1.3f, ink);
+                    Render2D.circleOutline(bx2 + size * 0.5f, y + size * 0.5f, size * 0.16f, 1.0f, ink);
+                    Render2D.rect(bx2 + size * 0.7f, y + size * 0.3f, 2.4f, 2.0f, 0.6f, ink);
                     break;
                 }
             }
@@ -263,8 +271,11 @@ public final class SettingsPopup {
             else if (index == 1) {
                 hint = "Скопировать пресет настроек модуля (короткий код)";
             }
-            else {
+            else if (index == 2) {
                 hint = "Вставить пресет настроек из буфера обмена";
+            }
+            else {
+                hint = "Сбросить модуль целиком: настройки, клавиша, режим и включённость";
             }
         }
         else {
@@ -452,8 +463,8 @@ public final class SettingsPopup {
         float top = this.drag.getRenderY();
         float x = this.px + this.width - 6.0f;
         float size = 12.0f;
-        for (int i = 0; i < 3; ++i) {
-            float bx = x - (float) (3 - i) * (size + 3.0f);
+        for (int i = 0; i < 4; ++i) {
+            float bx = x - (float) (4 - i) * (size + 3.0f);
             if (mouseX < bx || mouseX > bx + size || mouseY < top + 3.0f || mouseY > top + 3.0f + size) {
                 continue;
             }
@@ -478,7 +489,7 @@ public final class SettingsPopup {
                 this.showHint("Пресет скопирован в буфер");
                 break;
             }
-            default: {
+            case 2: {
                 String code = MinecraftClient.getInstance().keyboard.getClipboard();
                 int applied = ModulePresets.apply(this.module, code);
                 if (applied < 0) {
@@ -490,6 +501,14 @@ public final class SettingsPopup {
                     this.widgets = SettingsFactory.build(this.module);
                     this.showHint("Применено настроек: " + applied);
                 }
+                break;
+            }
+            default: {
+                // точечный сброс: настройки, клавиша, режим и включённость — как у модуля из коробки
+                int changed = ConfigManager.resetModule(this.module, true);
+                Sounds.play("gui_close");
+                this.widgets = SettingsFactory.build(this.module);
+                this.showHint("Модуль сброшен: настроек " + changed + ", клавиша и режим восстановлены");
                 break;
             }
         }

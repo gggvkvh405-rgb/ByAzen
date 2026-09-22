@@ -252,6 +252,56 @@ public final class ConfigManager {
         return jsonObject;
     }
 
+    /** Публичный снимок настроек: нужен версиям конфига и доктору настроек (№151, №157). */
+    public static JsonObject buildModuleSnapshot() {
+        return ConfigManager.buildModuleRoot();
+    }
+
+    /** Применяет снимок настроек: модули, клавиши, дрэги и тему. Возвращает число модулей. */
+    public static int applyModuleSnapshot(JsonObject snapshot) {
+        if (snapshot == null) {
+            return -1;
+        }
+        ConfigManager.INSTANCE.loading = true;
+        try {
+            ConfigManager.applyModuleRoot(snapshot);
+        }
+        catch (Throwable throwable) {
+            ByAzen.LOGGER.warn("[ConfigManager] Snapshot apply failed", throwable);
+            return -1;
+        }
+        finally {
+            ConfigManager.INSTANCE.loading = false;
+        }
+        ConfigManager.markDirty();
+        int count = snapshot.has("modules") && snapshot.get("modules").isJsonObject()
+                ? snapshot.getAsJsonObject("modules").entrySet().size() : 0;
+        return count;
+    }
+
+    /** Полный сброс настроек одного модуля: и значения, и клавиша, и состояние (идея №158). */
+    public static int resetModule(Module module, boolean resetBind) {
+        if (module == null) {
+            return 0;
+        }
+        int count = 0;
+        for (Setting setting : module.getSettings().all()) {
+            JsonElement before = ConfigManager.serializeSetting(setting);
+            ConfigManager.resetSetting(setting);
+            JsonElement after = ConfigManager.serializeSetting(setting);
+            if (before != null && !before.equals((Object)after)) {
+                ++count;
+            }
+        }
+        if (resetBind) {
+            module.setBind(module instanceof ClickGui ? KeyBind.keyboard(344) : KeyBind.NONE);
+        }
+        module.setBindMode(Module.BindMode.TOGGLE);
+        module.setEnabled(module.defaultEnabled());
+        ConfigManager.markDirty();
+        return count;
+    }
+
     private static Path moduleConfigPath() {
         return RepositoryStorage.root().resolve("autocfg.byazen");
     }

@@ -1356,6 +1356,9 @@ implements GuiCapture.Source {
         if (this.parallaxX != 0.0f || this.parallaxY != 0.0f) {
             drawContext.getMatrices().translate(this.parallaxX, this.parallaxY);
         }
+        if (rtx.byazen.utils.render.backdrops.ClickGuiBackdrops.active()) {
+            rtx.byazen.utils.render.backdrops.ClickGuiBackdrops.render(drawContext, f6, f9, f10, f7, f8);
+        }
         RectUtil.drawClientRect(f9, f10, f7, f8, 12.0f, f6, 6.0f);
         float f11 = 12.0f;
         RenderHelper.drawPanelBg(f9 + 5.0f, f10 + 5.0f, 110.0f, f8 - 10.0f, f11, 0.0f, 0.0f, f11, f6);
