@@ -256,8 +256,19 @@ extends BaseScreen {
         RectUtil.drawClientRect(x, y, W, H, 12.0f, a);
         Render2D.outline(x, y, W, H, 12.0f, 1.0f, ClientAccent.accentSoft(38.0f * a));
         Render2D.msdfText(FONT_SEMI, this.name(file), x + PAD, y + 20.0f, 8.0f, GalleryScreen.rgba(255, 255, 255, 240.0f * a));
-        Render2D.msdfText(FONT_TEXT, Lang.t("← → листать • C — копировать путь • O — открыть папку • Delete — удалить • Esc — назад", "← → browse • C — copy path • O — open folder • Delete — remove • Esc — back"),
+        Render2D.msdfText(FONT_TEXT, Lang.t("← → листать • R — отметить • C — копировать путь • O — открыть папку • Delete — удалить • Esc — назад", "← → browse • R — annotate • C — copy path • O — open folder • Delete — remove • Esc — back"),
                 x + PAD, y + 31.0f, 5.6f, GalleryScreen.rgba(180, 186, 200, 140.0f * a));
+        float markWidth = 74.0f;
+        float markHeight = 17.0f;
+        float markX = x + W - PAD - markWidth;
+        float markY = y + 27.0f;
+        boolean markHot = mx >= markX && mx <= markX + markWidth && my >= markY && my <= markY + markHeight;
+        Render2D.rect(markX, markY, markWidth, markHeight, 6.0f,
+                markHot ? ClientAccent.accentSoft(70.0f * a) : GalleryScreen.rgba(255, 255, 255, 14.0f * a));
+        Render2D.outline(markX, markY, markWidth, markHeight, 6.0f, 1.0f, ClientAccent.accentSoft((markHot ? 120.0f : 60.0f) * a));
+        String markLabel = Lang.t("Отметить", "Annotate");
+        Render2D.msdfText(FONT_SEMI, markLabel, markX + (markWidth - Render2D.msdfWidth(FONT_SEMI, markLabel, 6.0f)) * 0.5f, markY + 5.4f, 6.0f,
+                markHot ? GalleryScreen.rgba(255, 255, 255, 245.0f * a) : GalleryScreen.rgba(214, 219, 230, 200.0f * a));
         float imageLeft = x + PAD;
         float imageTop = y + 40.0f;
         float imageWidth = W - PAD * 2.0f;
@@ -311,6 +322,13 @@ extends BaseScreen {
                 else {
                     this.pendingDelete = -1;
                 }
+                return true;
+            }
+            float markWidth = 74.0f;
+            float markX = GalleryScreen.panelX() + W - PAD - markWidth;
+            float markY = GalleryScreen.panelY() + 27.0f;
+            if (click.button() == 0 && mx >= markX && mx <= markX + markWidth && my >= markY && my <= markY + 17.0f) {
+                this.annotate();
                 return true;
             }
             if (click.button() == 0) {
@@ -395,6 +413,10 @@ extends BaseScreen {
                 this.step(1);
                 return true;
             }
+            if (key == 82) {
+                this.annotate();
+                return true;
+            }
             if (key == 67) {
                 this.copyPath();
                 return true;
@@ -423,6 +445,25 @@ extends BaseScreen {
         this.previewIndex = Math.floorMod(this.previewIndex + direction, this.files.size());
         this.pendingDelete = -1;
         Sounds.play("select_category");
+    }
+
+    /** Открывает разметку снимка (идея №110 из IDEAS.md). */
+    private void annotate() {
+        int index = this.previewIndex >= 0 ? this.previewIndex : this.hovered;
+        if (index < 0 || index >= this.files.size()) {
+            if (this.files.isEmpty()) {
+                this.footer = Lang.t("Снимков нет — сделайте снимок по F2", "No screenshots — press F2 in game");
+                return;
+            }
+            index = 0;
+        }
+        Path file = this.files.get(index);
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client == null) {
+            return;
+        }
+        Sounds.play("module_settings_open");
+        client.setScreen(new ScreenshotAnnotatorScreen(this, file));
     }
 
     private void copyPath() {

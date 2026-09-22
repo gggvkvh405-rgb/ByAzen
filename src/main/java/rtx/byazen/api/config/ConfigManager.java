@@ -393,6 +393,12 @@ public final class ConfigManager {
      * WARNING - Removed try catching itself - possible behaviour change.
      */
     public static void loadProfile(String string) {
+        try {
+            rtx.byazen.api.modules.impl.Utils.ConfigBackupModule.beforeProfileChange();
+        }
+        catch (Throwable throwable) {
+            // резервная копия перед сменой профиля не критична для самой загрузки
+        }
         Path path = ConfigManager.profilePath(string);
         if (!Files.exists(path, new LinkOption[0])) {
             path = ConfigManager.previousProfilePath(string);

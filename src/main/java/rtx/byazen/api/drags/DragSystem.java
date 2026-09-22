@@ -24,6 +24,7 @@ import rtx.byazen.api.drags.components.ArmorComp;
 import rtx.byazen.api.drags.components.ArrayListComp;
 import rtx.byazen.api.drags.components.ClockComp;
 import rtx.byazen.api.drags.components.PerfGraphComp;
+import rtx.byazen.api.drags.components.ReconnectComp;
 import rtx.byazen.api.drags.components.ClipboardComp;
 import rtx.byazen.api.drags.components.CooldownsComp;
 import rtx.byazen.api.drags.components.HPFocusComp;
@@ -88,6 +89,7 @@ public final class DragSystem {
         this.register(new SessionStatsComp());
         this.register(new ClipboardComp());
         this.register(new PerfGraphComp());
+        this.register(new ReconnectComp());
         new InfoHud();
         ConfigManager.applyActiveDrags();
         EventBus.get().subscribe(this);
