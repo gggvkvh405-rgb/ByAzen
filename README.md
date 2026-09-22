@@ -5,10 +5,10 @@ Kimiko: все пакеты, классы, ресурсы, мод-ид и стр
 
 | | |
 |---|---|
-| Готовый мод | **`ByAzen-1.8.1.jar`** (в корне репозитория) |
+| Готовый мод | **`ByAzen-1.9.0.jar`** (в корне репозитория) |
 | Mod ID | `byazen` |
 | Имя в игре | ByAzen |
-| Версия | 1.8.1 |
+| Версия | 1.9.0 |
 | Minecraft | 1.21.11 |
 | Fabric Loader | 0.19.3+ |
 | Fabric API | 0.141.6+1.21.11 |
@@ -70,7 +70,7 @@ gradlew.bat build        # Windows (JDK 21 в PATH)
 
 1. Установите Fabric Loader 0.19.3+ для Minecraft 1.21.11.
 2. Положите Fabric API (`fabric-api-0.141.6+1.21.11.jar`) в `.minecraft/mods`.
-3. Положите `ByAzen-1.8.1.jar` в `.minecraft/mods`.
+3. Положите `ByAzen-1.9.0.jar` в `.minecraft/mods`.
 4. Запустите игру.
 
 Отдельно ставить `Pulse-Cosmetics` и `KillEffect` **не нужно** — оба мода вложены внутрь `ByAzen-1.8.1.jar`

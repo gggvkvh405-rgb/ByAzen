@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Locale;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.math.Vec3d;
+import rtx.byazen.api.nav.Waypoint;
+import rtx.byazen.api.nav.WaypointStore;
 import rtx.byazen.utils.handbook.Handbook;
 
 /**
