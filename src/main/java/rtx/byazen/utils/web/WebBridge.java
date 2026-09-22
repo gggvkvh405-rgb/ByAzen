@@ -83,7 +83,7 @@ public final class WebBridge {
         JsonObject root = new JsonObject();
         MinecraftClient client = MinecraftClient.getInstance();
         root.addProperty("time", System.currentTimeMillis());
-        root.addProperty("version", "1.7.1");
+        root.addProperty("version", WebBridge.version());
         if (client == null) {
             root.addProperty("online", false);
             return root;
@@ -135,10 +135,52 @@ public final class WebBridge {
             root.addProperty("deaths", deaths.entries().size());
         }
         root.addProperty("web", LocalHttp.get().status());
+        Runtime runtime = Runtime.getRuntime();
+        root.addProperty("memory", Math.round((runtime.totalMemory() - runtime.freeMemory()) / 1048576L));
+        root.addProperty("memoryMax", Math.round(runtime.maxMemory() / 1048576L));
+        if (client.world != null) {
+            long dayTime = client.world.getTimeOfDay() % 24000L;
+            root.addProperty("worldTime", dayTime);
+            root.addProperty("worldClock", String.format(java.util.Locale.ROOT, "%02d:%02d",
+                    (dayTime / 1000L + 6L) % 24L, (dayTime % 1000L) * 60L / 1000L));
+        }
         return root;
     }
 
     /** Ряды для графиков дашборда + локальный рейтинг сессий. */
+    /** Версия клиента из метаданных мода — страницы показывают её в углу. */
+    public static String version() {
+        try {
+            net.fabricmc.loader.api.FabricLoader loader = net.fabricmc.loader.api.FabricLoader.getInstance();
+            net.fabricmc.loader.api.ModContainer container = loader.getModContainer("byazen").orElse(null);
+            if (container != null) {
+                return container.getMetadata().getVersion().getFriendlyString();
+            }
+        }
+        catch (Throwable ignored) {
+        }
+        return "dev";
+    }
+
+    /** Последние сообщения чата для страницы-оверлея. */
+    public static JsonObject chatJson() {
+        JsonObject root = new JsonObject();
+        JsonArray messages = new JsonArray();
+        try {
+            java.util.List<String> entries = rtx.byazen.utils.chat.ChatHistory.entries();
+            int from = Math.max(0, entries.size() - 12);
+            for (int i = from; i < entries.size(); ++i) {
+                String line = entries.get(i);
+                messages.add(line == null ? "" : line.replaceAll("\u00a7.", "").trim());
+            }
+        }
+        catch (Throwable throwable) {
+            ClientLog.debug("веб-страница: чат недоступен");
+        }
+        root.add("messages", messages);
+        return root;
+    }
+
     public static JsonObject stats() {
         JsonObject root = new JsonObject();
         JsonArray fps = new JsonArray();

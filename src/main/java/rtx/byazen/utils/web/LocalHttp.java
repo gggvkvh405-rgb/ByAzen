@@ -40,6 +40,7 @@ public final class LocalHttp {
     private boolean lan;
     private String token = LocalHttp.newToken();
     private boolean dashboard;
+    private boolean overlay;
     private long startedAt;
 
     private LocalHttp() {
@@ -88,9 +89,14 @@ public final class LocalHttp {
      * {@code lan} — слушать ли домашнюю сеть (иначе только этот компьютер).
      */
     public synchronized String start(int port, boolean lan, boolean dashboard) {
+        return this.start(port, lan, dashboard, this.overlay);
+    }
+
+    public synchronized String start(int port, boolean lan, boolean dashboard, boolean overlay) {
         this.dashboard = dashboard;
+        this.overlay = overlay;
         if (this.server != null) {
-            if (this.port == port && this.lan == lan && this.dashboard == dashboard) {
+            if (this.port == port && this.lan == lan && this.dashboard == dashboard && this.overlay == overlay) {
                 return "Веб-сервер уже работает: " + this.link();
             }
             this.stop();
@@ -163,6 +169,18 @@ public final class LocalHttp {
                     return;
                 }
                 LocalHttp.send(exchange, 200, "text/html; charset=utf-8", WebPages.dashboard(query));
+                return;
+            }
+            if (path.equals("/overlay")) {
+                if (!this.overlay) {
+                    LocalHttp.send(exchange, 404, "text/html; charset=utf-8", WebPages.off());
+                    return;
+                }
+                LocalHttp.send(exchange, 200, "text/html; charset=utf-8", WebPages.overlay(query));
+                return;
+            }
+            if (path.equals("/api/chat")) {
+                LocalHttp.send(exchange, 200, "application/json; charset=utf-8", WebBridge.chatJson().toString());
                 return;
             }
             if (path.equals("/api/state")) {

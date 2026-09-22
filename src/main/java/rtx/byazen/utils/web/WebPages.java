@@ -219,6 +219,122 @@ public final class WebPages {
                 """, query, true);
     }
 
+    /** Страница-оверлей для OBS: прозрачный фон, только выбранные блоки. */
+    public static String overlay(String query) {
+        String blocks = WebPages.param(query, "show");
+        if (blocks == null || blocks.isBlank()) {
+            blocks = "chat,counters,music,events,big";
+        }
+        boolean big = blocks.contains("big");
+        String token = LocalHttp.get().token();
+        return """
+                <!doctype html>
+                <html lang="ru"><head><meta charset="utf-8">
+                <title>ByAzen Stream Overlay</title>
+                <style>
+                :root { --ink:#EEF3FB; --accent:#7FB2FF; --panel:rgba(10,12,18,0.55); }
+                * { box-sizing:border-box; }
+                html,body { margin:0; padding:0; background:transparent; overflow:hidden;
+                  font-family:"Segoe UI",Roboto,Arial,sans-serif; color:var(--ink); }
+                .wrap { position:fixed; inset:0; display:flex; justify-content:space-between; align-items:flex-end;
+                  padding:24px; gap:16px; }
+                .col { display:flex; flex-direction:column; gap:10px; max-width:44%; }
+                .card { background:var(--panel); border:1px solid rgba(160,190,255,0.18); border-radius:14px;
+                  padding:12px 14px; backdrop-filter:blur(6px); }
+                .title { font-size:12px; letter-spacing:.14em; text-transform:uppercase; opacity:.7; margin-bottom:6px; }
+                .big .title { font-size:14px; }
+                .row { display:flex; justify-content:space-between; gap:14px; font-variant-numeric:tabular-nums; }
+                .value { color:var(--accent); font-weight:600; }
+                .chat { max-height:220px; overflow:hidden; display:flex; flex-direction:column-reverse; gap:4px; }
+                .chat div { font-size:14px; opacity:.95; }
+                .big .chat div { font-size:17px; }
+                .counter { font-size:22px; }
+                .big .counter { font-size:28px; }
+                .muted { opacity:.65; font-size:12px; }
+                .event { font-size:13px; opacity:.9; }
+                .big .event { font-size:15px; }
+                </style></head>
+                <body>
+                <div class="wrap">
+                  <div class="col" id="left"></div>
+                  <div class="col" id="right"></div>
+                </div>
+                <script>
+                const TOKEN = "__TOKEN__";
+                const SHOW = "__SHOW__".split(",");
+                const BIG = "__BIG__" === "true";
+                if (BIG) { document.body.classList.add("big"); }
+                function esc(t) { const d = document.createElement("div"); d.textContent = t == null ? "" : t; return d.innerHTML; }
+                async function api(path) {
+                  try { const r = await fetch(path + (path.includes("?") ? "&" : "?") + "t=" + TOKEN, {cache:"no-store"});
+                    return await r.json(); } catch (e) { return null; }
+                }
+                function card(title, body) { return '<div class="card"><div class="title">' + esc(title) + '</div>' + body + '</div>'; }
+                function line(label, value) { return '<div class="row"><span class="muted">' + esc(label) + '</span><span class="value">' + esc(value) + '</span></div>'; }
+                function clock(ms) {
+                  try { return new Date(ms).toLocaleTimeString(); } catch (e) { return ""; }
+                }
+                function render(state, events, chat) {
+                  const left = []; const right = [];
+                  if (SHOW.includes("counters") && state) {
+                    const player = state.player_state || {};
+                    const coords = player.x == null ? "-" : (player.x + " " + player.y + " " + player.z);
+                    left.push(card("ByAzen", '<div class="counter value">' + esc(state.fps) + ' FPS</div>'
+                      + line("мир", state.worldClock || (player.world || "-"))
+                      + line("координаты", coords)
+                      + line("HP", (player.health == null ? "-" : (player.health + " / " + player.maxHealth)))
+                      + line("память", (state.memory == null ? "-" : (state.memory + " МБ")))));
+                  }
+                  if (SHOW.includes("music") && state && state.music) {
+                    left.push(card("Сейчас играет", '<div class="value">' + esc(state.music.title || "тишина") + '</div>'
+                      + '<div class="muted">' + esc(state.music.playing ? ("громкость " + state.music.volume + "%") : "плеер на паузе") + '</div>'));
+                  }
+                  if (SHOW.includes("chat") && chat && chat.messages) {
+                    const list = chat.messages.slice(-8).map(m => '<div>' + esc(m) + '</div>').join("");
+                    right.push(card("Чат", '<div class="chat">' + list + '</div>'));
+                  }
+                  if (SHOW.includes("events") && events && events.events) {
+                    const list = events.events.slice(-6).reverse().map(e => '<div class="event">'
+                      + '<span class="muted">' + esc(clock(e.time)) + '</span> ' + esc(e.text) + '</div>').join("");
+                    right.push(card("События", list || '<div class="muted">пока пусто</div>'));
+                  }
+                  document.getElementById("left").innerHTML = left.join("");
+                  document.getElementById("right").innerHTML = right.join("");
+                }
+                async function tick() {
+                  const state = await api("/api/state");
+                  const events = await api("/api/events");
+                  const chat = await api("/api/chat");
+                  render(state, events, chat);
+                }
+                tick();
+                setInterval(tick, 2000);
+                </script>
+                </body></html>
+                """.replace("__TOKEN__", token).replace("__SHOW__", blocks).replace("__BIG__", big ? "true" : "false");
+    }
+
+    private static String param(String query, String key) {
+        if (query == null) {
+            return null;
+        }
+        for (String pair : query.split("&")) {
+            int index = pair.indexOf('=');
+            if (index <= 0) {
+                continue;
+            }
+            if (pair.substring(0, index).equalsIgnoreCase(key)) {
+                try {
+                    return java.net.URLDecoder.decode(pair.substring(index + 1), java.nio.charset.StandardCharsets.UTF_8);
+                }
+                catch (Throwable throwable) {
+                    return pair.substring(index + 1);
+                }
+            }
+        }
+        return null;
+    }
+
     public static String denied() {
         return page("ByAzen · доступ закрыт", """
                 <header><div class="brand"><div class="logo">B</div><div><h1>Нужен токен</h1>

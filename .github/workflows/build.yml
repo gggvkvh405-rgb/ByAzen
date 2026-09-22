@@ -78,6 +78,14 @@ jobs:
       - name: Show build output
         run: ls -la build/libs
 
+      - name: Build Lite jar (идея №187)
+        run: |
+          ./gradlew --no-daemon liteJar
+          ls -la build/libs
+          test -f build/libs/ByAzen-lite-*.jar
+          unzip -p build/libs/ByAzen-lite-*.jar byazen-tier.txt | grep -q lite
+          echo "LITE JAR OK: $(ls -la build/libs/ByAzen-lite-*.jar)"
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -86,7 +94,9 @@ jobs:
           if-no-files-found: error
 
       - name: Verify built jar
-        run: python3 tools/verify_jar.py | tee tools/build/jar-verify.txt
+        run: |
+          FULL_JAR=$(ls build/libs/ByAzen-[0-9]*.jar | head -1)
+          python3 tools/verify_jar.py "$FULL_JAR" | tee tools/build/jar-verify.txt
 
       - name: Publish CI report into repository
         run: |
@@ -106,6 +116,12 @@ jobs:
             echo '```'
             cat tools/build/jar-verify.txt
             echo '```'
+            echo
+            echo '## Lite-сборка (идея №187)'
+            echo '```'
+            ls -la build/libs/ByAzen-lite-*.jar
+            echo "маркер внутри jar: $(unzip -p build/libs/ByAzen-lite-*.jar byazen-tier.txt)"
+            echo '```'
           } > ci-report.md
           git add -f -- ci-report.md
           if git diff --cached --quiet; then
@@ -120,7 +136,9 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           rm -f ByAzen-*.jar
-          cp build/libs/ByAzen-*.jar .
+          # в репозиторий кладём только полную сборку: lite-сборка живёт в артефактах прогона
+          FULL_JAR=$(ls build/libs/ByAzen-[0-9]*.jar | head -1)
+          cp "$FULL_JAR" .
           # only the built jar (and wrapper files) - never build/ or .gradle/ caches
           git add -f -A -- './ByAzen-*.jar'
           git add -f -- gradle/wrapper/gradle-wrapper.jar gradlew gradlew.bat gradle/wrapper/gradle-wrapper.properties

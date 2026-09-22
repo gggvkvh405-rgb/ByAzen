@@ -3,6 +3,7 @@ package rtx.byazen.utils.web;
 import rtx.byazen.api.modules.Module;
 import rtx.byazen.api.modules.ModuleManager;
 import rtx.byazen.api.modules.impl.Utils.MobileCompanionModule;
+import rtx.byazen.api.modules.impl.Interface.StreamOverlayModule;
 import rtx.byazen.api.modules.impl.Utils.WebDashboardModule;
 
 /**
@@ -20,8 +21,9 @@ public final class WebService {
     public static void refresh() {
         boolean companion = WebService.enabled(MobileCompanionModule.class);
         boolean dashboard = WebService.enabled(WebDashboardModule.class);
+        boolean overlay = WebService.enabled(StreamOverlayModule.class);
         LocalHttp http = LocalHttp.get();
-        if (!companion && !dashboard) {
+        if (!companion && !dashboard && !overlay) {
             if (http.running()) {
                 http.stop();
                 WebBridge.pushEvent("web", "Веб-сервер остановлен");
@@ -31,10 +33,11 @@ public final class WebService {
         int port = MobileCompanionModule.port();
         boolean lan = MobileCompanionModule.lanAllowed();
         boolean wasRunning = http.running();
-        String result = http.start(port, lan, dashboard);
+        String result = http.start(port, lan, dashboard, overlay);
         WebBridge.ensure();
         if (!wasRunning) {
-            WebBridge.pushEvent("web", dashboard && !companion ? "Дашборд запущен" : "Компаньон запущен");
+            WebBridge.pushEvent("web", overlay && !companion && !dashboard ? "Оверлей для стрима запущен"
+                    : dashboard && !companion ? "Дашборд запущен" : "Компаньон запущен");
         }
         if (lan) {
             WebBridge.warnLanOnce();

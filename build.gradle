@@ -77,6 +77,40 @@ tasks.withType(org.gradle.api.tasks.bundling.AbstractArchiveTask).configureEach 
     reproducibleFileOrder = true
 }
 
+// Lite-сборка (идея №187): тот же клиент, но без тяжёлых ресурсов и с маркером сборки.
+// Полный jar остаётся основным артефактом, lite кладётся рядом в build/libs и попадает в артефакты CI.
+def liteExcludes = [
+        'assets/byazen/sounds/cosmetics/**',
+        'assets/byazen/gif/covers/**',
+        'assets/byazen/gif/**',
+]
+
+tasks.register('liteJar', Jar) {
+    dependsOn tasks.named('remapJar')
+    archiveFileName = "ByAzen-lite-${project.version}.jar"
+    destinationDirectory = layout.buildDirectory.dir('libs')
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    def fullJar = tasks.named('remapJar').flatMap { it.archiveFile }
+    from({ zipTree(fullJar.get().asFile) }) {
+        liteExcludes.each { pattern -> exclude pattern }
+    }
+    def marker = layout.buildDirectory.file('tmp/byazen-tier.txt')
+    from(marker) {
+        rename { 'byazen-tier.txt' }
+    }
+    doFirst {
+        def file = marker.get().asFile
+        file.parentFile.mkdirs()
+        file.text = "lite"
+    }
+}
+
+tasks.register('printTier') {
+    doLast {
+        println "ByAzen tier: full -> ${tasks.named('remapJar').get().archiveFileName.get()}, lite -> ByAzen-lite-${project.version}.jar"
+    }
+}
+
 java {
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
