@@ -1,6 +1,6 @@
 # Отчёт CI по сборке ByAzen
 
-Коммит: 110e16eb80fe7fe4aa78916f49a0d2acc5eebc93
+Коммит: da0c252837832446cea6be42d1fc152e5cfbd6b0
 
 ## Аудио-тракт (MP3 -> PCM, как в игре)
 ```
@@ -18,9 +18,9 @@ AUDIO SMOKE: OK
 
 ## Проверка собранного jar
 ```
-файл:             build/libs/ByAzen-1.9.1.jar
+файл:             build/libs/ByAzen-1.9.2.jar
 mod id:           byazen
-версия в jar:     1.9.1 (ожидается 1.9.1)
+версия в jar:     1.9.2 (ожидается 1.9.2)
 объявлено jar:    6
 лежит в jar:      6
 entrypoints:      client,main
@@ -30,6 +30,28 @@ VERIFY: OK
 
 ## Lite-сборка (идея №187)
 ```
--rw-r--r-- 1 runner runner 80400654 Sep 22 15:32 build/libs/ByAzen-lite-1.9.1.jar
+-rw-r--r-- 1 runner runner 80404747 Sep 22 15:55 build/libs/ByAzen-lite-1.9.2.jar
 маркер внутри jar: lite
 ```
+
+## Манифест обновлений (идеи №206–№208)
+```
+{
+  "version": "1.9.2",
+  "jar": "ByAzen-1.9.2.jar",
+  "url": "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.2.jar",
+  "urls": [
+    "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.2.jar"
+  ],
+  "sha256": "f8a720dbb36c9d1fe65bad7624ae331383d605ffe6f2982b457bcd9bc7bbc455",
+  "size": 80958241,
+  "released": "2026-09-22",
+  "minecraft": "1.21.11",
+  "loader": "0.19.3",
+  "java": 21,
+  "notes": "Манифест обновлений (№206). В репозитории появился update.json, но главное — он больше не",
+  "generated": "CI"
+}
+```
+
+Это то, что увидит клиент при проверке обновлений (модуль Updater).
