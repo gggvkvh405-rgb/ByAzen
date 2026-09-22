@@ -5,15 +5,48 @@ Daemon will be stopped at the end of the build
 Fabric Loom: 1.17.19
 
 > Task :compileJava
-/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/api/modules/impl/Interface/ScreenshotsModule.java:55: error: cannot find symbol
-    public final SliderSetting autoGap = this.register(new SliderSetting("Пауза между снимками, сек", "Чтобы авто-снимки не заваливали папку.")
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/cosmetics/CosmeticRegistry.java:63: error: constructor Cosmetic in class Cosmetic cannot be applied to given types;
+        return new Cosmetic(id, name, slot, shape, flavor, description, color, accent, icon, free);
+               ^
+  required: String,String,String,String,String,String,String,int,int,Item,boolean
+  found:    String,String,String,String,String,String,int,int,Item,boolean
+  reason: actual and formal argument lists differ in length
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/cosmetics/CosmeticModels.java:77: error: incompatible types: possible lossy conversion from double to float
+        mesh.cylinder(p(0.0, 0.02 * (double)s, 0.0), AXIS_X, AXIS_Z, AXIS_Y, brim, 0.30 * (double)s, 22, body, band);
+                                                                                        ^
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/cosmetics/CosmeticModels.java:88: error: incompatible types: possible lossy conversion from double to float
+        mesh.cylinder(p(0.0, 0.01 * (double)s, 0.0), AXIS_X, AXIS_Z, AXIS_Y, radius, 0.075 * (double)s, 20, gold, gold);
+                                                                                           ^
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/cosmetics/FootprintTrail.java:75: error: cannot find symbol
+        Vec3d pos = player.getPos();
+                          ^
+  symbol:   method getPos()
+  location: variable player of type PlayerEntity
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/cosmetics/FootprintTrail.java:145: error: constructor Point in class Point cannot be applied to given types;
+                    bloom.add(new BloomRenderer.Point(step.pos.add(0.0, 0.05, 0.0), size * 0.5f * fade,
+                              ^
+  required: Vec3d,float,int,float
+  found:    Vec3d,float,int
+  reason: actual and formal argument lists differ in length
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/pets/PetAccessories.java:88: error: incompatible types: possible lossy conversion from double to float
+            mesh.cylinder(head, right, forward, up, radius, (double)hatHeight, 16, body, accent);
+                                                            ^
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/api/modules/impl/Visuals/Footprints.java:71: error: incompatible types: CustomPetEntity cannot be converted to PlayerEntity
+                FootprintTrail.update(customPet.localPet(), now, this.spacing.getFloat(), tint);
+                                                        ^
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/api/ui/ProfileCoverScreen.java:269: error: close() in ProfileCoverScreen cannot override close() in Screen
+    private void close() {
                  ^
-  symbol:   class SliderSetting
-  location: class ScreenshotsModule
-1 error
+  attempting to assign weaker access privileges; was public
+Note: /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/api/mods/geckolib/animatable/instance/AnimatableInstanceCache.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+Note: Some messages have been simplified; recompile with -Xdiags:verbose to get full output
+8 errors
 
 > Task :compileJava FAILED
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_3-1790068274200.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_3-1790077601794.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/ByAzen/ByAzen/build/reports/problems/problems-report.html
 
@@ -22,12 +55,45 @@ FAILURE: Build failed with an exception.
 * What went wrong:
 Execution failed for task ':compileJava' (registered by plugin class 'org.gradle.api.plugins.JavaBasePlugin').
 > Compilation failed; see the compiler output below.
-  /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/api/modules/impl/Interface/ScreenshotsModule.java:55: error: cannot find symbol
-      public final SliderSetting autoGap = this.register(new SliderSetting("Пауза между снимками, сек", "Чтобы авто-снимки не заваливали папку.")
+  Note: /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/api/mods/geckolib/animatable/instance/AnimatableInstanceCache.java uses or overrides a deprecated API.
+  /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/cosmetics/CosmeticRegistry.java:63: error: constructor Cosmetic in class Cosmetic cannot be applied to given types;
+          return new Cosmetic(id, name, slot, shape, flavor, description, color, accent, icon, free);
+                 ^
+    required: String,String,String,String,String,String,String,int,int,Item,boolean
+    found:    String,String,String,String,String,String,int,int,Item,boolean
+    reason: actual and formal argument lists differ in length
+  /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/cosmetics/FootprintTrail.java:145: error: constructor Point in class Point cannot be applied to given types;
+                      bloom.add(new BloomRenderer.Point(step.pos.add(0.0, 0.05, 0.0), size * 0.5f * fade,
+                                ^
+    required: Vec3d,float,int,float
+    found:    Vec3d,float,int
+    reason: actual and formal argument lists differ in length
+  Note: Recompile with -Xlint:deprecation for details.
+  /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/api/ui/ProfileCoverScreen.java:269: error: close() in ProfileCoverScreen cannot override close() in Screen
+      private void close() {
                    ^
-    symbol:   class SliderSetting
-    location: class ScreenshotsModule
-  1 error
+    attempting to assign weaker access privileges; was public
+  /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/cosmetics/CosmeticModels.java:77: error: incompatible types: possible lossy conversion from double to float
+          mesh.cylinder(p(0.0, 0.02 * (double)s, 0.0), AXIS_X, AXIS_Z, AXIS_Y, brim, 0.30 * (double)s, 22, body, band);
+                                                                                          ^
+  /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/cosmetics/CosmeticModels.java:88: error: incompatible types: possible lossy conversion from double to float
+          mesh.cylinder(p(0.0, 0.01 * (double)s, 0.0), AXIS_X, AXIS_Z, AXIS_Y, radius, 0.075 * (double)s, 20, gold, gold);
+                                                                                             ^
+  /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/pets/PetAccessories.java:88: error: incompatible types: possible lossy conversion from double to float
+              mesh.cylinder(head, right, forward, up, radius, (double)hatHeight, 16, body, accent);
+                                                              ^
+  /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/api/modules/impl/Visuals/Footprints.java:71: error: incompatible types: CustomPetEntity cannot be converted to PlayerEntity
+                  FootprintTrail.update(customPet.localPet(), now, this.spacing.getFloat(), tint);
+                                                          ^
+  Note: Recompile with -Xlint:unchecked for details.
+  Note: Some messages have been simplified; recompile with -Xdiags:verbose to get full output
+  Note: Some input files use unchecked or unsafe operations.
+  /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/cosmetics/FootprintTrail.java:75: error: cannot find symbol
+          Vec3d pos = player.getPos();
+                            ^
+    symbol:   method getPos()
+    location: variable player of type PlayerEntity
+  8 errors
 
 * Try:
 > Check your code and dependencies to fix the compilation error(s)
@@ -69,12 +135,45 @@ org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':compile
 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
 Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Compilation failed; see the compiler output below.
-/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/api/modules/impl/Interface/ScreenshotsModule.java:55: error: cannot find symbol
-    public final SliderSetting autoGap = this.register(new SliderSetting("Пауза между снимками, сек", "Чтобы авто-снимки не заваливали папку.")
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/cosmetics/CosmeticRegistry.java:63: error: constructor Cosmetic in class Cosmetic cannot be applied to given types;
+        return new Cosmetic(id, name, slot, shape, flavor, description, color, accent, icon, free);
+               ^
+  required: String,String,String,String,String,String,String,int,int,Item,boolean
+  found:    String,String,String,String,String,String,int,int,Item,boolean
+  reason: actual and formal argument lists differ in length
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/cosmetics/CosmeticModels.java:77: error: incompatible types: possible lossy conversion from double to float
+        mesh.cylinder(p(0.0, 0.02 * (double)s, 0.0), AXIS_X, AXIS_Z, AXIS_Y, brim, 0.30 * (double)s, 22, body, band);
+                                                                                        ^
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/cosmetics/CosmeticModels.java:88: error: incompatible types: possible lossy conversion from double to float
+        mesh.cylinder(p(0.0, 0.01 * (double)s, 0.0), AXIS_X, AXIS_Z, AXIS_Y, radius, 0.075 * (double)s, 20, gold, gold);
+                                                                                           ^
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/cosmetics/FootprintTrail.java:75: error: cannot find symbol
+        Vec3d pos = player.getPos();
+                          ^
+  symbol:   method getPos()
+  location: variable player of type PlayerEntity
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/cosmetics/FootprintTrail.java:145: error: constructor Point in class Point cannot be applied to given types;
+                    bloom.add(new BloomRenderer.Point(step.pos.add(0.0, 0.05, 0.0), size * 0.5f * fade,
+                              ^
+  required: Vec3d,float,int,float
+  found:    Vec3d,float,int
+  reason: actual and formal argument lists differ in length
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/pets/PetAccessories.java:88: error: incompatible types: possible lossy conversion from double to float
+            mesh.cylinder(head, right, forward, up, radius, (double)hatHeight, 16, body, accent);
+                                                            ^
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/api/modules/impl/Visuals/Footprints.java:71: error: incompatible types: CustomPetEntity cannot be converted to PlayerEntity
+                FootprintTrail.update(customPet.localPet(), now, this.spacing.getFloat(), tint);
+                                                        ^
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/api/ui/ProfileCoverScreen.java:269: error: close() in ProfileCoverScreen cannot override close() in Screen
+    private void close() {
                  ^
-  symbol:   class SliderSetting
-  location: class ScreenshotsModule
-1 error
+  attempting to assign weaker access privileges; was public
+Note: /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/api/mods/geckolib/animatable/instance/AnimatableInstanceCache.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+Note: Some messages have been simplified; recompile with -Xdiags:verbose to get full output
+8 errors
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:89)
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:50)
 	at org.gradle.api.internal.tasks.compile.NormalizingJavaCompiler.delegateAndHandleErrors(NormalizingJavaCompiler.java:98)
@@ -209,5 +308,5 @@ Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Com
 	... 30 more
 
 
-BUILD FAILED in 22s
+BUILD FAILED in 31s
 1 actionable task: 1 executed
