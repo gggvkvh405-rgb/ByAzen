@@ -22,6 +22,7 @@ import rtx.byazen.api.modules.settings.impl.BindSetting;
 import rtx.byazen.api.modules.settings.impl.BooleanSetting;
 import rtx.byazen.api.modules.settings.impl.ButtonSetting;
 import rtx.byazen.api.modules.settings.impl.SeparatorSetting;
+import rtx.byazen.api.modules.settings.impl.SliderSetting;
 import rtx.byazen.api.ui.GalleryScreen;
 import rtx.byazen.api.ui.ScreenshotAnnotatorScreen;
 import rtx.byazen.api.ui.UI;

@@ -368,7 +368,7 @@ public final class ModsIndex {
         String name = translation == null ? "" : translation;
         if (name.startsWith("key.")) {
             int dot = name.lastIndexOf(46);
-            return dot > 0 ? name.substring(dot + 1).replace(95, ' ') : name.substring(4);
+            return dot > 0 ? name.substring(dot + 1).replace('_', ' ') : name.substring(4);
         }
         return name;
     }

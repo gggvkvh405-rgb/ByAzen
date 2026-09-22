@@ -64,7 +64,7 @@ extends BaseScreen {
         float x2;
         float y2;
         int color;
-        int thickness;
+        float thickness;
         String text = "";
     }
 
