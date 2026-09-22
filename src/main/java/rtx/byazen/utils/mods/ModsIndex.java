@@ -20,6 +20,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
+import net.fabricmc.loader.api.metadata.Person;
 import net.fabricmc.loader.api.metadata.ModMetadata;
 import rtx.byazen.ByAzen;
 
@@ -95,6 +96,21 @@ public final class ModsIndex {
         }
     }
 
+    /** Первый автор мода: в лоадере это коллекция, а не список. */
+    private static String firstAuthor(ModMetadata metadata) {
+        try {
+            for (Person person : metadata.getAuthors()) {
+                if (person != null && person.getName() != null) {
+                    return person.getName();
+                }
+            }
+        }
+        catch (Throwable throwable) {
+            return "";
+        }
+        return "";
+    }
+
     /** Список всех модов, отсортированный по названию. */
     public static List<Mod> list() {
         ArrayList<Mod> list = new ArrayList<Mod>();
@@ -102,7 +118,7 @@ public final class ModsIndex {
             for (ModContainer container : FabricLoader.getInstance().getAllMods()) {
                 ModMetadata metadata = container.getMetadata();
                 Path path = ModsIndex.pathOf(container);
-                String authors = metadata.getAuthors().isEmpty() ? "" : metadata.getAuthors().get(0).getName();
+                String authors = ModsIndex.firstAuthor(metadata);
                 String description = metadata.getDescription() == null ? "" : metadata.getDescription();
                 list.add(new Mod(metadata.getId(), metadata.getName(), metadata.getVersion().getFriendlyString(),
                         path, authors, description));

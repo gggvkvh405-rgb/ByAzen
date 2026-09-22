@@ -5,19 +5,15 @@ Daemon will be stopped at the end of the build
 Fabric Loom: 1.17.19
 
 > Task :compileJava
-/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/mods/ModsIndex.java:105: error: cannot find symbol
-                String authors = metadata.getAuthors().isEmpty() ? "" : metadata.getAuthors().get(0).getName();
-                                                                                             ^
-  symbol:   method get(int)
-  location: interface Collection<Person>
-Note: /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/api/mods/geckolib/animatable/instance/AnimatableInstanceCache.java uses or overrides a deprecated API.
-Note: Recompile with -Xlint:deprecation for details.
-Note: Some input files use unchecked or unsafe operations.
-Note: Recompile with -Xlint:unchecked for details.
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/api/modules/impl/Interface/ScreenshotsModule.java:55: error: cannot find symbol
+    public final SliderSetting autoGap = this.register(new SliderSetting("Пауза между снимками, сек", "Чтобы авто-снимки не заваливали папку.")
+                 ^
+  symbol:   class SliderSetting
+  location: class ScreenshotsModule
 1 error
 
 > Task :compileJava FAILED
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_3-1790068611155.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_3-1790068274200.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/ByAzen/ByAzen/build/reports/problems/problems-report.html
 
@@ -26,15 +22,11 @@ FAILURE: Build failed with an exception.
 * What went wrong:
 Execution failed for task ':compileJava' (registered by plugin class 'org.gradle.api.plugins.JavaBasePlugin').
 > Compilation failed; see the compiler output below.
-  Note: /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/api/mods/geckolib/animatable/instance/AnimatableInstanceCache.java uses or overrides a deprecated API.
-  Note: Recompile with -Xlint:deprecation for details.
-  Note: Recompile with -Xlint:unchecked for details.
-  Note: Some input files use unchecked or unsafe operations.
-  /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/mods/ModsIndex.java:105: error: cannot find symbol
-                  String authors = metadata.getAuthors().isEmpty() ? "" : metadata.getAuthors().get(0).getName();
-                                                                                               ^
-    symbol:   method get(int)
-    location: interface Collection<Person>
+  /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/api/modules/impl/Interface/ScreenshotsModule.java:55: error: cannot find symbol
+      public final SliderSetting autoGap = this.register(new SliderSetting("Пауза между снимками, сек", "Чтобы авто-снимки не заваливали папку.")
+                   ^
+    symbol:   class SliderSetting
+    location: class ScreenshotsModule
   1 error
 
 * Try:
@@ -77,15 +69,11 @@ org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':compile
 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
 Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Compilation failed; see the compiler output below.
-/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/mods/ModsIndex.java:105: error: cannot find symbol
-                String authors = metadata.getAuthors().isEmpty() ? "" : metadata.getAuthors().get(0).getName();
-                                                                                             ^
-  symbol:   method get(int)
-  location: interface Collection<Person>
-Note: /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/api/mods/geckolib/animatable/instance/AnimatableInstanceCache.java uses or overrides a deprecated API.
-Note: Recompile with -Xlint:deprecation for details.
-Note: Some input files use unchecked or unsafe operations.
-Note: Recompile with -Xlint:unchecked for details.
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/api/modules/impl/Interface/ScreenshotsModule.java:55: error: cannot find symbol
+    public final SliderSetting autoGap = this.register(new SliderSetting("Пауза между снимками, сек", "Чтобы авто-снимки не заваливали папку.")
+                 ^
+  symbol:   class SliderSetting
+  location: class ScreenshotsModule
 1 error
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:89)
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:50)
@@ -221,5 +209,5 @@ Note: Recompile with -Xlint:unchecked for details.
 	... 30 more
 
 
-BUILD FAILED in 25s
+BUILD FAILED in 22s
 1 actionable task: 1 executed
