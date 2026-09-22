@@ -48,12 +48,12 @@ extends Module {
     private final SeparatorSetting moodSeparator = this.register(new SeparatorSetting("Настроение"));
     public final BooleanSetting emotions = this.register(new BooleanSetting("Эмоции", "Показывать эмоции питомца мягкими светящимися частицами.", true));
     public final BooleanSetting idlePlay = this.register(new BooleanSetting("Игры при простое", "Питомец сам затевает игру, когда вы стоите без дела.", true));
-    public final SliderSetting moodInterval = this.register(new SliderSetting("Частота, с", "Как часто питомец показывает эмоции сам.", 12.0f, 4.0f, 45.0f, 1.0f)).visible(this.idlePlay::getValue);
-    public final SliderSetting sparkLevel = this.register(new SliderSetting("Яркость эмоций, %", "Насколько яркие частицы эмоций.", 70.0f, 20.0f, 150.0f, 5.0f)).visible(this.emotions::getValue);
+    public final SliderSetting moodInterval = this.register(new SliderSetting("Частота, с", "Как часто питомец показывает эмоции сам.").range(4.0f, 45.0f).increment(1.0f).setValue(12.0f)).visible(this.idlePlay::getValue);
+    public final SliderSetting sparkLevel = this.register(new SliderSetting("Яркость эмоций, %", "Насколько яркие частицы эмоций.").range(20.0f, 150.0f).increment(5.0f).setValue(70.0f)).visible(this.emotions::getValue);
 
     private final SeparatorSetting soundSeparator = this.register(new SeparatorSetting("Звуки"));
     public final BooleanSetting sounds = this.register(new BooleanSetting("Звуки питомца", "Питомец попискивает, когда радуется или грустит.", true));
-    public final SliderSetting soundVolume = this.register(new SliderSetting("Громкость, %", "Громкость звуков питомца.", 65.0f, 10.0f, 100.0f, 5.0f)).visible(this.sounds::getValue);
+    public final SliderSetting soundVolume = this.register(new SliderSetting("Громкость, %", "Громкость звуков питомца.").range(10.0f, 100.0f).increment(5.0f).setValue(65.0f)).visible(this.sounds::getValue);
 
     private final SeparatorSetting lookSeparator = this.register(new SeparatorSetting("Вид"));
     public final BooleanSetting accentEmotion = this.register(new BooleanSetting("Акцент в эмоциях", "Подмешивать акцент клиента в частицы эмоций.", true));

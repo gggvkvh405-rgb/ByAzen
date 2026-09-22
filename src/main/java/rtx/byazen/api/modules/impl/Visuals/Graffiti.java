@@ -43,12 +43,12 @@ extends Module {
     public final ButtonSetting clearAll = this.register(new ButtonSetting("Снять все наклейки", "Убрать все рисунки из мира (файлы PNG остаются).").label("Снять").onClick(Graffiti::clearAll));
 
     private final SeparatorSetting lookSeparator = this.register(new SeparatorSetting("Вид наклейки"));
-    public final SliderSetting size = this.register(new SliderSetting("Размер, блоки", "Насколько крупный рисунок на стене.", 1.4f, 0.35f, 4.0f, 0.05f));
-    public final SliderSetting rotation = this.register(new SliderSetting("Поворот, °", "Поворот рисунка вокруг оси стены.", 0.0f, -180.0f, 180.0f, 5.0f));
-    public final SliderSetting opacity = this.register(new SliderSetting("Прозрачность, %", "Насколько плотный рисунок.", 100.0f, 20.0f, 100.0f, 5.0f));
+    public final SliderSetting size = this.register(new SliderSetting("Размер, блоки", "Насколько крупный рисунок на стене.").range(0.35f, 4.0f).increment(0.05f).setValue(1.4f));
+    public final SliderSetting rotation = this.register(new SliderSetting("Поворот, °", "Поворот рисунка вокруг оси стены.").range(-180.0f, 180.0f).increment(5.0f).setValue(0.0f));
+    public final SliderSetting opacity = this.register(new SliderSetting("Прозрачность, %", "Насколько плотный рисунок.").range(20.0f, 100.0f).increment(5.0f).setValue(100.0f));
     public final BooleanSetting emissive = this.register(new BooleanSetting("Свечение", "Рисунок не гаснет в темноте, как светящаяся краска.", true));
     public final BooleanSetting fadeIn = this.register(new BooleanSetting("Плавное появление", "Наклейка мягко проявляется после установки.", true));
-    public final SliderSetting range = this.register(new SliderSetting("Дальность, блоков", "С какого расстояния показывать наклейки.", 64.0f, 16.0f, 160.0f, 8.0f));
+    public final SliderSetting range = this.register(new SliderSetting("Дальность, блоков", "С какого расстояния показывать наклейки.").range(16.0f, 160.0f).increment(8.0f).setValue(64.0f));
 
     private final ParticleRenderer renderer = new ParticleRenderer();
     private final List<GraffitiStore.Decal> decals = new ArrayList<GraffitiStore.Decal>();

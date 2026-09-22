@@ -20,7 +20,7 @@ extends Module {
     private final SeparatorSetting hudSeparator = this.register(new SeparatorSetting("В интерфейсе"));
     private final BooleanSetting hudIcon = this.register(new BooleanSetting("Иконка в HUD", "Показывать выбранное оружие в HUD: иконкой и названием модели.", false));
     private final BooleanSetting hudName = this.register(new BooleanSetting("Название в HUD", "Подписывать модель рядом с иконкой.", true)).visible(this.hudIcon::getValue);
-    private final SliderSetting hudScale = this.register(new SliderSetting("Размер иконки, %", "Насколько крупная иконка оружия в HUD.", 100.0f, 60.0f, 220.0f, 5.0f)).visible(this.hudIcon::getValue);
+    private final SliderSetting hudScale = this.register(new SliderSetting("Размер иконки, %", "Насколько крупная иконка оружия в HUD.").range(60.0f, 220.0f).increment(5.0f).setValue(100.0f)).visible(this.hudIcon::getValue);
     private final BooleanSetting hudShadow = this.register(new BooleanSetting("Тень текста", "Мягкая тень под названием модели, чтобы читалось на любом фоне.", true)).visible(this.hudIcon::getValue);
 
     private final SeparatorSetting menuSeparator = this.register(new SeparatorSetting("Редактор"));

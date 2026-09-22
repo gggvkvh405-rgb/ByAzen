@@ -50,13 +50,13 @@ extends Module {
 
     private final SeparatorSetting lookSeparator = this.register(new SeparatorSetting("Форма"));
     public final ModeSetting shape = this.register(new ModeSetting("Форма", "Какие крылья рисовать.", MODE_ANGEL, MODE_ANGEL, MODE_DRAGON, MODE_MOTH));
-    public final SliderSetting size = this.register(new SliderSetting("Размер, %", "Насколько крупные крылья.", 100.0f, 50.0f, 180.0f, 5.0f));
-    public final SliderSetting span = this.register(new SliderSetting("Размах, %", "Насколько широко раскрыты крылья.", 100.0f, 50.0f, 170.0f, 5.0f));
-    public final SliderSetting droop = this.register(new SliderSetting("Провис, %", "Насколько сильно ткань провисает под своим весом.", 45.0f, 0.0f, 120.0f, 5.0f));
-    public final SliderSetting wind = this.register(new SliderSetting("Ветер", "Как сильно ветер колышет ткань.", 55.0f, 0.0f, 150.0f, 5.0f));
+    public final SliderSetting size = this.register(new SliderSetting("Размер, %", "Насколько крупные крылья.").range(50.0f, 180.0f).increment(5.0f).setValue(100.0f));
+    public final SliderSetting span = this.register(new SliderSetting("Размах, %", "Насколько широко раскрыты крылья.").range(50.0f, 170.0f).increment(5.0f).setValue(100.0f));
+    public final SliderSetting droop = this.register(new SliderSetting("Провис, %", "Насколько сильно ткань провисает под своим весом.").range(0.0f, 120.0f).increment(5.0f).setValue(45.0f));
+    public final SliderSetting wind = this.register(new SliderSetting("Ветер", "Как сильно ветер колышет ткань.").range(0.0f, 150.0f).increment(5.0f).setValue(55.0f));
 
     private final SeparatorSetting motionSeparator = this.register(new SeparatorSetting("Движение"));
-    public final SliderSetting flapSpeed = this.register(new SliderSetting("Взмах", "Скорость взмахов при полёте и в прыжке.", 60.0f, 0.0f, 160.0f, 5.0f));
+    public final SliderSetting flapSpeed = this.register(new SliderSetting("Взмах", "Скорость взмахов при полёте и в прыжке.").range(0.0f, 160.0f).increment(5.0f).setValue(60.0f));
     public final BooleanSetting glideSpread = this.register(new BooleanSetting("Раскрывать в падении", "Раскрывать крылья шире, когда вы падаете или летите на элитрах.", true));
     public final BooleanSetting landing = this.register(new BooleanSetting("Складывать на земле", "Плавно складывать крылья, когда вы стоите спокойно.", true));
 

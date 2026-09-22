@@ -65,7 +65,7 @@ extends Module {
     public final ModeSetting filter = this.register(new ModeSetting("Фильтр", "Какую группу предметов подсвечивать.", FILTER_ALL,
             FILTER_ALL, FILTER_WEAPONS, FILTER_TOOLS, FILTER_ARMOR, FILTER_FOOD, FILTER_BLOCKS, FILTER_RESOURCES, FILTER_CONTAINERS));
     public final BooleanSetting dimOthers = this.register(new BooleanSetting("Затемнять лишнее", "Мягко затемнять ячейки, которые не подходят под фильтр.", true));
-    public final SliderSetting dimStrength = this.register(new SliderSetting("Сила затемнения, %", "Насколько сильно темнить неподходящие ячейки.", 55.0f, 15.0f, 85.0f, 5.0f)).visible(this.dimOthers::getValue);
+    public final SliderSetting dimStrength = this.register(new SliderSetting("Сила затемнения, %", "Насколько сильно темнить неподходящие ячейки.").range(15.0f, 85.0f).increment(5.0f).setValue(55.0f)).visible(this.dimOthers::getValue);
     public final ColorSetting markColor = this.register(new ColorSetting("Цвет рамки", "Цвет акцентной рамки вокруг подходящих ячеек.", new java.awt.Color(120, 200, 255, 200)));
 
     private final SeparatorSetting searchSeparator = this.register(new SeparatorSetting("Поиск"));
