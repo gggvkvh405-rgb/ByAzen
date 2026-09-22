@@ -74,7 +74,7 @@ public final class CosmeticModels {
         int body = CosmeticModels.alpha(cosmetic.color, 238);
         int band = CosmeticModels.alpha(cosmetic.accent, 246);
         float brim = 0.24f * s;
-        mesh.cylinder(p(0.0, 0.02 * (double)s, 0.0), AXIS_X, AXIS_Z, AXIS_Y, brim, 0.30 * (double)s, 22, body, band);
+        mesh.cylinder(p(0.0, 0.02 * (double)s, 0.0), AXIS_X, AXIS_Z, AXIS_Y, brim, (float)(0.30 * (double)s), 22, body, band);
         mesh.annulus(p(0.0, 0.02 * (double)s, 0.0), AXIS_X, AXIS_Z, brim, 0.36f * s, 22, band, CosmeticModels.alpha(cosmetic.accent, 120));
         // лента по низу шляпы: цвет акцента и мягкое свечение в темноте
         mesh.annulus(p(0.0, 0.05 * (double)s, 0.0), AXIS_X, AXIS_Z, brim * 1.01f, brim * 1.06f, 22,
@@ -85,7 +85,7 @@ public final class CosmeticModels {
         int gold = CosmeticModels.alpha(cosmetic.color, 244);
         int jewel = CosmeticModels.alpha(cosmetic.accent, 250);
         float radius = 0.21f * s;
-        mesh.cylinder(p(0.0, 0.01 * (double)s, 0.0), AXIS_X, AXIS_Z, AXIS_Y, radius, 0.075 * (double)s, 20, gold, gold);
+        mesh.cylinder(p(0.0, 0.01 * (double)s, 0.0), AXIS_X, AXIS_Z, AXIS_Y, radius, (float)(0.075 * (double)s), 20, gold, gold);
         mesh.annulus(p(0.0, 0.085 * (double)s, 0.0), AXIS_X, AXIS_Z, radius * 0.72f, radius, 20, jewel, gold);
         for (int i = 0; i < 6; ++i) {
             double angle = (double)i / 6.0 * Math.PI * 2.0;

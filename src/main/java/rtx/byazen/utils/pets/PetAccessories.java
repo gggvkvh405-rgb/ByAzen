@@ -85,7 +85,7 @@ public final class PetAccessories {
             Vec3d head = new Vec3d(base.x, base.y + (double)height * 0.94, base.z);
             float radius = (crown ? 0.10f : 0.12f) * scale;
             float hatHeight = (crown ? 0.09f : 0.19f) * scale;
-            mesh.cylinder(head, right, forward, up, radius, (double)hatHeight, 16, body, accent);
+            mesh.cylinder(head, right, forward, up, radius, hatHeight, 16, body, accent);
             mesh.annulus(head, right, forward, radius, radius * (crown ? 1.45f : 1.85f), 16, accent, body);
             if (crown) {
                 for (int i = 0; i < 5; ++i) {

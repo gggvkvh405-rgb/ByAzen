@@ -196,7 +196,7 @@ extends BaseScreen {
         float mouseY = Position.mouseY();
         if (click.button() == 0 && mouseX >= x + W - PAD - 14.0f && mouseX <= x + W - PAD
                 && mouseY >= y + 8.0f && mouseY <= y + 24.0f) {
-            this.close();
+            this.closeScreen();
             return true;
         }
         if (click.button() == 0 && mouseX >= ProfileCoverScreen.listX()
@@ -235,7 +235,7 @@ extends BaseScreen {
     public boolean keyPressed(KeyInput input) {
         int key = input.key();
         if (key == GLFW.GLFW_KEY_ESCAPE) {
-            this.close();
+            this.closeScreen();
             return true;
         }
         if (key == GLFW.GLFW_KEY_DOWN && this.selected + 1 < this.covers.size()) {
@@ -266,7 +266,7 @@ extends BaseScreen {
         }
     }
 
-    private void close() {
+    private void closeScreen() {
         BaseScreen.beginClosingOverlay(this);
         MinecraftClient client = MinecraftClient.getInstance();
         if (client != null) {

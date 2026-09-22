@@ -10,7 +10,7 @@ import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import rtx.byazen.api.events.impl.render.WorldRenderEvent;
@@ -67,13 +67,15 @@ public final class FootprintTrail {
      *
      * @param spacing расстояние между следами в блоках
      */
-    public static void update(PlayerEntity player, long now, double spacing, int color) {
-        if (player == null) {
+    public static void update(Entity entity, long now, double spacing, int color) {
+        if (entity == null) {
             return;
         }
-        Trail trail = TRAILS.computeIfAbsent(player.getId(), id -> new Trail());
-        Vec3d pos = player.getPos();
-        if (!player.isOnGround() || player.isGliding() || player.isSwimming()) {
+        Trail trail = TRAILS.computeIfAbsent(entity.getId(), id -> new Trail());
+        Vec3d pos = new Vec3d(entity.getX(), entity.getY(), entity.getZ());
+        boolean busy = entity instanceof PlayerEntity
+                && (((PlayerEntity)entity).isGliding() || ((PlayerEntity)entity).isSwimming());
+        if (!entity.isOnGround() || busy) {
             trail.last = pos;
             return;
         }
@@ -84,7 +86,7 @@ public final class FootprintTrail {
             return;
         }
         trail.left = !trail.left;
-        float yaw = player.getYaw();
+        float yaw = entity.getYaw();
         double rad = Math.toRadians(yaw);
         // правое плечо относительно направления взгляда
         double rightX = Math.cos(rad);
@@ -119,7 +121,7 @@ public final class FootprintTrail {
 
         for (Map.Entry<Integer, Trail> entrySet : TRAILS.entrySet()) {
             Trail trail = entrySet.getValue();
-            PlayerEntity owner = FootprintTrail.owner(client, entrySet.getKey());
+            Entity owner = FootprintTrail.owner(client, entrySet.getKey());
             if (owner == null) {
                 continue;
             }
@@ -143,7 +145,7 @@ public final class FootprintTrail {
                         FootprintTrail.pad(step, size * 0.22f, size * 0.44f, FootprintTrail.fade(tint, 0.75f)));
                 if (bloom != null && fade > 0.15f) {
                     bloom.add(new BloomRenderer.Point(step.pos.add(0.0, 0.05, 0.0), size * 0.5f * fade,
-                            FootprintTrail.fade(step.color != 0 ? step.color : color, fade)));
+                            FootprintTrail.fade(step.color != 0 ? step.color : color, fade), (float)step.time * 0.001f));
                 }
             }
         }
@@ -152,16 +154,11 @@ public final class FootprintTrail {
         }
     }
 
-    private static PlayerEntity owner(MinecraftClient client, int id) {
+    private static Entity owner(MinecraftClient client, int id) {
         if (client.world == null) {
             return null;
         }
-        for (PlayerEntity player : client.world.getPlayers()) {
-            if (player.getId() == id) {
-                return player;
-            }
-        }
-        return null;
+        return client.world.getEntityById(id);
     }
 
     /** Плоская овальная площадка, развёрнутая по направлению шага. */

@@ -60,7 +60,10 @@ public final class CosmeticRegistry {
 
     private static Cosmetic item(String id, String name, String slot, String shape, String flavor, String description,
                                  int color, int accent, Item icon, boolean free) {
-        return new Cosmetic(id, name, slot, shape, flavor, description, color, accent, icon, free);
+        String setName = Cosmetic.FLAVOR_SNOW.equals(flavor) ? "Зима"
+                : Cosmetic.FLAVOR_NEON.equals(flavor) ? "Неон"
+                : Cosmetic.FLAVOR_SPACE.equals(flavor) ? "Космос" : "";
+        return new Cosmetic(id, name, slot, shape, setName, flavor, description, color, accent, icon, free);
     }
 
     static {
