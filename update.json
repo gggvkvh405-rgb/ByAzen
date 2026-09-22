@@ -1,0 +1,16 @@
+{
+  "version": "1.9.1",
+  "jar": "ByAzen-1.9.1.jar",
+  "url": "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.1.jar",
+  "urls": [
+    "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.1.jar"
+  ],
+  "sha256": "0d5088ddbb342d4d372381dd36306908f4813b8d931f7fcb617f8406eb329412",
+  "size": 80954148,
+  "released": "2026-09-22",
+  "minecraft": "1.21.11",
+  "loader": "0.19.3",
+  "java": 21,
+  "notes": "Preflight-проверки проекта (№201). Скрипт tools/repo_checks.py запускается локально и в CI",
+  "generated": "локально"
+}

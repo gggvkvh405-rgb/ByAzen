@@ -15,6 +15,8 @@ from __future__ import annotations
 
 import os
 import re
+import hashlib
+import json
 import subprocess
 import sys
 
@@ -184,6 +186,49 @@ def check_versions() -> None:
             report("версия", f"README ({label}): ByAzen-{match.group(1)}.jar, а версия {version}")
 
 
+def check_manifest() -> None:
+    """update.json должен описывать именно тот jar, что лежит в репозитории (идеи №206–№208)."""
+    path = os.path.join(ROOT, "update.json")
+    if not os.path.exists(path):
+        report("манифест", "нет update.json — модуль Updater не найдёт обновлений")
+        return
+    try:
+        with open(path, encoding="utf-8") as handle:
+            manifest = json.load(handle)
+    except Exception as error:
+        report("манифест", f"update.json не читается: {error}")
+        return
+    version = re.search(r"mod_version=(\S+)", open(GRADLE_PROPERTIES, encoding="utf-8").read()).group(1)
+    jar_name = manifest.get("jar", "")
+    jar_path = os.path.join(ROOT, jar_name)
+    if manifest.get("version") != version:
+        warnings.append(f"манифест: update.json описывает {manifest.get('version')}, "
+                        f"а в gradle.properties {version} — CI перегенерирует его при сборке")
+    if not str(manifest.get("url", "")).startswith("https://"):
+        report("манифест", "в update.json нет https-ссылки на файл")
+    if len(manifest.get("sha256", "")) != 64:
+        report("манифест", "в update.json нет контрольной суммы sha256")
+    if not jar_name.endswith(".jar") or not os.path.exists(jar_path):
+        report("манифест", f"в репозитории нет файла {jar_name} из манифеста")
+        return
+    digest = hashlib.sha256()
+    with open(jar_path, "rb") as handle:
+        for chunk in iter(lambda: handle.read(1 << 20), b""):
+            digest.update(chunk)
+    real = digest.hexdigest()
+    if real != manifest.get("sha256"):
+        report("манифест", f"sha256 в update.json не совпадает с {jar_name}")
+    if os.path.getsize(jar_path) != manifest.get("size"):
+        report("манифест", f"размер в update.json не совпадает с {jar_name}")
+    checksum = os.path.join(ROOT, jar_name + ".sha256")
+    if not os.path.exists(checksum):
+        warnings.append(f"манифест: рядом с {jar_name} нет файла контрольной суммы")
+    else:
+        text = open(checksum, encoding="utf-8").read().split()
+        if not text or text[0] != real:
+            report("манифест", f"файл {jar_name}.sha256 не совпадает с самим jar")
+
+
 def check_docs(quiet: bool) -> None:
     """docs/MODULES.md должен совпадать с тем, что генерирует tools/gen_module_docs.py."""
     script = os.path.join(ROOT, "tools", "gen_module_docs.py")
@@ -227,6 +272,7 @@ def main() -> int:
     check_module_registration()
     check_get0()
     check_versions()
+    check_manifest()
     check_docs(quiet)
     check_layout(quiet)
     print()

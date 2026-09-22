@@ -26,6 +26,12 @@ extends Module {
     private final ButtonSetting restart = this.register(new ButtonSetting("Обновить и перезапустить",
             "Скачать обновление и закрыть игру — лаунчер запустит свежую версию.").label("Обновить")
             .onClick(UpdaterModule::updateNow));
+    private final ButtonSetting whatsNew = this.register(new ButtonSetting("Что нового",
+            "Печать описания изменений из манифеста обновлений: что именно поменялось в новой версии.")
+            .label("Что нового").onClick(UpdaterModule::printNotes));
+    private final ButtonSetting sources = this.register(new ButtonSetting("Источники проверки",
+            "Откуда клиент читает манифест: ветка main, ветка публикации сборки и GitHub Releases.")
+            .label("Источники").onClick(UpdaterModule::printSources));
     private final ButtonSetting page = this.register(new ButtonSetting("Страница проекта",
             "Открыть в браузере страницу, где лежат версии.").label("Открыть").onClick(UpdateChecker::openPage));
 
@@ -54,6 +60,27 @@ extends Module {
     private static void checkNow() {
         UpdateChecker.check(true);
         ChatMessage.send("§7" + UpdateChecker.summary());
+    }
+
+    private static void printNotes() {
+        UpdateChecker.check(false);
+        String notes = UpdateChecker.notes();
+        if (notes == null || notes.isBlank()) {
+            ChatMessage.send("§7Описания изменений пока нет — нажмите «Проверить обновление»");
+            return;
+        }
+        ChatMessage.send("§bЧто нового в манифесте: §f" + notes);
+        ChatMessage.send("§7" + UpdateChecker.summary());
+    }
+
+    private static void printSources() {
+        ChatMessage.send("§bМанифест обновлений читается по очереди:");
+        for (String source : UpdateChecker.sources()) {
+            ChatMessage.send("§7• §f" + source);
+        }
+        ChatMessage.send("§7Текущий источник: §f"
+                + (UpdateChecker.source().isBlank() ? "ещё не проверялось" : UpdateChecker.source()));
+        ChatMessage.send("§8Данные берутся из update.json, который CI собирает при каждой сборке");
     }
 
     private static void downloadNow() {
