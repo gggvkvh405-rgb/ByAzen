@@ -31,6 +31,9 @@ jobs:
       - name: Prepare Gradle wrapper
         run: gradle wrapper --gradle-version 9.5.1 --distribution-type bin
 
+      - name: Preflight-проверки проекта (импорты, модули, версии, доки)
+        run: python3 tools/repo_checks.py
+
       - name: Audio smoke test (MP3 декодируется как в игре)
         run: |
           set -e

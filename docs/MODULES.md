@@ -3,7 +3,7 @@
 Файл собран автоматически: `python3 tools/gen_module_docs.py`.
 Каждый модуль можно найти в клиенте командой `.find <слово>`, а показать, как он работает, — командой `.how <модуль>` или кнопкой «Инструкция строки» на вкладке «Гайд» в хабе.
 
-Всего модулей: **175**. Разделы: **Display** (38), **Events** (1), **Utils** (78), **Visuals** (58).
+Всего модулей: **177**. Разделы: **Display** (38), **Events** (1), **Utils** (80), **Visuals** (58).
 
 
 ## Раздел «Display»
@@ -558,6 +558,14 @@ Lite-профиль для слабых ПК: тяжёлые визуалы вы
 * Файл: `src/main/java/rtx/byazen/api/modules/impl/Utils/CrystalOptimizer.java`
 * Настройки: переключатель включения и клавиша
 
+### Daily Quests
+
+Три задания на день по вашей же игре: время, путь, добыча, бои, музыка, чат. За серию — косметика.
+
+* Раздел: `Utils`
+* Файл: `src/main/java/rtx/byazen/api/modules/impl/Utils/DailyQuestsModule.java`
+* Настройки: переключатель включения и клавиша
+
 ### Death Coords
 
 Выводит координаты смерти в чат.
@@ -869,6 +877,14 @@ Lite-профиль для слабых ПК: тяжёлые визуалы вы
 * Раздел: `Utils`
 * Файл: `src/main/java/rtx/byazen/api/modules/impl/Utils/ShulkerPreview.java`
 * Настройки: переключатель включения и клавиша
+
+### Smart Hints
+
+Ненавязчивые подсказки по ситуации: мало FPS, мало памяти, нет копии настроек, вышло обновление.
+
+* Раздел: `Utils`
+* Файл: `src/main/java/rtx/byazen/api/modules/impl/Utils/SmartHintsModule.java`
+* Настройки: Режим (Mode), Писать в чат (Boolean)
 
 ### Stats Export
 

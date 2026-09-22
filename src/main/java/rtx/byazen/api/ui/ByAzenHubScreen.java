@@ -19,6 +19,7 @@ import rtx.byazen.utils.missions.CoopMissions;
 import rtx.byazen.utils.vote.FeatureVote;
 import rtx.byazen.utils.render.others.RectUtil;
 import rtx.byazen.utils.render.render2d.Render2D;
+import rtx.byazen.utils.quests.DailyQuests;
 import rtx.byazen.utils.season.SeasonEvents;
 import rtx.byazen.utils.sounds.SoundManager;
 import rtx.byazen.utils.vote.CosmeticVote;
@@ -42,7 +43,7 @@ extends BaseScreen {
     private static final float ROW_H = 20.0f;
     private static final int VISIBLE = 10;
     private static final String[] TABS = {"Миссии", "Достижения", "События", "Голосование", "Профиль",
-            "Фичи", "Гайд"};
+            "Фичи", "Гайд", "Задания"};
     private static final String[] NOTES = {
             "Кооп-миссии для игры с друзьями",
             "Что вы уже сделали в клиенте",
@@ -50,7 +51,8 @@ extends BaseScreen {
             "Какая косметика будет следующей",
             "Ваш профиль и статистика",
             "За какие фичи голосуют игроки",
-            "Документация и «как это работает»"
+            "Документация и «как это работает»",
+            "Три задания на день и серия дней"
     };
     private static final String[][] BUTTONS = {
             {"В чат", "Код для друзей", "Принять код", "Сбросить"},
@@ -59,7 +61,8 @@ extends BaseScreen {
             {"Голосовать", "Код голоса", "Принять код", "Идея из буфера"},
             {"Скопировать профиль", "В чат"},
             {"Голосовать", "Код голосов", "Принять код", "Пожелание из буфера"},
-            {"Открыть тур", "Инструкция строки", "Все модули в чат"}
+            {"Открыть тур", "Инструкция строки", "Все модули в чат"},
+            {"В чат", "Сбросить"}
     };
 
     private static boolean openedOnce;
@@ -209,8 +212,11 @@ extends BaseScreen {
             case 5: {
                 return FeatureVote.myVote().isEmpty() ? "голос не отдан" : "ваш голос учтён";
             }
-            default: {
+            case 6: {
                 return ModuleManager.get() == null ? "гайд" : ModuleManager.get().getAll().size() + " модулей";
+            }
+            default: {
+                return DailyQuests.doneToday() + " из 3 · серия " + DailyQuests.streak();
             }
         }
     }
@@ -235,8 +241,11 @@ extends BaseScreen {
             case 5: {
                 return "Голос один и его можно поменять; свои пожелания уходят в код голосов";
             }
-            default: {
+            case 6: {
                 return "Выберите модуль и нажмите «Инструкция строки» — как это работает";
+            }
+            default: {
+                return "Задания выбираются по дате: у друзей сегодня те же три";
             }
         }
     }
@@ -264,8 +273,11 @@ extends BaseScreen {
             case 5: {
                 return FeatureVote.leaderboard();
             }
-            default: {
+            case 6: {
                 return this.guideRows();
+            }
+            default: {
+                return DailyQuests.rows();
             }
         }
     }
@@ -278,6 +290,7 @@ extends BaseScreen {
         list.add("§7" + CosmeticVote.summary());
         list.add("§7" + rtx.byazen.utils.profiles.BuildTier.summary());
         list.add("§7" + FeatureVote.summary());
+        list.add("§7" + DailyQuests.summary());
         list.add("§8Профиль хранится только у вас — наружу ничего не уходит");
         return list;
     }
@@ -492,7 +505,7 @@ extends BaseScreen {
                 }
                 break;
             }
-            default: {
+            case 4: {
                 if (index == 0) {
                     StringBuilder builder = new StringBuilder("Профиль ByAzen\n");
                     for (String line : this.profileRows()) {
@@ -505,6 +518,19 @@ extends BaseScreen {
                         ChatMessage.send(line.startsWith("§") ? line : "§7" + line);
                     }
                     this.say("Профиль — в чате");
+                }
+                break;
+            }
+            default: {
+                if (index == 0) {
+                    for (String line : DailyQuests.rows()) {
+                        ChatMessage.send(line.startsWith("§") ? line : "§7" + line);
+                    }
+                    this.say("Задания дня — в чате");
+                }
+                else {
+                    DailyQuests.reset();
+                    this.say("Прогресс заданий дня сброшен");
                 }
             }
         }

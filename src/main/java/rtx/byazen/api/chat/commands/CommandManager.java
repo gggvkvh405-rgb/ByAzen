@@ -36,6 +36,7 @@ import rtx.byazen.utils.storage.RepositoryStorage;
 import rtx.byazen.api.chat.commands.impl.HomeCommand;
 import rtx.byazen.api.chat.commands.impl.HowCommand;
 import rtx.byazen.api.chat.commands.impl.HubCommand;
+import rtx.byazen.api.chat.commands.impl.SnapshotCommand;
 import rtx.byazen.api.chat.commands.impl.TutorialCommand;
 
 public final class CommandManager {
@@ -92,6 +93,7 @@ public final class CommandManager {
         this.register(new HomeCommand());
         this.register(new HubCommand());
         this.register(new TutorialCommand());
+        this.register(new SnapshotCommand());
         ByAzen.LOGGER.info("[CommandManager] Initialized with {} commands, prefix '{}'", (Object)this.commands.size(), (Object)this.prefix);
     }
 

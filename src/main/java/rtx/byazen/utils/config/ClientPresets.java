@@ -1,6 +1,10 @@
 package rtx.byazen.utils.config;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -161,6 +165,41 @@ public final class ClientPresets {
         NotificationsModule.notify("§bПресет «" + preset.title() + "» применён", 4000L);
         WebBridge.pushEvent("preset", preset.title());
         return text;
+    }
+
+    /** Короткий код пресета: отправить другу, чтобы у него был такой же набор. */
+    public static String shareCode(String id) {
+        Preset preset = ClientPresets.preset(id);
+        if (preset == null) {
+            return "";
+        }
+        JsonObject root = new JsonObject();
+        root.addProperty("preset", preset.id());
+        root.addProperty("title", preset.title());
+        root.addProperty("note", preset.note());
+        String raw = root.toString();
+        return "BZPRESET1:" + Base64.getUrlEncoder().withoutPadding()
+                .encodeToString(raw.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /** Принимает код пресета от друга и применяет его. */
+    public static String applyCode(String code) {
+        String text = code == null ? "" : code.trim();
+        int index = text.indexOf("BZPRESET1:");
+        if (index < 0) {
+            return "Это не код пресета (нужен BZPRESET1:…)";
+        }
+        try {
+            String raw = new String(Base64.getUrlDecoder().decode(text.substring(index + 10).trim()), StandardCharsets.UTF_8);
+            String id = JsonParser.parseString(raw).getAsJsonObject().get("preset").getAsString();
+            if (ClientPresets.preset(id) == null) {
+                return "В коде неизвестный пресет — обновите клиент";
+            }
+            return "Пресет из кода: " + ClientPresets.apply(id);
+        }
+        catch (Throwable throwable) {
+            return "Код не читается — проверьте, что он скопирован целиком";
+        }
     }
 
     /** Строки для окна и чата. */

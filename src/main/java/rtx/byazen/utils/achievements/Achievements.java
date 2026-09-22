@@ -54,6 +54,10 @@ public final class Achievements {
         Achievements.add("configs_saved", "Аккуратный", "Сохраните настройки 5 раз", "Первые шаги", 5L, "configs", "");
         Achievements.add("compat_check", "Всё по полочкам", "Откройте хаб на вкладке достижений", "Первые шаги", 1L, "hub_opened", "");
 
+        Achievements.add("first_quest", "Первое задание", "Выполните задание дня", "Задания", 1L, "quests", "");
+        Achievements.add("quest_week", "Ритм недели", "Выполните все задания 7 дней подряд", "Задания", 7L, "quest_days", "set:snow");
+        Achievements.add("quest_month", "Месяц в ритме", "Выполните все задания 30 дней подряд", "Задания", 30L, "quest_days", "set:space");
+
         Achievements.add("hour", "Час в игре", "Проведите в игре час", "Игра", 3600000L, "playtime", "");
         Achievements.add("ten_hours", "Десять часов", "Проведите в игре 10 часов", "Игра", 36000000L, "playtime", "");
         Achievements.add("fifty_hours", "Ветеран", "Проведите в игре 50 часов", "Игра", 180000000L, "playtime", "set:neon");

@@ -1,5 +1,6 @@
 package rtx.byazen.api.modules.impl.Utils;
 
+import net.minecraft.client.MinecraftClient;
 import rtx.byazen.api.modules.Category;
 import rtx.byazen.api.modules.Module;
 import rtx.byazen.api.modules.settings.impl.ButtonSetting;
@@ -27,6 +28,13 @@ extends Module {
     private final ButtonSetting list = this.register(new ButtonSetting("Все пресеты",
             "Список наборов и какая графика к ним идёт.").label("Список")
             .onClick(ClientPresetsModule::printAll));
+
+    private final ButtonSetting shareCode = this.register(new ButtonSetting("Код пресета",
+            "Скопировать короткий код — друг вставит его у себя и получит такой же набор.").label("Код")
+            .onClick(ClientPresetsModule::copyCode));
+    private final ButtonSetting acceptCode = this.register(new ButtonSetting("Принять код",
+            "Взять код пресета из буфера обмена и применить его.").label("Принять")
+            .onClick(ClientPresetsModule::acceptCode));
 
     public ClientPresetsModule() {
         super("Client Presets", "Пресеты клиента в один клик: Анархия, PvP, Выживание, Стример, Минимум.",
@@ -66,6 +74,29 @@ extends Module {
         for (String line : ClientPresets.plan(module.preset.getValue())) {
             ChatMessage.send(line);
         }
+    }
+
+    private static void copyCode() {
+        ClientPresetsModule module = ClientPresetsModule.self();
+        if (module == null) {
+            return;
+        }
+        String code = ClientPresets.shareCode(module.preset.getValue());
+        if (code.isEmpty()) {
+            ChatMessage.send("§cПресет не найден");
+            return;
+        }
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client != null) {
+            client.keyboard.setClipboard(code);
+        }
+        ChatMessage.send("§bКод пресета скопирован — отправьте его другу");
+    }
+
+    private static void acceptCode() {
+        MinecraftClient client = MinecraftClient.getInstance();
+        String code = client == null ? "" : client.keyboard.getClipboard();
+        ChatMessage.send("§b" + ClientPresets.applyCode(code));
     }
 
     private static void printAll() {
