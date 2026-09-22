@@ -375,5 +375,60 @@
                                       "sounds":  [
                                                      "byazen:entity/nightmare_bb/laugh"
                                                  ]
-                                  }
+                                  },
+    "cosmetic_equip": {
+        "sounds": [
+            "byazen:cosmetics/cosmetic_equip"
+        ]
+    },
+    "cosmetic_unequip": {
+        "sounds": [
+            "byazen:cosmetics/cosmetic_unequip"
+        ]
+    },
+    "cosmetic_favorite": {
+        "sounds": [
+            "byazen:cosmetics/cosmetic_favorite"
+        ]
+    },
+    "cosmetic_claim_set": {
+        "sounds": [
+            "byazen:cosmetics/cosmetic_claim_set"
+        ]
+    },
+    "cosmetic_set_winter": {
+        "sounds": [
+            "byazen:cosmetics/cosmetic_set_winter"
+        ]
+    },
+    "cosmetic_set_neon": {
+        "sounds": [
+            "byazen:cosmetics/cosmetic_set_neon"
+        ]
+    },
+    "cosmetic_set_space": {
+        "sounds": [
+            "byazen:cosmetics/cosmetic_set_space"
+        ]
+    },
+    "pet_feed": {
+        "sounds": [
+            "byazen:cosmetics/pet_feed"
+        ]
+    },
+    "pet_pet": {
+        "sounds": [
+            "byazen:cosmetics/pet_pet"
+        ]
+    },
+    "pet_toy": {
+        "sounds": [
+            "byazen:cosmetics/pet_toy"
+        ]
+    },
+    "pet_level": {
+        "sounds": [
+            "byazen:cosmetics/pet_level"
+        ]
+    }
 }

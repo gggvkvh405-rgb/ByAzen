@@ -1,5 +1,10 @@
 package rtx.byazen.api.modules.impl.Visuals;
 import rtx.byazen.api.events.EventHandler;
+import rtx.byazen.api.events.impl.network.PacketReceiveEvent;
+import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
+import net.minecraft.client.MinecraftClient;
+import rtx.byazen.utils.cosmetics.CosmeticSounds;
+import rtx.byazen.utils.storage.friend.FriendUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -39,6 +44,9 @@ extends Module {
     private final BooleanSetting looping = this.register(new BooleanSetting("\u0417\u0430\u0446\u0438\u043a\u043b\u0438\u0442\u044c", "\u041f\u0440\u043e\u0438\u0433\u0440\u044b\u0432\u0430\u0442\u044c \u044d\u043c\u043e\u0446\u0438\u044e \u043f\u043e \u043a\u0440\u0443\u0433\u0443, \u043f\u043e\u043a\u0430 \u0435\u0451 \u043d\u0435 \u043e\u0441\u0442\u0430\u043d\u043e\u0432\u044f\u0442.", false));
     private final BooleanSetting thirdPerson = this.register(new BooleanSetting("\u0412\u0438\u0434 \u043e\u0442 \u0442\u0440\u0435\u0442\u044c\u0435\u0433\u043e \u043b\u0438\u0446\u0430", "\u041f\u0435\u0440\u0435\u043a\u043b\u044e\u0447\u0430\u0442\u044c \u043a\u0430\u043c\u0435\u0440\u0443, \u043f\u043e\u043a\u0430 \u043f\u0440\u043e\u0438\u0433\u0440\u044b\u0432\u0430\u0435\u0442\u0441\u044f \u044d\u043c\u043e\u0446\u0438\u044f.", true));
     private final BooleanSetting stopOnMove = this.register(new BooleanSetting("\u041f\u0440\u0435\u0440\u044b\u0432\u0430\u0442\u044c \u043f\u0440\u0438 \u0434\u0432\u0438\u0436\u0435\u043d\u0438\u0438", "\u041e\u0441\u0442\u0430\u043d\u0430\u0432\u043b\u0438\u0432\u0430\u0442\u044c \u044d\u043c\u043e\u0446\u0438\u044e \u043f\u0440\u0438 \u0445\u043e\u0434\u044c\u0431\u0435, \u043f\u0440\u044b\u0436\u043a\u0435 \u0438\u043b\u0438 \u0430\u0442\u0430\u043a\u0435.", true));
+    private final SeparatorSetting socialSeparator = this.register(new SeparatorSetting("Социальное"));
+    private final BooleanSetting chatCall = this.register(new BooleanSetting("Вызов из чата", "Запускать эмоцию по сообщению в чате: например «!танец».", true));
+    private final BooleanSetting teamOnly = this.register(new BooleanSetting("Только тиммейты", "Показывать чужие эмоции только от друзей, остальные скрываются.", false));
     private Perspective previousCamera;
     private final EmotionSyncClient sync = new EmotionSyncClient();
     private long nextConnectAt;
@@ -99,6 +107,76 @@ extends Module {
         }
     }
 
+    /** Эмоции 2.0: вызов из чата — «!танец», «!помахать» и другие названия (идея №125). */
+    @EventHandler
+    public void onPacket(PacketReceiveEvent packetReceiveEvent) {
+        if (!this.isEnabled() || !this.chatCall.getValue()) {
+            return;
+        }
+        GameMessageS2CPacket packet = packetReceiveEvent.getPacketAs(GameMessageS2CPacket.class);
+        if (packet == null || packet.overlay()) {
+            return;
+        }
+        String text = packet.content().getString();
+        if (text == null || text.indexOf('!') < 0) {
+            return;
+        }
+        Emotion emotion = Emotions.emotionFromChat(text);
+        if (emotion == null) {
+            return;
+        }
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client == null || client.player == null || client.world == null) {
+            return;
+        }
+        PlayerEntity sender = this.chatSender(text);
+        CosmeticSounds.play("cosmetic_favorite", 0.8f);
+        if (sender == client.player) {
+            this.playEmotion(emotion);
+            return;
+        }
+        if (sender == null) {
+            return;
+        }
+        if (this.teamOnly.getValue() && !FriendUtils.isFriend(sender.getName().getString())) {
+            return;
+        }
+        EmotionPlayback.setRemote(sender.getUuid(), emotion, System.currentTimeMillis(), this.speed.getFloat(), this.looping.getValue());
+    }
+
+    /** Ищет в тексте сообщения «!название эмоции» и возвращает эмоцию. */
+    private static Emotion emotionFromChat(String text) {
+        String lower = text.toLowerCase(java.util.Locale.ROOT);
+        int index = lower.indexOf('!');
+        while (index >= 0) {
+            String tail = lower.substring(index + 1);
+            for (Emotion emotion : Emotion.values()) {
+                String key = emotion.displayName().toLowerCase(java.util.Locale.ROOT);
+                if (tail.startsWith(key)) {
+                    return emotion;
+                }
+            }
+            index = lower.indexOf('!', index + 1);
+        }
+        return null;
+    }
+
+    /** Определяет, кто из игроков написал сообщение с вызовом эмоции. */
+    private PlayerEntity chatSender(String text) {
+        String lower = text.toLowerCase(java.util.Locale.ROOT);
+        PlayerEntity best = null;
+        for (PlayerEntity playerEntity : this.mc.world.getPlayers()) {
+            String name = playerEntity.getName().getString().toLowerCase(java.util.Locale.ROOT);
+            if (name.isEmpty() || !lower.contains(name)) {
+                continue;
+            }
+            if (best == null || name.length() > best.getName().getString().length()) {
+                best = playerEntity;
+            }
+        }
+        return best;
+    }
+
     private void tickSync() {
         String string = this.mc.player.getGameProfile().name();
         if (string == null || string.isBlank()) {
@@ -121,6 +199,7 @@ extends Module {
         for (EmotionRemoteState emotionRemoteState : this.sync.snapshot().values()) {
             PlayerEntity playerEntity;
             if (!string3.equals(emotionRemoteState.world()) || emotionRemoteState.minecraftUsername().equalsIgnoreCase(string) || (playerEntity = this.findPlayer(emotionRemoteState.minecraftUsername())) == null) continue;
+            if (this.teamOnly.getValue() && !FriendUtils.isFriend(playerEntity.getName().getString())) continue;
             EmotionPlayback.setRemote((UUID)playerEntity.getUuid(), (Emotion)emotionRemoteState.emotion(), (long)emotionRemoteState.startedAt(), (float)emotionRemoteState.speed(), (boolean)emotionRemoteState.looping());
         }
     }

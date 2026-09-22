@@ -13,6 +13,7 @@ import rtx.byazen.ByAzen;
 import rtx.byazen.api.liteapi.FeatureBlocklist;
 import rtx.byazen.api.liteapi.LiteApiCodec;
 import rtx.byazen.api.liteapi.LiteApiCodec.Request;
+import rtx.byazen.utils.cosmetics.CosmeticGrants;
 import rtx.byazen.api.liteapi.packets.LiteApiPayload;
 
 public final class LiteApiClient {
@@ -45,6 +46,8 @@ public final class LiteApiClient {
             return;
         }
         if (incoming.isPushEvent()) {
+            CosmeticGrants.applyFromLiteApi(incoming.payload());
+
             if ("nextEvent".equals(incoming.event())) {
                 LiteApiEvents.update(incoming.payload());
             }

@@ -8,9 +8,15 @@ import rtx.byazen.api.mods.killeffect.KillEffectBridge;
 import rtx.byazen.api.modules.Category;
 import rtx.byazen.api.modules.Module;
 import rtx.byazen.api.modules.settings.impl.ButtonSetting;
+import rtx.byazen.api.modules.settings.impl.BooleanSetting;
+import rtx.byazen.api.modules.settings.impl.MultiSelectSetting;
+import rtx.byazen.api.modules.settings.impl.SliderSetting;
 import rtx.byazen.api.modules.settings.impl.SelectSetting;
 import rtx.byazen.api.modules.settings.impl.SeparatorSetting;
 import rtx.byazen.utils.chat.ChatMessage;
+import rtx.byazen.utils.cosmetics.CosmeticSounds;
+import java.util.List;
+import java.util.Random;
 
 /**
  * ByAzen module for the bundled "Kill Effect" mod: 3D kill effects built from Blockbench models.
@@ -60,6 +66,18 @@ extends Module {
 
     private boolean pendingApply;
     private boolean warnedUnavailable;
+
+    private final SeparatorSetting randomSeparator = this.register(new SeparatorSetting("Случайный выбор"));
+    private final BooleanSetting randomize = this.register(new BooleanSetting("Случайный из списка", "Каждое убийство играет новый эффект из выбранных ниже."));
+    private final MultiSelectSetting pool = this.register(new MultiSelectSetting("Список эффектов", "Эффекты, среди которых выбирается случайный.").value(KillEffect3D.EFFECT_NAMES).selected(KillEffect3D.EFFECT_NAMES));
+    private final SliderSetting changeInterval = this.register(new SliderSetting("Как часто менять, с", "Сколько секунд играет один эффект, прежде чем смениться.").range(1.0f, 20.0f).increment(1.0f).setValue(3.0f).visible(this.randomize::getValue));
+    private final SeparatorSetting soundSeparator = this.register(new SeparatorSetting("Звук"));
+    private final BooleanSetting sound = this.register(new BooleanSetting("Звук эффекта", "Проигрывать звук ByAzen в момент появления эффекта.").setValue(true));
+    private final SliderSetting soundVolume = this.register(new SliderSetting("Громкость звука, %", "Насколько громко звучит эффект.").range(0.0f, 100.0f).increment(5.0f).setValue(80.0f).visible(this.sound::getValue));
+
+    private final Random random = new Random();
+    private long nextPickAt;
+    private int lastActiveCount;
 
     public KillEffect3D() {
         super("Kill Effect 3D", "3D-эффекты убийства: модели, анимации и выбор эффекта. Пока модуль выключен, эффекты не появляются.", Category.VISUALS);
@@ -147,6 +165,44 @@ extends Module {
             this.applySettings();
         }
         this.mirrorFromMod();
+        this.tickRandom();
+        this.tickSound();
+    }
+
+    /** Рандомизация по списку: раз в несколько секунд берём случайный эффект из отмеченных. */
+    private void tickRandom() {
+        if (!this.randomize.getValue()) {
+            return;
+        }
+        long now = System.currentTimeMillis();
+        if (now < this.nextPickAt) {
+            return;
+        }
+        this.nextPickAt = now + (long)(this.changeInterval.getFloat() * 1000.0f);
+        List<String> options = this.pool.getSelected();
+        if (options.isEmpty()) {
+            return;
+        }
+        String current = this.effectSetting.getValue();
+        String pick = options.get(this.random.nextInt(options.size()));
+        if (options.size() > 1 && pick.equals(current)) {
+            pick = options.get((options.indexOf(pick) + 1) % options.size());
+        }
+        if (pick.equals(current)) {
+            return;
+        }
+        this.effectSetting.selected(pick);
+        ConfigManager.markDirty();
+        this.pendingApply = true;
+    }
+
+    /** Звук: играем в момент рождения эффекта (список активных стал непустым). */
+    private void tickSound() {
+        int active = KillEffectBridge.activeEffects().size();
+        if (this.sound.getValue() && active > 0 && this.lastActiveCount == 0) {
+            CosmeticSounds.play("cosmetic_claim_set", this.soundVolume.getFloat() / 100.0f);
+        }
+        this.lastActiveCount = active;
     }
 
     public static final class Ticker {

@@ -31,6 +31,9 @@ public class CustomCapeMixin {
     @Inject(method="getSkinTextures", at={@At(value="RETURN")}, cancellable=true, require = 0)
     private void byazen_replaceCape(CallbackInfoReturnable<SkinTextures> cir) {
         AbstractClientPlayerEntity player = (AbstractClientPlayerEntity)(Object)this;
+        if (!CapeGradient.isEnabled()) {
+            return;
+        }
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.player == null || !CustomCapeMixin.byazen_shouldUseCustomCape(player, (AbstractClientPlayerEntity)client.player)) {
             return;

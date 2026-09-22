@@ -167,7 +167,8 @@
     "emotions.AvatarRendererEmotionMixin",
     "emotions.HumanoidModelEmotionMixin",
     "emotions.PictureInPictureRendererAccessor",
-    "emotions.GuiRendererEmotionPipMixin"
+    "emotions.GuiRendererEmotionPipMixin",
+    "CustomPetScaleMixin"
   ],
   "injectors": {
     "maxShiftBy": 2,

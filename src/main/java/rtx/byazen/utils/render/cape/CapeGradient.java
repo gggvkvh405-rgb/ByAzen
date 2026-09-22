@@ -37,6 +37,7 @@ public final class CapeGradient {
     private static long lastUpdateMs;
     private static int lastSig;
     private static boolean initialized;
+    private static boolean enabled = true;
     private static boolean failed;
 
     private CapeGradient() {
@@ -45,6 +46,15 @@ public final class CapeGradient {
     static {
         shadeLut = new int[65536];
         lastSig = Integer.MIN_VALUE;
+    }
+
+    /** Выключатель: модуль анимированных плащей может вернуть обычный вид. */
+    public static void setEnabled(boolean value) {
+        enabled = value;
+    }
+
+    public static boolean isEnabled() {
+        return enabled;
     }
 
     public static AssetInfo.TextureAsset asset() {
