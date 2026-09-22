@@ -54,6 +54,9 @@ jobs:
           javac -cp tools/build/jlayer.jar -d tools/build tools/AudioSmokeTest.java
           java -cp "tools/build/jlayer.jar:tools/build" AudioSmokeTest tools/build/fixture.mp3 $MIN | tee tools/build/audio-smoke.txt
 
+      - name: Проверка раскладки окон (дифф интерфейса в числах)
+        run: python3 tools/ui_layout_check.py
+
       - name: Build ByAzen
         run: |
           set -o pipefail

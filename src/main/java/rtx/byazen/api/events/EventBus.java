@@ -102,6 +102,8 @@ public final class EventBus {
             try {
                 this.handle.invoke(event);
             } catch (Throwable throwable) {
+                // анти-краш (идея №169): считаем сбои и отключаем модуль-виновника
+                rtx.byazen.utils.safety.ModuleGuard.failed(this.owner, throwable);
                 String string = this.owner.getClass().getName() + "|" + event.getClass().getName() + "|" + throwable.getClass().getName();
                 if (EventBus.REPORTED_FAILURES.add(string)) {
                     ByAzen.LOGGER.error("[EventBus] Exception in event handler {} for {} (further identical errors suppressed)", this.owner.getClass().getSimpleName(), event.getClass().getSimpleName(), throwable);

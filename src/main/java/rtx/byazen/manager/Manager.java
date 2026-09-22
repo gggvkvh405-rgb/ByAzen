@@ -65,6 +65,14 @@ public final class Manager {
         LazyTasks.submit("Головы в чате", ChatHeads::init);
         LazyTasks.submit("Анимации чата", ChatAnimationMod::init);
         net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.END_CLIENT_TICK.register(LazyTasks::tick);
+        // один раз при входе в мир: проверка требований и конфликтов миксинов (идеи №171, №173)
+        net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if (client == null || client.player == null) {
+                return;
+            }
+            rtx.byazen.utils.startup.EnvCheck.warnIfNeeded();
+            rtx.byazen.utils.compat.MixinAudit.warnIfNeeded();
+        });
         Thread thread = new Thread(DiscordRPCManager::start, "ByAzen-Discord-RPC-Init");
         thread.setDaemon(true);
         thread.start();

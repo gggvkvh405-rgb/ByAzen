@@ -540,7 +540,7 @@ extends BaseScreen {
         return super.keyPressed(input);
     }
 
-    private void close() {
+    public void close() {
         SoundManager.playSound(SoundManager.BUTTON_CLICK, 0.6f, 1.0f);
         BaseScreen.beginClosingOverlay(this);
         MinecraftClient client = MinecraftClient.getInstance();
