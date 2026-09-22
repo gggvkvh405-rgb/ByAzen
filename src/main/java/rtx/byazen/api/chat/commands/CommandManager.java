@@ -33,6 +33,10 @@ import rtx.byazen.api.chat.commands.impl.ViewModelCommand;
 import rtx.byazen.utils.chat.ChatMessage;
 import rtx.byazen.utils.sounds.Sounds;
 import rtx.byazen.utils.storage.RepositoryStorage;
+import rtx.byazen.api.chat.commands.impl.HomeCommand;
+import rtx.byazen.api.chat.commands.impl.HowCommand;
+import rtx.byazen.api.chat.commands.impl.HubCommand;
+import rtx.byazen.api.chat.commands.impl.TutorialCommand;
 
 public final class CommandManager {
     private static CommandManager instance;
@@ -84,6 +88,10 @@ public final class CommandManager {
         this.register(new WaypointCommand());
         this.register(new HistoryCommand());
         this.register(new DiagCommand());
+        this.register(new HowCommand());
+        this.register(new HomeCommand());
+        this.register(new HubCommand());
+        this.register(new TutorialCommand());
         ByAzen.LOGGER.info("[CommandManager] Initialized with {} commands, prefix '{}'", (Object)this.commands.size(), (Object)this.prefix);
     }
 

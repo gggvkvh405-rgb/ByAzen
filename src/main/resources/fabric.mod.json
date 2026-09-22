@@ -3,7 +3,7 @@
   "id": "byazen",
   "version": "${version}",
   "name": "ByAzen",
-  "description": "ByAzen - The Best Visual Experience for Minecraft 1.21.11",
+  "description": "ByAzen - The Best Visual Experience for Minecraft 1.21.11 Требуется Java 21 или новее и Minecraft 1.21.11.",
   "authors": [
     "ByAzen"
   ],

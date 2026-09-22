@@ -21,7 +21,9 @@ import rtx.byazen.utils.animations.Decelerate;
 import rtx.byazen.utils.animations.Direction;
 import rtx.byazen.utils.render.others.RectUtil;
 import rtx.byazen.utils.render.others.RoundedScissor;
+import rtx.byazen.utils.chat.ChatMessage;
 import rtx.byazen.utils.config.ModulePresets;
+import rtx.byazen.utils.help.ModuleHelp;
 import rtx.byazen.utils.render.render2d.Render2D;
 import rtx.byazen.utils.sounds.Sounds;
 
@@ -198,13 +200,22 @@ public final class SettingsPopup {
     }
 
     /** Служебная строка: название модуля и три кнопки - сброс, копировать пресет, вставить пресет. */
+    /** Размер кнопок в шапке: на узком окне кнопки чуть меньше, чтобы не лезли на название. */
+    private float headerButtonSize() {
+        return this.width >= 150.0f ? 12.0f : 10.5f;
+    }
+
+    private float headerButtonGap() {
+        return this.width >= 150.0f ? 3.0f : 2.2f;
+    }
+
     private void drawHeader(float top, float alpha) {
         if (this.module == null) {
             return;
         }
         float x = this.px + 6.0f;
         float y = top + 3.0f;
-        float size = 12.0f;
+        float size = this.headerButtonSize();
         Render2D.msdfText(FONT_SEMI, this.module.getDisplayName(), x, y + 2.0f, 6.6f,
                 SettingsPopup.rgba(255, 255, 255, 220.0f * alpha));
         if (!this.headerHint.isEmpty() && System.currentTimeMillis() - this.highlightAt > 2600L) {
@@ -218,8 +229,8 @@ public final class SettingsPopup {
         this.headerHover = -1.0f;
         float mx = Position.mouseX();
         float my = Position.mouseY();
-        for (int i = 0; i < 4; ++i) {
-            float bx2 = bx - (float) (4 - i) * (size + 3.0f);
+        for (int i = 0; i < 5; ++i) {
+            float bx2 = bx - (float) (5 - i) * (size + this.headerButtonGap());
             boolean hot = mx >= bx2 && mx <= bx2 + size && my >= y && my <= y + size;
             if (hot) {
                 this.headerHover = (float) i;
@@ -249,6 +260,12 @@ public final class SettingsPopup {
                     Render2D.rect(bx2 + size * 0.4f, y + size * 0.16f, size * 0.2f, size * 0.12f, 0.8f, ink);
                     break;
                 }
+                case 3: {
+                    // как это работает: знак вопроса
+                    Render2D.circleOutline(bx2 + size * 0.5f, y + size * 0.5f, size * 0.34f, 1.1f, ink);
+                    Render2D.msdfText(FONT_SEMI, "?", bx2 + size * 0.36f, y + 1.2f, 7.0f, ink);
+                    break;
+                }
                 default: {
                     // сброс модуля целиком: кольцо со стрелкой и вторая дуга
                     Render2D.circleOutline(bx2 + size * 0.5f, y + size * 0.5f, size * 0.3f, 1.3f, ink);
@@ -273,6 +290,9 @@ public final class SettingsPopup {
             }
             else if (index == 2) {
                 hint = "Вставить пресет настроек из буфера обмена";
+            }
+            else if (index == 3) {
+                hint = "Как это работает: что делает модуль и что в нём настроить";
             }
             else {
                 hint = "Сбросить модуль целиком: настройки, клавиша, режим и включённость";
@@ -462,9 +482,9 @@ public final class SettingsPopup {
         }
         float top = this.drag.getRenderY();
         float x = this.px + this.width - 6.0f;
-        float size = 12.0f;
-        for (int i = 0; i < 4; ++i) {
-            float bx = x - (float) (4 - i) * (size + 3.0f);
+        float size = this.headerButtonSize();
+        for (int i = 0; i < 5; ++i) {
+            float bx = x - (float) (5 - i) * (size + this.headerButtonGap());
             if (mouseX < bx || mouseX > bx + size || mouseY < top + 3.0f || mouseY > top + 3.0f + size) {
                 continue;
             }
@@ -501,6 +521,14 @@ public final class SettingsPopup {
                     this.widgets = SettingsFactory.build(this.module);
                     this.showHint("Применено настроек: " + applied);
                 }
+                break;
+            }
+            case 3: {
+                for (String line : ModuleHelp.full(this.module)) {
+                    ChatMessage.send(line);
+                }
+                Sounds.play("gui_open");
+                this.showHint("Как это работает — в чате");
                 break;
             }
             default: {

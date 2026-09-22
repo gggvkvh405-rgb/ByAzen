@@ -9,10 +9,14 @@ import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 import rtx.byazen.api.drags.Position;
+import rtx.byazen.api.modules.Module;
+import rtx.byazen.api.modules.ModuleManager;
 import rtx.byazen.api.ui.theme.ClientAccent;
 import rtx.byazen.utils.achievements.Achievements;
 import rtx.byazen.utils.chat.ChatMessage;
+import rtx.byazen.utils.help.ModuleHelp;
 import rtx.byazen.utils.missions.CoopMissions;
+import rtx.byazen.utils.vote.FeatureVote;
 import rtx.byazen.utils.render.others.RectUtil;
 import rtx.byazen.utils.render.render2d.Render2D;
 import rtx.byazen.utils.season.SeasonEvents;
@@ -37,20 +41,25 @@ extends BaseScreen {
     private static final float RAIL = 132.0f;
     private static final float ROW_H = 20.0f;
     private static final int VISIBLE = 10;
-    private static final String[] TABS = {"Миссии", "Достижения", "События", "Голосование", "Профиль"};
+    private static final String[] TABS = {"Миссии", "Достижения", "События", "Голосование", "Профиль",
+            "Фичи", "Гайд"};
     private static final String[] NOTES = {
             "Кооп-миссии для игры с друзьями",
             "Что вы уже сделали в клиенте",
             "Сезон идёт: палитра и награда",
             "Какая косметика будет следующей",
-            "Ваш профиль и статистика"
+            "Ваш профиль и статистика",
+            "За какие фичи голосуют игроки",
+            "Документация и «как это работает»"
     };
     private static final String[][] BUTTONS = {
             {"В чат", "Код для друзей", "Принять код", "Сбросить"},
             {"В чат", "Скопировать профиль", "Сбросить"},
             {"Забрать награду", "Включить палитру", "В чат"},
             {"Голосовать", "Код голоса", "Принять код", "Идея из буфера"},
-            {"Скопировать профиль", "В чат"}
+            {"Скопировать профиль", "В чат"},
+            {"Голосовать", "Код голосов", "Принять код", "Пожелание из буфера"},
+            {"Открыть тур", "Инструкция строки", "Все модули в чат"}
     };
 
     private static boolean openedOnce;
@@ -194,8 +203,14 @@ extends BaseScreen {
             case 3: {
                 return CosmeticVote.myVote().isEmpty() ? "голос не отдан" : "голос отдан";
             }
-            default: {
+            case 4: {
                 return Achievements.points() + " очков";
+            }
+            case 5: {
+                return FeatureVote.myVote().isEmpty() ? "голос не отдан" : "ваш голос учтён";
+            }
+            default: {
+                return ModuleManager.get() == null ? "гайд" : ModuleManager.get().getAll().size() + " модулей";
             }
         }
     }
@@ -214,8 +229,14 @@ extends BaseScreen {
             case 3: {
                 return "Выберите строку и нажмите «Голосовать» — голос можно переменить";
             }
-            default: {
+            case 4: {
                 return "Профиль можно скопировать и отправить друзьям";
+            }
+            case 5: {
+                return "Голос один и его можно поменять; свои пожелания уходят в код голосов";
+            }
+            default: {
+                return "Выберите модуль и нажмите «Инструкция строки» — как это работает";
             }
         }
     }
@@ -237,8 +258,14 @@ extends BaseScreen {
                         : CosmeticVote.proposals());
                 return list;
             }
-            default: {
+            case 4: {
                 return this.profileRows();
+            }
+            case 5: {
+                return FeatureVote.leaderboard();
+            }
+            default: {
+                return this.guideRows();
             }
         }
     }
@@ -250,7 +277,28 @@ extends BaseScreen {
         list.add("§7" + SeasonEvents.summary());
         list.add("§7" + CosmeticVote.summary());
         list.add("§7" + rtx.byazen.utils.profiles.BuildTier.summary());
+        list.add("§7" + FeatureVote.summary());
         list.add("§8Профиль хранится только у вас — наружу ничего не уходит");
+        return list;
+    }
+
+    /** Документация: каждый модуль одной строкой, что он делает и как называется для чата. */
+    private List<String> guideRows() {
+        ArrayList<String> list = new ArrayList<String>();
+        if (ModuleManager.get() == null) {
+            return list;
+        }
+        for (Module module : ModuleManager.get().getAll()) {
+            String description = module.getDescription() == null ? "" : module.getDescription();
+            if (description.length() > 78) {
+                description = description.substring(0, 77) + "…";
+            }
+            String bind = module.getBind() != null && module.getBind().isBound()
+                    ? " §8[" + module.getBind().getDisplayName() + "]" : "";
+            list.add("§b" + module.getDisplayName() + bind + " §7— " + description
+                    + " §8· " + module.getCategory().getDisplayName());
+        }
+        list.add("§8Команды: .find <слово> — где найти, .how <модуль> — как это работает");
         return list;
     }
 
@@ -396,6 +444,54 @@ extends BaseScreen {
                 }
                 break;
             }
+            case 5: {
+                if (index == 0) {
+                    java.util.List<FeatureVote.Wish> wishes = FeatureVote.wishes();
+                    if (this.selected < 0 || this.selected >= wishes.size()) {
+                        this.say("Выберите строку пожелания");
+                        break;
+                    }
+                    this.say(FeatureVote.vote(wishes.get(this.selected).id()));
+                }
+                else if (index == 1) {
+                    this.copy(FeatureVote.code(), "Код голосов скопирован");
+                }
+                else if (index == 2) {
+                    this.say(FeatureVote.applyCode(this.paste()));
+                }
+                else {
+                    String idea = this.paste();
+                    if (idea == null || idea.isBlank()) {
+                        this.say("Скопируйте пожелание в буфер и нажмите ещё раз");
+                        break;
+                    }
+                    this.say(FeatureVote.propose(idea));
+                }
+                break;
+            }
+            case 6: {
+                if (index == 0) {
+                    TutorialScreen.open();
+                }
+                else if (index == 1) {
+                    Module module = this.selectedModule();
+                    if (module == null) {
+                        this.say("Выберите модуль в списке слева");
+                        break;
+                    }
+                    for (String line : ModuleHelp.full(module)) {
+                        ChatMessage.send(line);
+                    }
+                    this.say("Инструкция по «" + module.getDisplayName() + "» — в чате");
+                }
+                else {
+                    for (String line : ModuleHelp.allModules()) {
+                        ChatMessage.send(line);
+                    }
+                    this.say("Список модулей — в чате");
+                }
+                break;
+            }
             default: {
                 if (index == 0) {
                     StringBuilder builder = new StringBuilder("Профиль ByAzen\n");
@@ -412,6 +508,18 @@ extends BaseScreen {
                 }
             }
         }
+    }
+
+    /** Модуль по выбранной строке гайда. */
+    private Module selectedModule() {
+        if (ModuleManager.get() == null) {
+            return null;
+        }
+        List<Module> modules = ModuleManager.get().getAll();
+        if (this.selected < 0 || this.selected >= modules.size()) {
+            return null;
+        }
+        return modules.get(this.selected);
     }
 
     private String paste() {

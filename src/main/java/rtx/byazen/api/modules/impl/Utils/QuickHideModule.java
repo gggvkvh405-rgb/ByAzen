@@ -12,10 +12,11 @@ import rtx.byazen.api.modules.Module;
 import rtx.byazen.api.modules.impl.Interface.NotificationsModule;
 import rtx.byazen.api.modules.settings.impl.BindSetting;
 import rtx.byazen.api.modules.settings.impl.BooleanSetting;
+import rtx.byazen.api.ui.BaseScreen;
 
 /**
  * Идеи №33 и №190 из IDEAS.md: «чистый экран» и кнопка «паника» —
- * одной клавишей спрятать весь HUD (для скриншотов и проверок), второй раз — вернуть как было.
+ * одной клавишей спрятать весь HUD и закрыть окна клиента (для скриншотов и проверок), второй раз — вернуть как было.
  */
 public final class QuickHideModule
 extends Module {
@@ -70,9 +71,17 @@ extends Module {
                 draggable.setVisible(false);
             }
             this.hidden = true;
+            this.closeClientScreens();
         }
         if (this.announce.getValue()) {
             NotificationsModule.notify(this.hidden ? "HUD скрыт — нажми " + this.keybind.getValue().getName() + " ещё раз" : "HUD возвращён", 1800L);
+        }
+    }
+
+    /** Паника (идея №190): закрыть окна клиента, чтобы они не попали на скриншот. */
+    private void closeClientScreens() {
+        if (this.mc.currentScreen instanceof BaseScreen) {
+            this.mc.setScreen(null);
         }
     }
 
