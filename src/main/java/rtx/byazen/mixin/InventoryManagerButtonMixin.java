@@ -26,6 +26,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import rtx.byazen.api.invmanager.InventoryArranger;
 import rtx.byazen.api.invmanager.InventoryManagerScreen;
+import rtx.byazen.api.modules.impl.Interface.InventoryPlus;
+import rtx.byazen.utils.inventory.InventorySorter;
 import rtx.byazen.utils.inventory.InventoryTemplates;
 
 @Mixin(InventoryScreen.class)
@@ -34,6 +36,8 @@ public abstract class InventoryManagerButtonMixin extends HandledScreen<PlayerSc
     private ButtonWidget byazen_setsButton;
     @Unique
     private ButtonWidget byazen_arrangeButton;
+    @Unique
+    private ButtonWidget byazen_sortButton;
 
     protected InventoryManagerButtonMixin(PlayerScreenHandler menu, PlayerInventory inventory, Text title) {
         super(menu, inventory, title);
@@ -47,6 +51,9 @@ public abstract class InventoryManagerButtonMixin extends HandledScreen<PlayerSc
         if (this.byazen_arrangeButton != null) {
             this.remove(this.byazen_arrangeButton);
         }
+        if (this.byazen_sortButton != null) {
+            this.remove(this.byazen_sortButton);
+        }
         int bw = 90;
         int bx = this.x - bw - 4;
         this.byazen_setsButton = this.addDrawableChild(
@@ -57,6 +64,13 @@ public abstract class InventoryManagerButtonMixin extends HandledScreen<PlayerSc
         this.byazen_arrangeButton = this.addDrawableChild(
             ButtonWidget.builder(Text.literal(InventoryArranger.isActive() ? "Раскладываю…" : "Разложить"), btn -> InventoryManagerButtonMixin.triggerArrange())
                 .dimensions(bx, this.y + 23, bw, 20)
+                .build()
+        );
+        this.byazen_sortButton = this.addDrawableChild(
+            ButtonWidget.builder(Text.literal(InventorySorter.isActive()
+                    ? "Сортирую… " + Math.round(InventorySorter.progress() * 100.0f) + "%"
+                    : "Сортировать"), btn -> InventoryPlus.triggerSort(this.getScreenHandler()))
+                .dimensions(bx, this.y + 46, bw, 20)
                 .build()
         );
     }

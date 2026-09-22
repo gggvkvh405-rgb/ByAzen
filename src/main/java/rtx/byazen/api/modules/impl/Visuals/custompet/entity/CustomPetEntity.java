@@ -96,6 +96,9 @@ implements GeoEntity {
     private boolean networkUmbrella;
     private boolean networkAirborne;
     private double networkAnimationSpeed = 1.0;
+    private int reactionTicks;
+    private double reactionBoost;
+    private double reactionHop;
 
     public CustomPetEntity(World world) {
         super(EntityType.FROG, world);
@@ -133,7 +136,7 @@ implements GeoEntity {
     private <E extends GeoAnimatable> PlayState predicate(AnimationTest<E> animationTest) {
         RawAnimation rawAnimation;
         AnimationController animationController = animationTest.controller();
-        animationController.animationSpeed = this.currentAnimationSpeed;
+        animationController.animationSpeed = this.currentAnimationSpeed + this.reactionBoost;
         if (this.owl) {
             RawAnimation rawAnimation2 = this.airborneMode ? OWL_FLY : (!this.moving ? OWL_IDLE : (this.currentAnimationSpeed >= 1.4 ? OWL_RUN : OWL_WALK));
             animationController.setAnimation(rawAnimation2);
@@ -255,8 +258,51 @@ implements GeoEntity {
             return;
         }
         this.setNoGravity(this.desiredAirborne);
+        this.tickReaction();
         super.tick();
         this.tickCustomMovement();
+    }
+
+    /** Реакция питомца: короткая встряска анимации, подскок и затухание. */
+    public void requestReaction(double boost, int ticks, double hop) {
+        this.reactionBoost = Math.max(this.reactionBoost, MathHelper.clamp(boost, 0.0, 3.0));
+        this.reactionTicks = Math.max(this.reactionTicks, Math.max(4, ticks));
+        this.reactionHop = Math.max(this.reactionHop, hop);
+    }
+
+    /** Звук эмоции — довольное бормотание питомца. */
+    public void playEmotionSound(float pitch) {
+        try {
+            SoundEvent soundEvent = CustomPetEntity.ambientSound();
+            if (soundEvent == null || this.getEntityWorld() == null) {
+                return;
+            }
+            this.getEntityWorld().playSoundClient(this.getX(), this.getY(), this.getZ(), soundEvent,
+                    this.getSoundCategory(), 0.85f, MathHelper.clamp(pitch, 0.6f, 1.8f), false);
+        }
+        catch (Throwable throwable) {
+            // звук недоступен — игре не мешаем
+        }
+    }
+
+    /** Мигает ли питомец реакцией прямо сейчас. */
+    public boolean isReacting() {
+        return this.reactionTicks > 0;
+    }
+
+    private void tickReaction() {
+        if (this.reactionTicks > 0) {
+            --this.reactionTicks;
+            if (!this.airborneMode && this.reactionHop > 0.0 && this.jumpCooldown <= 0) {
+                this.verticalVelocity = Math.max(this.verticalVelocity, this.reactionHop);
+                this.jumpCooldown = 9;
+            }
+            this.reactionHop = 0.0;
+        }
+        this.reactionBoost = this.reactionTicks > 0 ? this.reactionBoost * 0.92 : this.reactionBoost * 0.85;
+        if (this.reactionBoost < 0.01) {
+            this.reactionBoost = 0.0;
+        }
     }
 
     public float getStepHeight() {

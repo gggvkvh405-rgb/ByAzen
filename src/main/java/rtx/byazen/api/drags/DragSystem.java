@@ -83,6 +83,7 @@ public final class DragSystem {
         this.register(new rtx.byazen.api.drags.components.MinimapComp());
         this.register(new rtx.byazen.api.drags.components.WaypointsComp());
         this.register(new ClockComp());
+        this.register(new rtx.byazen.api.drags.components.SwordComp());
         this.register(new TextComp());
         this.register(new SessionStatsComp());
         this.register(new ClipboardComp());

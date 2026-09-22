@@ -84,6 +84,16 @@ extends Module {
         this.resetAll();
     }
 
+    /** Локальный питомец игрока — для реакций и эмоций «Питомцы 2.0». */
+    public CustomPetEntity localPet() {
+        try {
+            return this.localController == null ? null : this.localController.getPet();
+        }
+        catch (Throwable throwable) {
+            return null;
+        }
+    }
+
     @EventHandler
     public void onTick(TickEvent tickEvent) {
         if (!tickEvent.isPre()) {
