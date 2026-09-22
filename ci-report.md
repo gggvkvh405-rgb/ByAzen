@@ -1,6 +1,6 @@
 # Отчёт CI по сборке ByAzen
 
-Коммит: 07378300ea08a5a764ff44712f26b9b6ed1d093a
+Коммит: 110e16eb80fe7fe4aa78916f49a0d2acc5eebc93
 
 ## Аудио-тракт (MP3 -> PCM, как в игре)
 ```
@@ -18,9 +18,9 @@ AUDIO SMOKE: OK
 
 ## Проверка собранного jar
 ```
-файл:             build/libs/ByAzen-1.9.0.jar
+файл:             build/libs/ByAzen-1.9.1.jar
 mod id:           byazen
-версия в jar:     1.9.0 (ожидается 1.9.0)
+версия в jar:     1.9.1 (ожидается 1.9.1)
 объявлено jar:    6
 лежит в jar:      6
 entrypoints:      client,main
@@ -30,6 +30,6 @@ VERIFY: OK
 
 ## Lite-сборка (идея №187)
 ```
--rw-r--r-- 1 runner runner 80364183 Sep 22 15:18 build/libs/ByAzen-lite-1.9.0.jar
+-rw-r--r-- 1 runner runner 80400654 Sep 22 15:32 build/libs/ByAzen-lite-1.9.1.jar
 маркер внутри jar: lite
 ```
