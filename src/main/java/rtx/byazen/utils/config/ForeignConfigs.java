@@ -192,7 +192,7 @@ public final class ForeignConfigs {
                             ++report.sliders;
                             break;
                         case "renderDistance":
-                            client.options.getRenderDistance().setValue(pair.getValue());
+                            client.options.getViewDistance().setValue(pair.getValue());
                             ++report.sliders;
                             break;
                         default:
