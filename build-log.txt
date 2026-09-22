@@ -4,22 +4,19 @@ Daemon will be stopped at the end of the build
 > Configure project :
 Fabric Loom: 1.17.19
 
-> Task :compileJava
-/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/web/LocalHttp.java:182: error: non-static method request(String,String) cannot be referenced from a static context
-                LocalHttp.send(exchange, 200, "application/json; charset=utf-8", WebBridge.request(action, query).toString());
-                                                                                          ^
-/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/web/WebBridge.java:154: error: incompatible types: int cannot be converted to JsonElement
-        root.add("samples", WebBridge.seriesCount());
-                                                 ^
-Note: /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/api/mods/geckolib/animatable/instance/AnimatableInstanceCache.java uses or overrides a deprecated API.
-Note: Recompile with -Xlint:deprecation for details.
-Note: Some input files use unchecked or unsafe operations.
-Note: Recompile with -Xlint:unchecked for details.
-Note: Some messages have been simplified; recompile with -Xdiags:verbose to get full output
-2 errors
-
 > Task :compileJava FAILED
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_4-1790081994202.json
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/nav/TeleportHelper.java:25: error: cannot find symbol
+    public static Waypoint home() {
+                  ^
+  symbol:   class Waypoint
+  location: class TeleportHelper
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/nav/TeleportHelper.java:68: error: cannot find symbol
+    private static String coords(Waypoint point) {
+                                 ^
+  symbol:   class Waypoint
+  location: class TeleportHelper
+2 errors
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_4-1790085299182.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/ByAzen/ByAzen/build/reports/problems/problems-report.html
 
@@ -28,17 +25,16 @@ FAILURE: Build failed with an exception.
 * What went wrong:
 Execution failed for task ':compileJava' (registered by plugin class 'org.gradle.api.plugins.JavaBasePlugin').
 > Compilation failed; see the compiler output below.
-  Note: /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/api/mods/geckolib/animatable/instance/AnimatableInstanceCache.java uses or overrides a deprecated API.
-  Note: Recompile with -Xlint:deprecation for details.
-  /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/web/WebBridge.java:154: error: incompatible types: int cannot be converted to JsonElement
-          root.add("samples", WebBridge.seriesCount());
-                                                   ^
-  /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/web/LocalHttp.java:182: error: non-static method request(String,String) cannot be referenced from a static context
-                  LocalHttp.send(exchange, 200, "application/json; charset=utf-8", WebBridge.request(action, query).toString());
-                                                                                            ^
-  Note: Recompile with -Xlint:unchecked for details.
-  Note: Some messages have been simplified; recompile with -Xdiags:verbose to get full output
-  Note: Some input files use unchecked or unsafe operations.
+  /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/nav/TeleportHelper.java:25: error: cannot find symbol
+      public static Waypoint home() {
+                    ^
+    symbol:   class Waypoint
+    location: class TeleportHelper
+  /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/nav/TeleportHelper.java:68: error: cannot find symbol
+      private static String coords(Waypoint point) {
+                                   ^
+    symbol:   class Waypoint
+    location: class TeleportHelper
   2 errors
 
 * Try:
@@ -81,17 +77,16 @@ org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':compile
 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
 Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Compilation failed; see the compiler output below.
-/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/web/LocalHttp.java:182: error: non-static method request(String,String) cannot be referenced from a static context
-                LocalHttp.send(exchange, 200, "application/json; charset=utf-8", WebBridge.request(action, query).toString());
-                                                                                          ^
-/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/web/WebBridge.java:154: error: incompatible types: int cannot be converted to JsonElement
-        root.add("samples", WebBridge.seriesCount());
-                                                 ^
-Note: /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/api/mods/geckolib/animatable/instance/AnimatableInstanceCache.java uses or overrides a deprecated API.
-Note: Recompile with -Xlint:deprecation for details.
-Note: Some input files use unchecked or unsafe operations.
-Note: Recompile with -Xlint:unchecked for details.
-Note: Some messages have been simplified; recompile with -Xdiags:verbose to get full output
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/nav/TeleportHelper.java:25: error: cannot find symbol
+    public static Waypoint home() {
+                  ^
+  symbol:   class Waypoint
+  location: class TeleportHelper
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/nav/TeleportHelper.java:68: error: cannot find symbol
+    private static String coords(Waypoint point) {
+                                 ^
+  symbol:   class Waypoint
+  location: class TeleportHelper
 2 errors
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:89)
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:50)
@@ -227,5 +222,5 @@ Note: Some messages have been simplified; recompile with -Xdiags:verbose to get 
 	... 30 more
 
 
-BUILD FAILED in 35s
+BUILD FAILED in 19s
 1 actionable task: 1 executed
