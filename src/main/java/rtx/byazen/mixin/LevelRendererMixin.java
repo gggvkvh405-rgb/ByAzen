@@ -28,6 +28,7 @@ import rtx.byazen.api.modules.impl.Visuals.JumpCircle;
 import rtx.byazen.api.modules.impl.Visuals.KillEffect;
 import rtx.byazen.api.ui.window.WorldGuiCloseAnimation;
 import rtx.byazen.utils.render.post.customsky.CustomSkyRenderer;
+import rtx.byazen.api.modules.impl.Visuals.AntiAliasing;
 import rtx.byazen.utils.render.post.fogblur.FogBlurRenderer;
 import rtx.byazen.utils.render.post.guilayerblur.GuiLayerBlurRenderer;
 import rtx.byazen.utils.render.render2d.blur.BlurFramebuffer;
@@ -73,6 +74,7 @@ public abstract class LevelRendererMixin {
         this.applyJumpCircleDistortion(camera, positionMatrix, projectionMatrix, frustumMatrix);
         DragSystem.get().applyDragDistortion(this.client.getFramebuffer());
         this.renderChinaHat(worldRenderEvent);
+        this.applyAntiAliasing();
     }
 
     private void applyCustomSky(Matrix4f positionMatrix, Matrix4f projectionMatrix) {
@@ -89,6 +91,13 @@ public abstract class LevelRendererMixin {
         int color = ambience.skyColorRGB();
         int color2 = ambience.skyColor2RGB();
         CustomSkyRenderer.apply(this.client.getFramebuffer(), byazen_skyViewProj, time, ambience.skyTypeIndex(), (float)(color >> 16 & 0xFF) / 255.0f, (float)(color >> 8 & 0xFF) / 255.0f, (float)(color & 0xFF) / 255.0f, (float)(color2 >> 16 & 0xFF) / 255.0f, (float)(color2 >> 8 & 0xFF) / 255.0f, (float)(color2 & 0xFF) / 255.0f, ambience.skyGradientMode(), ambience.skyBrightness());
+    }
+
+    private void applyAntiAliasing() {
+        AntiAliasing antiAliasing = AntiAliasing.getInstance();
+        if (antiAliasing != null && antiAliasing.isEnabled()) {
+            antiAliasing.onAfterWorld(this.client.getFramebuffer());
+        }
     }
 
     private void applyFogBlur() {

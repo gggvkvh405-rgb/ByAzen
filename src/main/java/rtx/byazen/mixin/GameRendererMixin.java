@@ -19,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import rtx.byazen.api.modules.impl.Utils.CameraSettings;
 import rtx.byazen.api.modules.impl.Visuals.Ambience;
 import rtx.byazen.api.modules.impl.Visuals.AspectRatio;
+import rtx.byazen.api.modules.impl.Visuals.CameraPlus;
 import rtx.byazen.api.modules.impl.Visuals.KillEffect;
 import rtx.byazen.api.modules.impl.Visuals.NoRender;
 import rtx.byazen.api.ui.UI;
@@ -130,6 +131,16 @@ public abstract class GameRendererMixin {
         if (NoRender.isActive("\u041f\u043e\u043a\u0430\u0447\u0438\u0432\u0430\u043d\u0438\u0435 \u043a\u0430\u043c\u0435\u0440\u044b")) {
             ci.cancel();
         }
+    }
+
+    @ModifyReturnValue(method="getFov", at={@At(value="RETURN")}, require = 0)
+    private float byazen_cameraPlusFov(float original) {
+        return CameraPlus.applyFov(original);
+    }
+
+    @ModifyReturnValue(method="getBasicProjectionMatrix", at={@At(value="RETURN")}, require = 0)
+    private Matrix4f byazen_cameraPlusProjection(Matrix4f original) {
+        return CameraPlus.applyProjection(original);
     }
 
     private void byazen_applyWorldSaturation() {
