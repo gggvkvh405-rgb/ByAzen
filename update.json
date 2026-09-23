@@ -1,16 +1,16 @@
 {
-  "version": "1.9.4",
-  "jar": "ByAzen-1.9.4.jar",
-  "url": "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.4.jar",
+  "version": "1.9.5",
+  "jar": "ByAzen-1.9.5.jar",
+  "url": "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.5.jar",
   "urls": [
-    "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.4.jar"
+    "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.5.jar"
   ],
-  "sha256": "faea88f62dd3f69c1151bb3dc5711c1ccf6ceaf6f130435df042f297edb021ba",
-  "size": 81091388,
+  "sha256": "b5ced490ed4ca2be40c4dc2bb4d592c485956868a4759dfadc7486f810b081bd",
+  "size": 81091447,
   "released": "2026-09-23",
   "minecraft": "1.21.11",
   "loader": "0.19.3",
   "java": 21,
-  "notes": "Журнал старта с «хлебными крошками». Клиент пишет шаг инициализации в лог",
+  "notes": "Главное: исправлено падение Mixin transformation of net.minecraft.class_636 failed …",
   "generated": "CI"
 }
