@@ -13,10 +13,12 @@ import net.minecraft.text.Text;
 import rtx.byazen.api.drags.Position;
 import rtx.byazen.api.modules.ModuleManager;
 import rtx.byazen.api.modules.impl.Interface.MusicPlayerModule;
+import rtx.byazen.api.music.Equalizer;
 import rtx.byazen.api.music.MusicCovers;
 import rtx.byazen.api.music.MusicEngine;
 import rtx.byazen.api.music.MusicHttp;
 import rtx.byazen.api.music.MusicLibrary;
+import rtx.byazen.api.music.MusicPlaylists;
 import rtx.byazen.api.music.MusicShapes;
 import rtx.byazen.api.music.MusicTrack;
 import rtx.byazen.api.music.RadioCatalog;
@@ -58,9 +60,11 @@ extends BaseScreen {
 
     private enum Tab {
         LIBRARY("Библиотека"),
+        PLAYLISTS("Плейлисты"),
         SEARCH("Поиск"),
         FAVORITES("Избранное"),
-        LINKS("Свои ссылки");
+        LINKS("Свои ссылки"),
+        EQUALIZER("Эквалайзер");
 
         private final String label;
 
@@ -85,6 +89,10 @@ extends BaseScreen {
     private float progressHover;
     private final float[] modeHover = new float[3];
     private final float[] chipHover = new float[8];
+    private final float[] playlistHover = new float[MusicPlaylists.MAX_PLAYLISTS + 2];
+    private final float[] presetHover = new float[Equalizer.presets().length + 2];
+    private final float[] bandHover = new float[Equalizer.BANDS];
+    private final MusicPlaylists playlists = MusicPlaylists.get();
     private final float[] spectrum = new float[48];
     private float visualizerHover;
     private boolean draggingScroll;
@@ -100,6 +108,8 @@ extends BaseScreen {
     private volatile String searchedQuery = "";
     private boolean popularLoaded;
     private int libraryChip;
+    private float equalizerAppear;
+    private int draggingBand = -1;
 
     public MusicPlayerScreen(Screen parent) {
         super(Text.literal("Музыкальный плеер"));
@@ -136,7 +146,13 @@ extends BaseScreen {
     }
 
     private float listTop() {
-        return panelY() + 74.0f + (this.tab == Tab.SEARCH || this.tab == Tab.LINKS ? FIELD_H + 8.0f : this.tab == Tab.LIBRARY ? CHIP_H + 8.0f : 0.0f);
+        if (this.tab == Tab.SEARCH || this.tab == Tab.LINKS) {
+            return panelY() + 74.0f + FIELD_H + 8.0f;
+        }
+        if (this.tab == Tab.LIBRARY || this.tab == Tab.PLAYLISTS || this.tab == Tab.EQUALIZER) {
+            return panelY() + 74.0f + CHIP_H + 8.0f;
+        }
+        return panelY() + 74.0f;
     }
 
     /** Полка чипов вкладки «Библиотека»: все станции, недавние и курируемые подборки. */
@@ -221,12 +237,371 @@ extends BaseScreen {
         return false;
     }
 
+    // ------------------------------------------------------------------ плейлисты (идея №3)
+
+    /** Полка вкладки «Плейлисты»: создать, играть и сами плейлисты. */
+    private void drawPlaylistChips(float x, float y, float a, float mx, float my, float dt) {
+        if (this.tab != Tab.PLAYLISTS) {
+            return;
+        }
+        float cursor = x + PAD;
+        float chipY = y + 74.0f;
+        int total = this.playlists.count() + 2;
+        for (int i = 0; i < total; ++i) {
+            String label = this.playlistChipLabel(i);
+            float width = Render2D.msdfWidth(FONT_SEMI, label, 5.6f) + 16.0f;
+            if (i > 1 && cursor + width > x + W - PAD) {
+                break;
+            }
+            boolean hot = mx >= cursor && mx <= cursor + width && my >= chipY && my <= chipY + CHIP_H;
+            this.playlistHover[Math.min(i, this.playlistHover.length - 1)] += ((hot ? 1.0f : 0.0f)
+                    - this.playlistHover[Math.min(i, this.playlistHover.length - 1)]) * Math.min(1.0f, dt * 13.0f);
+            float hover = this.playlistHover[Math.min(i, this.playlistHover.length - 1)];
+            boolean active = i > 1 && i - 2 == this.playlists.selectedIndex();
+            boolean action = i < 2;
+            int fill = active || action
+                    ? ClientAccent.accentSoft((active ? 48.0f : 24.0f) * a)
+                    : MusicPlayerScreen.rgba(255, 255, 255, (9.0f + 12.0f * hover) * a);
+            Render2D.rect(cursor, chipY, width, CHIP_H, 5.5f, fill);
+            if (active) {
+                Render2D.outline(cursor, chipY, width, CHIP_H, 5.5f, 0.9f, ClientAccent.accentSoft(120.0f * a));
+            }
+            int color = active
+                    ? MusicPlayerScreen.rgba(255, 255, 255, 245.0f * a)
+                    : action
+                      ? ClientAccent.accentBright((170.0f + 70.0f * hover) * a)
+                      : MusicPlayerScreen.rgba(196, 203, 216, (140.0f + 80.0f * hover) * a);
+            MusicPlayerScreen.text(FONT_SEMI, label, cursor + 8.0f, chipY + CHIP_H * 0.5f, 5.6f, color);
+            cursor += width + 5.0f;
+        }
+        if (this.playlists.count() == 0) {
+            String hint = "Плейлистов пока нет: «+ Создать», а треки добавляются правой кнопкой мыши";
+            MusicPlayerScreen.text(FONT_TEXT, hint, cursor + 4.0f, chipY + CHIP_H * 0.5f, 5.2f,
+                    MusicPlayerScreen.rgba(178, 184, 196, 120.0f * a));
+        }
+    }
+
+    private String playlistChipLabel(int index) {
+        if (index == 0) {
+            return "+ Создать";
+        }
+        if (index == 1) {
+            return "Играть";
+        }
+        MusicPlaylists.Playlist playlist = this.playlists.get(index - 2);
+        return playlist == null ? "" : playlist.name();
+    }
+
+    private boolean handlePlaylistChipClick(float mx, float my, float x, float y) {
+        if (this.tab != Tab.PLAYLISTS) {
+            return false;
+        }
+        float cursor = x + PAD;
+        float chipY = y + 74.0f;
+        if (my < chipY - 2.0f || my > chipY + CHIP_H + 2.0f) {
+            return false;
+        }
+        int total = this.playlists.count() + 2;
+        for (int i = 0; i < total; ++i) {
+            float width = Render2D.msdfWidth(FONT_SEMI, this.playlistChipLabel(i), 5.6f) + 16.0f;
+            if (mx >= cursor && mx <= cursor + width) {
+                this.onPlaylistChip(i);
+                return true;
+            }
+            cursor += width + 5.0f;
+        }
+        return false;
+    }
+
+    private void onPlaylistChip(int index) {
+        Sounds.play("select_category");
+        if (index == 0) {
+            MusicPlaylists.Playlist playlist = this.playlists.create("");
+            if (playlist == null) {
+                this.toast("Предел плейлистов: " + MusicPlaylists.MAX_PLAYLISTS);
+                return;
+            }
+            this.scroll = 0.0f;
+            this.scrollTarget = 0.0f;
+            this.toast("Плейлист «" + playlist.name() + "» создан");
+            return;
+        }
+        if (index == 1) {
+            this.playSelectedPlaylist();
+            return;
+        }
+        this.playlists.select(index - 2);
+        this.scroll = 0.0f;
+        this.scrollTarget = 0.0f;
+    }
+
+    private void playSelectedPlaylist() {
+        MusicPlaylists.Playlist playlist = this.playlists.selected();
+        if (playlist == null) {
+            this.toast("Сначала создайте плейлист");
+            return;
+        }
+        MusicTrack track = this.playlists.play(this.playlists.selectedIndex());
+        if (track == null) {
+            this.toast("Плейлист «" + playlist.name() + "» пуст");
+            return;
+        }
+        Sounds.play("module_settings_open");
+        this.toast("Играем «" + playlist.name() + "»");
+    }
+
+    /** Правый клик по треку: во вкладке плейлиста — убрать, в остальных — добавить в выбранный. */
+    private boolean handleRowContext(List<MusicTrack> list, int row) {
+        if (row < 0 || row >= list.size()) {
+            return false;
+        }
+        MusicTrack track = list.get(row);
+        if (this.tab == Tab.PLAYLISTS) {
+            int playlist = this.playlists.selectedIndex();
+            if (playlist < 0 || !this.playlists.removeTrack(playlist, row)) {
+                return false;
+            }
+            Sounds.play("gui_close");
+            this.toast("«" + track.title() + "» убран из плейлиста");
+            return true;
+        }
+        MusicPlaylists.Playlist target = this.playlists.selected();
+        if (target == null) {
+            target = this.playlists.create("");
+        }
+        if (target == null) {
+            this.toast("Предел плейлистов: " + MusicPlaylists.MAX_PLAYLISTS);
+            return true;
+        }
+        if (this.playlists.add(this.playlists.indexOf(target.name()), track)) {
+            Sounds.play("gui_open");
+            this.toast("«" + track.title() + "» → «" + target.name() + "»");
+        }
+        else {
+            this.toast("Уже есть в «" + target.name() + "»");
+        }
+        return true;
+    }
+
+    private float playlistRowIconX(float left, float width, int slot) {
+        return left + width - 18.0f - (float) slot * 14.0f;
+    }
+
+    // ------------------------------------------------------------------ эквалайзер (идея №5)
+
+    private float equalizerTop() {
+        return this.listTop();
+    }
+
+    private float equalizerHeight() {
+        return Math.max(60.0f, panelY() + H - 62.0f - this.equalizerTop());
+    }
+
+    private float bandWidth() {
+        return (W - PAD * 2.0f - 4.0f * (float) (Equalizer.BANDS - 1)) / (float) Equalizer.BANDS;
+    }
+
+    private float bandCenterX(int band) {
+        return panelX() + PAD + (this.bandWidth() + 4.0f) * (float) band + this.bandWidth() * 0.5f;
+    }
+
+    private float bandTrackTop() {
+        return this.equalizerTop() + 26.0f;
+    }
+
+    private float bandTrackBottom() {
+        return this.equalizerTop() + this.equalizerHeight() - 30.0f;
+    }
+
+    private float bandValueY(float decibels) {
+        float ratio = (Equalizer.MAX_DB - decibels) / (Equalizer.MAX_DB - Equalizer.MIN_DB);
+        return this.bandTrackTop() + Math.max(0.0f, Math.min(1.0f, ratio)) * (this.bandTrackBottom() - this.bandTrackTop());
+    }
+
+    private float bandYToValue(float y) {
+        float span = Math.max(1.0f, this.bandTrackBottom() - this.bandTrackTop());
+        float ratio = Math.max(0.0f, Math.min(1.0f, (y - this.bandTrackTop()) / span));
+        float value = Equalizer.MAX_DB - ratio * (Equalizer.MAX_DB - Equalizer.MIN_DB);
+        return Math.round(value * 2.0f) / 2.0f;
+    }
+
+    private int presetChipCount() {
+        return Equalizer.presetCount() + 2;
+    }
+
+    private String presetChipLabel(int index) {
+        if (index == 0) {
+            return Equalizer.get().enabled() ? "ЭКВАЛАЙЗЕР: ВКЛ" : "ЭКВАЛАЙЗЕР: ВЫКЛ";
+        }
+        if (index <= Equalizer.presetCount()) {
+            return Equalizer.presetName(index - 1);
+        }
+        return "Сброс";
+    }
+
+    private void drawPresetChips(float x, float y, float a, float mx, float my, float dt) {
+        if (this.tab != Tab.EQUALIZER) {
+            return;
+        }
+        Equalizer equalizer = Equalizer.get();
+        float cursor = x + PAD;
+        float chipY = y + 74.0f;
+        int total = this.presetChipCount();
+        for (int i = 0; i < total; ++i) {
+            String label = this.presetChipLabel(i);
+            float width = Render2D.msdfWidth(FONT_SEMI, label, 5.4f) + 14.0f;
+            if (cursor + width > x + W - PAD) {
+                break;
+            }
+            boolean hot = mx >= cursor && mx <= cursor + width && my >= chipY && my <= chipY + CHIP_H;
+            this.presetHover[Math.min(i, this.presetHover.length - 1)] += ((hot ? 1.0f : 0.0f)
+                    - this.presetHover[Math.min(i, this.presetHover.length - 1)]) * Math.min(1.0f, dt * 13.0f);
+            float hover = this.presetHover[Math.min(i, this.presetHover.length - 1)];
+            boolean active = i == 0
+                    ? equalizer.enabled()
+                    : i <= Equalizer.presetCount() && equalizer.preset().equals(this.presetChipLabel(i));
+            int fill = active
+                    ? ClientAccent.accentSoft(46.0f * a)
+                    : MusicPlayerScreen.rgba(255, 255, 255, (9.0f + 12.0f * hover) * a);
+            Render2D.rect(cursor, chipY, width, CHIP_H, 5.5f, fill);
+            if (active) {
+                Render2D.outline(cursor, chipY, width, CHIP_H, 5.5f, 0.9f, ClientAccent.accentSoft(120.0f * a));
+            }
+            int color = active
+                    ? MusicPlayerScreen.rgba(255, 255, 255, 245.0f * a)
+                    : MusicPlayerScreen.rgba(196, 203, 216, (140.0f + 80.0f * hover) * a);
+            MusicPlayerScreen.text(FONT_SEMI, label, cursor + 7.0f, chipY + CHIP_H * 0.5f, 5.4f, color);
+            cursor += width + 5.0f;
+        }
+    }
+
+    private boolean handlePresetChipClick(float mx, float my, float x, float y) {
+        if (this.tab != Tab.EQUALIZER) {
+            return false;
+        }
+        float cursor = x + PAD;
+        float chipY = y + 74.0f;
+        if (my < chipY - 2.0f || my > chipY + CHIP_H + 2.0f) {
+            return false;
+        }
+        int total = this.presetChipCount();
+        for (int i = 0; i < total; ++i) {
+            float width = Render2D.msdfWidth(FONT_SEMI, this.presetChipLabel(i), 5.4f) + 14.0f;
+            if (mx >= cursor && mx <= cursor + width) {
+                this.onPresetChip(i);
+                return true;
+            }
+            cursor += width + 5.0f;
+        }
+        return false;
+    }
+
+    private void onPresetChip(int index) {
+        Equalizer equalizer = Equalizer.get();
+        Sounds.play("select_category");
+        if (index == 0) {
+            equalizer.setEnabled(!equalizer.enabled());
+            this.toast(equalizer.enabled() ? "Эквалайзер включён" : "Эквалайзер выключен");
+            return;
+        }
+        if (index > Equalizer.presetCount()) {
+            equalizer.applyPreset(Equalizer.presetName(0));
+            equalizer.setEnabled(true);
+            this.toast("Полосы сброшены: «" + Equalizer.presetName(0) + "»");
+            return;
+        }
+        String name = Equalizer.presetName(index - 1);
+        equalizer.applyPreset(name);
+        equalizer.setEnabled(true);
+        this.toast("Пресет: " + name);
+    }
+
+    private void drawEqualizer(float x, float y, float a, float mx, float my, float dt) {
+        Equalizer equalizer = Equalizer.get();
+        this.equalizerAppear += (1.0f - this.equalizerAppear) * Math.min(1.0f, dt * 9.0f);
+        float ea = a * this.equalizerAppear;
+        float left = x + PAD;
+        float width = W - PAD * 2.0f;
+        float top = this.equalizerTop();
+        float height = this.equalizerHeight();
+        Render2D.rect(left, top, width, height, 9.0f, MusicPlayerScreen.rgba(255, 255, 255, 7.0f * ea));
+        Render2D.outline(left, top, width, height, 9.0f, 1.0f, ClientAccent.accentSoft(24.0f * ea));
+        float zeroY = this.bandValueY(0.0f);
+        Render2D.rect(left + 8.0f, zeroY, width - 16.0f, 1.0f, 0.5f, MusicPlayerScreen.rgba(255, 255, 255, 26.0f * ea));
+        for (int band = 0; band < Equalizer.BANDS; ++band) {
+            float cx = this.bandCenterX(band);
+            float trackTop = this.bandTrackTop();
+            float trackBottom = this.bandTrackBottom();
+            float decibels = equalizer.gain(band);
+            float valueY = this.bandValueY(decibels);
+            boolean hot = mx >= cx - this.bandWidth() * 0.5f && mx <= cx + this.bandWidth() * 0.5f
+                    && my >= trackTop - 8.0f && my <= trackBottom + 8.0f;
+            this.bandHover[band] += ((hot ? 1.0f : 0.0f) - this.bandHover[band]) * Math.min(1.0f, dt * 14.0f);
+            float hover = this.bandHover[band];
+            Render2D.rect(cx - 1.25f, trackTop, 2.5f, trackBottom - trackTop, 1.25f, MusicPlayerScreen.rgba(255, 255, 255, 20.0f * ea));
+            float fillHeight = Math.abs(valueY - zeroY);
+            if (fillHeight > 0.4f) {
+                Render2D.rect(cx - 1.25f, Math.min(zeroY, valueY), 2.5f, fillHeight, 1.25f,
+                        ClientAccent.accentSoft((140.0f + 60.0f * hover) * ea));
+            }
+            Render2D.circle(cx, valueY, 3.1f + 0.9f * hover, ClientAccent.accentBright((210.0f + 45.0f * hover) * ea));
+            String frequency = Equalizer.label(band);
+            MusicPlayerScreen.text(FONT_TEXT, frequency, cx - Render2D.msdfWidth(FONT_TEXT, frequency, 4.9f) * 0.5f,
+                    trackBottom + 13.0f, 4.9f, MusicPlayerScreen.rgba(186, 192, 204, 150.0f * ea));
+            String value = (decibels > 0.0f ? "+" : "") + Math.round(decibels);
+            MusicPlayerScreen.text(FONT_SEMI, value, cx - Render2D.msdfWidth(FONT_SEMI, value, 4.9f) * 0.5f,
+                    trackTop - 10.0f, 4.9f, Math.abs(decibels) < 0.1f
+                            ? MusicPlayerScreen.rgba(170, 176, 188, 120.0f * ea)
+                            : ClientAccent.accentBright(225.0f * ea));
+        }
+        String hint = equalizer.enabled()
+                ? "Тяните полосы мышью · пресет: «" + equalizer.preset() + "»"
+                : "Эквалайзер выключен — включите его чипом слева или выберите пресет";
+        MusicPlayerScreen.text(FONT_TEXT, hint, left + width * 0.5f - Render2D.msdfWidth(FONT_TEXT, hint, 5.2f) * 0.5f,
+                top + height - 7.0f, 5.2f, MusicPlayerScreen.rgba(178, 184, 196, 130.0f * ea));
+    }
+
+    private boolean handleEqualizerClick(float mx, float my) {
+        if (this.tab != Tab.EQUALIZER) {
+            return false;
+        }
+        float top = this.bandTrackTop();
+        float bottom = this.bandTrackBottom();
+        if (my < top - 10.0f || my > bottom + 10.0f) {
+            return false;
+        }
+        for (int band = 0; band < Equalizer.BANDS; ++band) {
+            float cx = this.bandCenterX(band);
+            if (mx < cx - this.bandWidth() * 0.5f || mx > cx + this.bandWidth() * 0.5f) {
+                continue;
+            }
+            Equalizer equalizer = Equalizer.get();
+            equalizer.setEnabled(true);
+            equalizer.setGain(band, this.bandYToValue(my));
+            this.draggingBand = band;
+            Sounds.play("module_settings_open");
+            return true;
+        }
+        return false;
+    }
+
     private float listHeight() {
         return panelY() + H - 62.0f - this.listTop();
     }
 
     private List<MusicTrack> rows() {
         switch (this.tab) {
+            case PLAYLISTS: {
+                MusicPlaylists.Playlist playlist = this.playlists.selected();
+                if (playlist == null) {
+                    return new ArrayList<MusicTrack>();
+                }
+                List<MusicTrack> tracks = new ArrayList<MusicTrack>(playlist.tracks());
+                return tracks.size() > MAX_ROWS_PER_TAB ? tracks.subList(0, MAX_ROWS_PER_TAB) : tracks;
+            }
+            case EQUALIZER: {
+                return new ArrayList<MusicTrack>();
+            }
             case FAVORITES: {
                 List<MusicTrack> favorites = new ArrayList<MusicTrack>(this.library.favorites());
                 return favorites.size() > MAX_ROWS_PER_TAB ? favorites.subList(0, MAX_ROWS_PER_TAB) : favorites;
@@ -281,6 +656,8 @@ extends BaseScreen {
         this.drawVisualizer(x, y, a, mx, my, delta);
         this.drawTabs(x, y, a, mx, my, dt);
         this.drawLibraryChips(x, y, a, mx, my, dt);
+        this.drawPlaylistChips(x, y, a, mx, my, dt);
+        this.drawPresetChips(x, y, a, mx, my, dt);
         this.drawContent(drawContext, x, y, a, mx, my, dt);
         this.drawFooter(drawContext, x, y, a, mx, my, dt);
         this.drawToast(x, y, a, dt);
@@ -430,6 +807,10 @@ extends BaseScreen {
     }
 
     private void drawContent(DrawContext drawContext, float x, float y, float a, float mx, float my, float dt) {
+        if (this.tab == Tab.EQUALIZER) {
+            this.drawEqualizer(x, y, a, mx, my, dt);
+            return;
+        }
         float left = x + PAD;
         float width = W - PAD * 2.0f;
         if (this.tab == Tab.SEARCH) {
@@ -474,6 +855,7 @@ extends BaseScreen {
     private void drawRow(DrawContext drawContext, List<MusicTrack> list, int index, MusicTrack track, float left, float ry,
                          float width, float a, float mx, float my, MusicTrack playing, MusicEngine engine) {
         boolean isPlaying = playing != null && playing.key().equals(track.key());
+        boolean playlistRow = this.tab == Tab.PLAYLISTS;
         boolean hovered = mx >= left && mx <= left + width && my >= ry && my <= ry + ROW_H;
         float target = hovered ? 1.0f : 0.0f;
         this.rowHoverAnim(index, target);
@@ -484,9 +866,9 @@ extends BaseScreen {
             RectUtil.drawClientSector(left + 0.5f, ry + 6.0f, 2.2f, ROW_H - 12.0f, 1.0f, 1.0f, 1.0f, 1.0f, ClientAccent.accent(220.0f * a), 0.0f);
         }
         this.drawCover(track, left + 5.0f, ry + 3.0f, COVER_ROW, 5.0f, a, track.coverUrl() != null);
-        float bookmarkX = left + width - 22.0f;
+        float bookmarkX = left + width - 22.0f - (playlistRow ? 42.0f : 0.0f);
         boolean favorite = this.library.isFavorite(track);
-        float textWidth = width - 31.0f - 30.0f - 44.0f;
+        float textWidth = width - 31.0f - 30.0f - 44.0f - (playlistRow ? 42.0f : 0.0f);
         Render2D.pushScissor(drawContext, left + 31.0f, ry + 2.0f, Math.max(20.0f, textWidth), ROW_H - 4.0f);
         MusicPlayerScreen.text(FONT_SEMI, track.title(), left + 31.0f, ry + 10.0f, 7.0f,
                 MusicPlayerScreen.rgba(255, 255, 255, (isPlaying ? 250.0f : 235.0f) * a));
@@ -512,6 +894,22 @@ extends BaseScreen {
         boolean bookHot = mx >= bookmarkX - 2.0f && mx <= bookmarkX + 20.0f && my >= ry && my <= ry + ROW_H;
         MusicShapes.bookmark(bookmarkX + 1.0f, ry + 5.0f, 16.0f, favorite,
                 favorite ? ClientAccent.accent(240.0f * a) : MusicPlayerScreen.rgba(220, 226, 236, (bookHot ? 220.0f : 120.0f) * a));
+        if (playlistRow) {
+            for (int slot = 0; slot < 3; ++slot) {
+                float iconX = this.playlistRowIconX(left, width, slot);
+                boolean iconHot = mx >= iconX - 2.0f && mx <= iconX + 12.0f && my >= ry && my <= ry + ROW_H;
+                int color = MusicPlayerScreen.rgba(220, 226, 236, (iconHot ? 235.0f : 120.0f) * a);
+                if (slot == 0) {
+                    MusicShapes.chevron(iconX, ry + 8.0f, 10.0f, true, color);
+                }
+                else if (slot == 1) {
+                    MusicShapes.chevron(iconX, ry + 8.0f, 10.0f, false, color);
+                }
+                else {
+                    MusicShapes.close(iconX, ry + 8.0f, 10.0f, MusicPlayerScreen.rgba(232, 138, 138, (iconHot ? 240.0f : 150.0f) * a));
+                }
+            }
+        }
     }
 
     private void drawEmptyState(float left, float top, float width, float height, float a) {
@@ -526,6 +924,18 @@ extends BaseScreen {
             case LINKS: {
                 message = "Своих ссылок пока нет";
                 hint = "Вставьте ссылку на поток и нажмите «Добавить»";
+                break;
+            }
+            case PLAYLISTS: {
+                if (this.playlists.count() == 0) {
+                    message = "Плейлистов пока нет";
+                    hint = "Нажмите «+ Создать», включите станцию и добавьте её правой кнопкой";
+                }
+                else {
+                    MusicPlaylists.Playlist playlist = this.playlists.selected();
+                    message = "Плейлист «" + (playlist == null ? "" : playlist.name()) + "» пуст";
+                    hint = "Правый клик по треку в «Библиотеке», «Избранном» или «Поиске» добавит его сюда";
+                }
                 break;
             }
             case SEARCH: {
@@ -861,6 +1271,9 @@ extends BaseScreen {
                     this.tab = hoveredTab;
                     this.scroll = 0.0f;
                     this.scrollTarget = 0.0f;
+                    if (this.tab == Tab.EQUALIZER) {
+                        this.equalizerAppear = 0.0f;
+                    }
                     if (this.tab == Tab.SEARCH) {
                         this.search.focus();
                         this.lastTypeNs = System.currentTimeMillis();
@@ -895,6 +1308,34 @@ extends BaseScreen {
                 MusicTrack track = list.get(row);
                 float left = x + PAD;
                 float width = W - PAD * 2.0f;
+                if (click.button() == 1) {
+                    return this.handleRowContext(list, row);
+                }
+                if (this.tab == Tab.PLAYLISTS) {
+                    for (int slot = 0; slot < 3; ++slot) {
+                        float iconX = this.playlistRowIconX(left, width, slot);
+                        if (mx >= iconX - 3.0f && mx <= iconX + 13.0f) {
+                            int playlist = this.playlists.selectedIndex();
+                            if (slot == 0) {
+                                if (this.playlists.move(playlist, row, row - 1)) {
+                                    Sounds.play("select_category");
+                                    this.toast("Трек поднят выше");
+                                }
+                            }
+                            else if (slot == 1) {
+                                if (this.playlists.move(playlist, row, row + 1)) {
+                                    Sounds.play("select_category");
+                                    this.toast("Трек опущен ниже");
+                                }
+                            }
+                            else if (this.playlists.removeTrack(playlist, row)) {
+                                Sounds.play("gui_close");
+                                this.toast("«" + track.title() + "» убран из плейлиста");
+                            }
+                            return true;
+                        }
+                    }
+                }
                 float bookmarkX = left + width - 22.0f;
                 if (mx >= bookmarkX - 2.0f && mx <= bookmarkX + 20.0f) {
                     this.library.toggleFavorite(track);
@@ -904,6 +1345,15 @@ extends BaseScreen {
                 }
                 Sounds.play("module_settings_open");
                 this.playFrom(list, row);
+                return true;
+            }
+            if (this.handlePlaylistChipClick(mx, my, x, y)) {
+                return true;
+            }
+            if (this.handlePresetChipClick(mx, my, x, y)) {
+                return true;
+            }
+            if (this.handleEqualizerClick(mx, my)) {
                 return true;
             }
             if (this.handleTransportClick(mx, my, x, y)) {
@@ -994,6 +1444,7 @@ extends BaseScreen {
     public boolean mouseReleased(Click click) {
         this.draggingScroll = false;
         this.draggingVolume = false;
+        this.draggingBand = -1;
         this.search.mouseReleased(click.button());
         this.linkField.mouseReleased(click.button());
         return super.mouseReleased(click);
@@ -1071,6 +1522,45 @@ extends BaseScreen {
                 this.search.focus();
                 return true;
             }
+            case 69: {
+                if (this.tab != Tab.EQUALIZER) {
+                    this.tab = Tab.EQUALIZER;
+                    this.equalizerAppear = 0.0f;
+                    this.scroll = 0.0f;
+                    this.scrollTarget = 0.0f;
+                    Sounds.play("select_category");
+                    this.toast("Эквалайзер: 10 полос, пресеты — сверху");
+                }
+                return true;
+            }
+            case 80: {
+                if (this.tab != Tab.PLAYLISTS) {
+                    this.tab = Tab.PLAYLISTS;
+                    this.scroll = 0.0f;
+                    this.scrollTarget = 0.0f;
+                    Sounds.play("select_category");
+                    this.toast("Плейлисты: «+ Создать», добавление — правой кнопкой");
+                }
+                return true;
+            }
+            case 49:
+            case 50:
+            case 51:
+            case 52:
+            case 53: {
+                if (this.tab != Tab.EQUALIZER) {
+                    break;
+                }
+                this.onPresetChip(input.key() - 48);
+                return true;
+            }
+            case 48: {
+                if (this.tab != Tab.EQUALIZER) {
+                    break;
+                }
+                this.onPresetChip(this.presetChipCount() - 1);
+                return true;
+            }
             case 256: {
                 this.close();
                 return true;
@@ -1091,6 +1581,25 @@ extends BaseScreen {
         if (!this.popularLoaded) {
             this.publishPopular();
         }
+    }
+
+    /** Открыть плеер сразу на вкладке эквалайзера (идея №5). */
+    public void focusEqualizerTab() {
+        this.tab = Tab.EQUALIZER;
+        this.equalizerAppear = 0.0f;
+        this.scroll = 0.0f;
+        this.scrollTarget = 0.0f;
+        this.search.blur();
+        this.linkField.blur();
+    }
+
+    /** Открыть плеер сразу на вкладке плейлистов (идея №3). */
+    public void focusPlaylistsTab() {
+        this.tab = Tab.PLAYLISTS;
+        this.scroll = 0.0f;
+        this.scrollTarget = 0.0f;
+        this.search.blur();
+        this.linkField.blur();
     }
 
     // ------------------------------------------------------------------ actions
@@ -1236,6 +1745,9 @@ extends BaseScreen {
         }
         if (this.draggingScroll) {
             this.updateScrollFromMouse(Position.mouseY());
+        }
+        if (this.draggingBand >= 0 && this.tab == Tab.EQUALIZER) {
+            Equalizer.get().setGain(this.draggingBand, this.bandYToValue(Position.mouseY()));
         }
         List<MusicTrack> list = this.rows();
         MusicTrack current = MusicEngine.get().current();

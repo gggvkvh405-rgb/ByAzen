@@ -85,6 +85,16 @@ public final class MusicShapes {
         Render2D.rect(x + size * 0.78f, y + size * 0.3f, size * 0.1f, size * 0.44f, size * 0.05f, color);
     }
 
+    /** Векторная стрелка «выше/ниже» — для сортировки треков в плейлисте (идея №3). */
+    public static void chevron(float x, float y, float size, boolean up, int color) {
+        float thickness = Math.max(1.0f, size * 0.17f);
+        float midX = x + size * 0.5f;
+        float topY = up ? y + size * 0.26f : y + size * 0.74f;
+        float bottomY = up ? y + size * 0.74f : y + size * 0.26f;
+        Render2D.line(midX, topY, x + size * 0.08f, bottomY, thickness, color);
+        Render2D.line(midX, topY, x + size * 0.92f, bottomY, thickness, color);
+    }
+
     /** Крестик «закрыть». */
     public static void close(float x, float y, float size, int color) {
         float thickness = Math.max(1.0f, size * 0.13f);

@@ -36,7 +36,7 @@ problems: list[str] = []
 warnings: list[str] = []
 checked = 0
 # вендорный код (GeckoLib, WaveyCapes, Discord RPC, миксины) не трогаем
-VENDOR_MARKERS = ("/api/mods/", "/mixin/", "/utils/discord/", "/api/ui/window/")
+VENDOR_MARKERS = ("/api/mods/", "/mixin/", "/utils/discord/", "/api/ui/window/", "/libs/")
 
 
 def report(kind: str, text: str) -> None:
@@ -99,6 +99,9 @@ def check_imports(sources: Sources, quiet: bool) -> None:
     for path in java_files():
         name = os.path.basename(path)[:-5]
         if name in SKIP_IMPORT_CHECK:
+            continue
+        if any(marker in path.replace(os.sep, "/") for marker in VENDOR_MARKERS):
+            # вендорный код (JOrbis, GeckoLib, WaveyCapes, Discord RPC) не проверяем
             continue
         text = open(path, encoding="utf-8").read()
         clean = strip_noise(text)

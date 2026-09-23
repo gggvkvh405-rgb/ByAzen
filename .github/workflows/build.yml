@@ -57,6 +57,18 @@ jobs:
           javac -cp tools/build/jlayer.jar -d tools/build tools/AudioSmokeTest.java
           java -cp "tools/build/jlayer.jar:tools/build" AudioSmokeTest tools/build/fixture.mp3 $MIN | tee tools/build/audio-smoke.txt
 
+      - name: OGG smoke test (Vorbis декодируется как в игре)
+        run: |
+          set -e
+          mkdir -p tools/build
+          # Декодер OGG собирается из исходников проекта: Minecraft и другие библиотеки не нужны.
+          javac -d tools/build \
+            $(find src/main/java/rtx/byazen/libs/audio -name '*.java') \
+            src/main/java/rtx/byazen/api/music/OggVorbisStream.java \
+            tools/OggSmokeTest.java
+          java -cp tools/build OggSmokeTest \
+            src/main/resources/assets/byazen/sounds/charmsfxpack/echocharmmain.ogg 2.0 | tee tools/build/ogg-smoke.txt
+
       - name: Проверка раскладки окон (дифф интерфейса в числах)
         run: python3 tools/ui_layout_check.py
 
@@ -121,6 +133,11 @@ jobs:
             echo '## Аудио-тракт (MP3 -> PCM, как в игре)'
             echo '```'
             cat tools/build/audio-smoke.txt
+            echo '```'
+            echo
+            echo '## Аудио-тракт (OGG Vorbis -> PCM, идея №21)'
+            echo '```'
+            cat tools/build/ogg-smoke.txt
             echo '```'
             echo
             echo '## Проверка собранного jar'

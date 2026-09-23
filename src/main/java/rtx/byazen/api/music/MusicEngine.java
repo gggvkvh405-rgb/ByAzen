@@ -90,13 +90,17 @@ public final class MusicEngine {
     private volatile boolean paused;
     private volatile boolean stopping;
     private volatile long connectingSince;
-    private volatile SourceDataLine line;
+    private final CopyOnWriteArrayList<Session> sessions = new CopyOnWriteArrayList<Session>();
+    private static final int MAX_SESSIONS = 4;
     private volatile String nowPlaying = "";
     private volatile Repeat repeat = Repeat.ALL;
     private volatile boolean shuffle;
     private volatile boolean normalize = true;
     private volatile float normGain = 1.0f;
-    private volatile int lineChannels = 2;
+    private volatile int crossfadeMs = 1200;
+    private volatile boolean equalizerOn;
+    private volatile int equalizerRevision = -1;
+    private volatile int playbackRate = 44100;
 
     private MusicEngine() {
     }
@@ -211,6 +215,53 @@ public final class MusicEngine {
         this.volume = Math.max(0.0f, Math.min(1.0f, value));
     }
 
+    /**
+     * Один активный поток плеера: своя звуковая линия, своя громкость и свой конверт появления.
+     * <p>
+     * Отдельная сессия нужна для кроссфейда (идея №4): пока новый трек плавно появляется, старый
+     * ещё несколько секунд доигрывает свой хвост и сам закрывает линию. Два потока при этом звучат
+     * одновременно, поэтому переход получается настоящим, а не «пауза — и новый трек».
+     */
+    private static final class Session {
+
+        private final long token;
+        private final MusicTrack track;
+        private final int fadeMs;
+        private final long startedAt = System.currentTimeMillis();
+        private volatile SourceDataLine line;
+        private volatile int lineChannels = 2;
+        private volatile float gain = 0.08f;
+        private volatile Equalizer.Processor processor;
+        private volatile boolean orphan;
+        private volatile long orphanUntil;
+        private volatile boolean dead;
+
+        Session(long token, MusicTrack track, int fadeMs) {
+            this.token = token;
+            this.track = track;
+            this.fadeMs = Math.max(0, fadeMs);
+        }
+
+        /** Сессия ещё имеет право писать звук (в том числе затухающий хвост при кроссфейде). */
+        boolean audible() {
+            return !this.dead && (!this.orphan || System.currentTimeMillis() < this.orphanUntil);
+        }
+
+        /** Это по-прежнему текущий трек (а не хвост предыдущего). */
+        boolean current() {
+            return !this.dead && !this.orphan;
+        }
+    }
+
+    /** Длительность кроссфейда в миллисекундах (0 — переключать мгновенно). */
+    public int crossfadeMs() {
+        return this.crossfadeMs;
+    }
+
+    public void setCrossfadeMs(int value) {
+        this.crossfadeMs = Math.max(0, Math.min(8000, value));
+    }
+
     public void play(List<MusicTrack> tracks, int startIndex) {
         if (tracks == null || tracks.isEmpty()) {
             return;
@@ -267,7 +318,11 @@ public final class MusicEngine {
     public void stop() {
         this.stopping = true;
         this.generation.incrementAndGet();
-        this.closeLine();
+        for (Session session : this.sessions) {
+            session.dead = true;
+            this.closeSession(session);
+        }
+        this.sessions.clear();
         this.state = State.IDLE;
         this.detail = "";
         this.level = 0.0f;
@@ -354,9 +409,27 @@ public final class MusicEngine {
         if (track == null) {
             return;
         }
-        this.stop();
+        MusicTrack previous = this.current;
+        boolean switching = previous != null && !previous.url().equals(track.url());
+        // Кроссфейд включается только при живом проигрывании: при первом запуске или после паузы
+        // трек просто появляется плавно.
+        int fade = switching && this.state == State.PLAYING && !this.paused ? this.crossfadeMs : 0;
+        this.pruneSessions(fade);
+        for (Session session : this.sessions) {
+            if (fade > 0) {
+                // Старый поток доигрывает хвост и сам закрывает свою линию (идея №4).
+                session.orphan = true;
+                session.orphanUntil = System.currentTimeMillis() + fade + 250L;
+            }
+            else {
+                session.dead = true;
+                this.closeSession(session);
+            }
+        }
         this.stopping = false;
         long token = this.generation.incrementAndGet();
+        Session session = new Session(token, track, fade);
+        this.sessions.add(session);
         this.index = newIndex;
         this.current = track;
         this.elapsedMs = 0L;
@@ -366,12 +439,27 @@ public final class MusicEngine {
         this.nowPlaying = "";
         this.state = State.CONNECTING;
         this.connectingSince = System.currentTimeMillis();
-        Thread thread = new Thread(() -> this.run(track, token), "byazen-music");
+        Thread thread = new Thread(() -> this.run(track, session), "byazen-music");
         thread.setDaemon(true);
         thread.start();
     }
 
-    private void run(MusicTrack track, long token) {
+    /** Не даём накопиться звуковым линиям, если треки переключают очень быстро. */
+    private void pruneSessions(int fade) {
+        if (this.sessions.size() < MAX_SESSIONS) {
+            return;
+        }
+        for (Session session : this.sessions) {
+            if (session.orphan || fade == 0) {
+                session.dead = true;
+                this.closeSession(session);
+                this.sessions.remove(session);
+            }
+        }
+    }
+
+    private void run(MusicTrack track, Session session) {
+        long token = session.token;
         boolean finished = false;
         boolean opened = false;
         try (InputStream raw = this.openStream(track, token)) {
@@ -379,13 +467,17 @@ public final class MusicEngine {
                 return;
             }
             BufferedInputStream stream = new BufferedInputStream(raw, 1 << 16);
-            if (this.isMp3(track)) {
-                finished = this.playMp3(track, stream, token);
+            int format = this.detectFormat(track, stream);
+            if (format == FORMAT_OGG) {
+                finished = this.playOgg(stream, session);
+            }
+            else if (format == FORMAT_MP3) {
+                finished = this.playMp3(track, stream, session);
             }
             else {
-                finished = this.playPcm(stream, token);
+                finished = this.playPcm(stream, session);
             }
-            opened = this.line != null && token == this.generation.get();
+            opened = session.line != null && session.current();
         }
         catch (Throwable throwable) {
             if (this.isCurrent(token) && !this.stopping) {
@@ -394,9 +486,8 @@ public final class MusicEngine {
             return;
         }
         finally {
-            if (this.isCurrent(token)) {
-                this.closeLine();
-            }
+            this.closeSession(session);
+            this.sessions.remove(session);
         }
         if (!this.isCurrent(token) || this.stopping || this.paused) {
             return;
@@ -431,6 +522,77 @@ public final class MusicEngine {
 
     private boolean isCurrent(long token) {
         return token == this.generation.get();
+    }
+
+    private static final int FORMAT_PCM = 0;
+    private static final int FORMAT_MP3 = 1;
+    private static final int FORMAT_OGG = 2;
+
+    /**
+     * Определяет формат потока (идея №21): OGG узнаём по сигнатуре «OggS» в первых байтах, MP3 — по
+     * расширению или кадру синхронизации, остальное отдаём {@code javax.sound} (WAV/AIFF/AU).
+     */
+    private int detectFormat(MusicTrack track, BufferedInputStream stream) {
+        String extension = this.extension(track.url());
+        if (extension.equals("ogg") || extension.equals("oga") || extension.equals("ogv") || extension.equals("opus")) {
+            return FORMAT_OGG;
+        }
+        if (extension.equals("wav") || extension.equals("aiff") || extension.equals("aif") || extension.equals("au")) {
+            return FORMAT_PCM;
+        }
+        byte[] head = new byte[4];
+        int read = 0;
+        try {
+            stream.mark(head.length);
+            read = stream.read(head, 0, head.length);
+            stream.reset();
+        }
+        catch (Throwable ignored) {
+            return extension.equals("mp3") ? FORMAT_MP3 : FORMAT_PCM;
+        }
+        if (read >= 4 && head[0] == 'O' && head[1] == 'g' && head[2] == 'g' && head[3] == 'S') {
+            return FORMAT_OGG;
+        }
+        if (read >= 3 && head[0] == 'I' && head[1] == 'D' && head[2] == '3') {
+            return FORMAT_MP3;
+        }
+        if (read >= 2 && (head[0] & 0xFF) == 0xFF && (head[1] & 0xE0) == 0xE0) {
+            return FORMAT_MP3;
+        }
+        if (read >= 4 && head[0] == 'R' && head[1] == 'I' && head[2] == 'F' && head[3] == 'F') {
+            return FORMAT_PCM;
+        }
+        if (read >= 4 && head[0] == 'F' && head[1] == 'O' && head[2] == 'R' && head[3] == 'M') {
+            return FORMAT_PCM;
+        }
+        return extension.equals("mp3") || track.kind() == MusicTrack.Kind.RADIO || track.kind() == MusicTrack.Kind.TRACK
+                ? FORMAT_MP3 : FORMAT_PCM;
+    }
+
+    private String extension(String url) {
+        String lower = url == null ? "" : url.toLowerCase(Locale.ROOT);
+        int query = lower.indexOf('?');
+        if (query > 0) {
+            lower = lower.substring(0, query);
+        }
+        int dot = lower.lastIndexOf('.');
+        int slash = lower.lastIndexOf('/');
+        return dot > slash ? lower.substring(dot + 1) : "";
+    }
+
+    /**
+     * OGG Vorbis (идея №21): декодируется JOrbis — тем же декодером, которым Minecraft читает свои
+     * звуки. Сэмплы идут в общую звуковую линию, поэтому эквалайзер, нормализация и кроссфейд
+     * работают и здесь.
+     */
+    private boolean playOgg(BufferedInputStream stream, Session session) throws Exception {
+        long token = session.token;
+        return OggVorbisStream.decode(stream, (samples, length, rate, channels) -> {
+            if (session.line == null && session.audible()) {
+                this.openLine(session, rate, channels);
+            }
+            this.writeShort(samples, length, rate, channels, session);
+        }, () -> !session.audible() || this.stopping || !this.isCurrent(token));
     }
 
     private InputStream openStream(MusicTrack track, long token) throws Exception {
@@ -473,21 +635,6 @@ public final class MusicEngine {
         return response.body();
     }
 
-    private boolean isMp3(MusicTrack track) {
-        String lower = track.url().toLowerCase(Locale.ROOT);
-        int query = lower.indexOf('?');
-        if (query > 0) {
-            lower = lower.substring(0, query);
-        }
-        if (lower.endsWith(".mp3")) {
-            return true;
-        }
-        if (lower.endsWith(".wav") || lower.endsWith(".aiff") || lower.endsWith(".aif") || lower.endsWith(".au")) {
-            return false;
-        }
-        return !lower.endsWith(".ogg") && !lower.endsWith(".oga") && track.kind() != MusicTrack.Kind.LOCAL;
-    }
-
     /**
      * Decodes an MP3 stream frame by frame; returns true when the stream ended by itself.
      * <p>
@@ -495,7 +642,8 @@ public final class MusicEngine {
      * Если после падения в буфере остались данные, соединение открывается заново - эфир продолжается,
      * а не обрывается.
      */
-    private boolean playMp3(MusicTrack track, BufferedInputStream stream, long token) throws Exception {
+    private boolean playMp3(MusicTrack track, BufferedInputStream stream, Session session) throws Exception {
+        long token = session.token;
         Bitstream bitstream = new Bitstream(stream);
         Decoder decoder = new Decoder();
         boolean reconnectable = track.kind() != MusicTrack.Kind.LOCAL;
@@ -503,7 +651,7 @@ public final class MusicEngine {
         long decodedFrames = 0L;
         int rate = 44100;
         int channels = 2;
-        while (this.isCurrent(token) && !this.stopping && !Thread.currentThread().isInterrupted()) {
+        while (session.audible() && !this.stopping && !Thread.currentThread().isInterrupted()) {
             Header header;
             try {
                 header = bitstream.readFrame();
@@ -524,7 +672,7 @@ public final class MusicEngine {
                 this.detail = "Переподключение к потоку…";
                 Thread.sleep(RECONNECT_DELAY_MS);
                 InputStream reopened = this.openStream(track, token);
-                if (reopened == null || !this.isCurrent(token) || this.stopping) {
+                if (reopened == null || !session.audible() || this.stopping) {
                     return true;
                 }
                 stream = new BufferedInputStream(reopened, 1 << 16);
@@ -537,10 +685,10 @@ public final class MusicEngine {
             if (samples != null && samples.getBufferLength() > 0) {
                 rate = decoder.getOutputFrequency();
                 channels = decoder.getOutputChannels();
-                if (this.line == null) {
-                    this.openLine(rate, channels, token);
+                if (session.line == null) {
+                    this.openLine(session, rate, channels);
                 }
-                this.writeShort(samples.getBuffer(), samples.getBufferLength(), rate, channels, token);
+                this.writeShort(samples.getBuffer(), samples.getBufferLength(), rate, channels, session);
             }
             bitstream.closeFrame();
         }
@@ -563,7 +711,8 @@ public final class MusicEngine {
     }
 
     /** Decodes WAV/AIFF/AU (anything the JDK supports) into the same output line. */
-    private boolean playPcm(BufferedInputStream stream, long token) throws Exception {
+    private boolean playPcm(BufferedInputStream stream, Session session) throws Exception {
+        long token = session.token;
         try (AudioInputStream source = AudioSystem.getAudioInputStream(stream)) {
             AudioFormat base = source.getFormat();
             float rate = base.getSampleRate() <= 0.0f ? 44100.0f : base.getSampleRate();
@@ -574,19 +723,20 @@ public final class MusicEngine {
                     : source;
             byte[] buffer = new byte[8192];
             int read;
-            while (this.isCurrent(token) && !this.stopping && !Thread.currentThread().isInterrupted()
+            while (session.audible() && !this.stopping && !Thread.currentThread().isInterrupted()
                     && (read = pcm.read(buffer, 0, buffer.length)) > 0) {
-                if (this.line == null) {
-                    this.openLine((int) pcm.getFormat().getSampleRate(), pcm.getFormat().getChannels(), token);
+                if (session.line == null) {
+                    this.openLine(session, (int) pcm.getFormat().getSampleRate(), pcm.getFormat().getChannels());
                 }
-                this.writeBytes(buffer, read, (int) pcm.getFormat().getSampleRate(), pcm.getFormat().getChannels(), token);
+                this.writeBytes(buffer, read, (int) pcm.getFormat().getSampleRate(), pcm.getFormat().getChannels(), session);
             }
         }
         return true;
     }
 
-    private void openLine(int rate, int channelCount, long token) {
-        if (!this.isCurrent(token) || this.stopping) {
+    private void openLine(Session session, int rate, int channelCount) {
+        long token = session.token;
+        if (!session.audible() || this.stopping) {
             return;
         }
         int sampleRate = rate <= 0 ? 44100 : rate;
@@ -600,13 +750,17 @@ public final class MusicEngine {
                 SourceDataLine dataLine = AudioSystem.getSourceDataLine(format);
                 dataLine.open(format, 1 << 17);
                 dataLine.start();
-                if (!this.isCurrent(token) || this.stopping) {
+                if (!session.audible() || this.stopping) {
                     dataLine.close();
                     return;
                 }
-                this.lineChannels = candidate;
-                this.line = dataLine;
-                if (this.state == State.CONNECTING) {
+                session.lineChannels = candidate;
+                session.line = dataLine;
+                this.playbackRate = sampleRate;
+                Equalizer equalizer = Equalizer.get();
+                this.equalizerOn = equalizer.enabled();
+                session.processor = new Equalizer.Processor(sampleRate, candidate);
+                if (session.current() && this.state == State.CONNECTING) {
                     this.state = State.PLAYING;
                     this.detail = "";
                 }
@@ -616,29 +770,102 @@ public final class MusicEngine {
                 lastError = throwable;
             }
         }
-        this.line = null;
-        if (this.isCurrent(token)) {
+        session.line = null;
+        if (session.current()) {
             this.fail("Нет доступа к звуковому устройству"
                     + (lastError == null ? "" : ": " + lastError.getClass().getSimpleName()));
         }
     }
 
-    private void writeShort(short[] samples, int length, int rate, int channels, long token) {
-        SourceDataLine dataLine = this.line;
-        if (dataLine == null || !this.isCurrent(token)) {
+    /** Закрывает линию одной сессии (хвост кроссфейда уходит тихо, без исключений). */
+    private void closeSession(Session session) {
+        SourceDataLine dataLine = session.line;
+        session.line = null;
+        if (dataLine == null) {
             return;
         }
-        boolean duplicate = this.lineChannels == 2 && channels == 1;
-        this.updateNormalizationShort(samples, length);
-        float target = this.paused ? 0.0f : this.volume * this.normGain;
-        float currentGain = this.gain;
-        float step = (target - currentGain) / (float) Math.max(1, length);
+        try {
+            dataLine.stop();
+            dataLine.flush();
+            dataLine.close();
+        }
+        catch (Throwable ignored) {
+        }
+    }
+
+    /** Обновляет эквалайзер, когда настройки поменяли прямо во время проигрывания. */
+    private void ensureEqualizer() {
+        Equalizer equalizer = Equalizer.get();
+        boolean enabled = equalizer.enabled();
+        int revision = equalizer.revision();
+        if (enabled == this.equalizerOn && revision == this.equalizerRevision) {
+            return;
+        }
+        this.equalizerOn = enabled;
+        this.equalizerRevision = revision;
+        for (Session session : this.sessions) {
+            if (session.current()) {
+                session.processor = new Equalizer.Processor(this.playbackRate, session.lineChannels);
+            }
+        }
+    }
+
+    /**
+     * Общая часть записи: громкость, нормализация, эквалайзер и, главное, конверт кроссфейда
+     * (идея №4) — новый трек входит за секунду с небольшим, старый за это же время уходит в тишину.
+     */
+    private float[] mixGain(Session session, int samples) {
+        float target;
+        if (!session.audible()) {
+            target = 0.0f;
+        }
+        else if (this.paused) {
+            target = 0.0f;
+        }
+        else {
+            float base = this.volume * (session.orphan ? 1.0f : this.normGain);
+            if (session.orphan) {
+                long left = session.orphanUntil - System.currentTimeMillis();
+                float fade = session.fadeMs <= 0 ? 0.0f : Math.max(0.0f, Math.min(1.0f, (float) left / session.fadeMs));
+                target = base * fade;
+            }
+            else if (session.fadeMs > 0) {
+                float fade = Math.max(0.0f, Math.min(1.0f, (float) (System.currentTimeMillis() - session.startedAt) / session.fadeMs));
+                target = base * fade;
+            }
+            else {
+                target = base;
+            }
+        }
+        float current = session.gain;
+        float step = (target - current) / (float) Math.max(1, samples);
+        session.gain = target;
+        return new float[]{current, step};
+    }
+
+    private void writeShort(short[] samples, int length, int rate, int channels, Session session) {
+        SourceDataLine dataLine = session.line;
+        if (dataLine == null || !session.audible()) {
+            return;
+        }
+        this.ensureEqualizer();
+        boolean duplicate = session.lineChannels == 2 && channels == 1;
+        if (session.current()) {
+            this.updateNormalizationShort(samples, length);
+        }
+        float[] ramp = this.mixGain(session, length);
+        float currentGain = ramp[0];
+        float step = ramp[1];
         int outLength = duplicate ? length * 2 : length;
         byte[] bytes = new byte[outLength * 2];
         double sum = 0.0;
         for (int i = 0; i < length; ++i) {
             currentGain += step;
             int value = Math.max(-32768, Math.min(32767, (int) ((float) samples[i] * currentGain)));
+            if (this.equalizerOn && session.processor != null) {
+                int channel = duplicate ? 0 : i % Math.max(1, channels);
+                value = session.processor.processSample(channel, value);
+            }
             bytes[i * 2] = (byte) value;
             bytes[i * 2 + 1] = (byte) (value >> 8);
             if (duplicate) {
@@ -647,31 +874,39 @@ public final class MusicEngine {
             }
             sum += (double) value * (double) value;
         }
-        this.gain = currentGain;
-        this.updateLevel(sum / (double) Math.max(1, length));
-        if (!this.paused) {
-            this.elapsedMs += (long) length * 1000L / Math.max(1, rate * channels);
+        if (session.current()) {
+            this.updateLevel(sum / (double) Math.max(1, length));
+            if (!this.paused) {
+                this.elapsedMs += (long) length * 1000L / Math.max(1, rate * channels);
+            }
         }
-        this.safeWrite(dataLine, bytes, outLength * 2);
+        this.safeWrite(dataLine, bytes, outLength * 2, session);
     }
 
-    private void writeBytes(byte[] source, int length, int rate, int channels, long token) {
-        SourceDataLine dataLine = this.line;
-        if (dataLine == null || !this.isCurrent(token)) {
+    private void writeBytes(byte[] source, int length, int rate, int channels, Session session) {
+        SourceDataLine dataLine = session.line;
+        if (dataLine == null || !session.audible()) {
             return;
         }
+        this.ensureEqualizer();
         int samples = length / 2;
-        boolean duplicate = this.lineChannels == 2 && channels == 1;
-        this.updateNormalizationBytes(source, length);
-        float target = this.paused ? 0.0f : this.volume * this.normGain;
-        float currentGain = this.gain;
-        float step = (target - currentGain) / (float) Math.max(1, samples);
+        boolean duplicate = session.lineChannels == 2 && channels == 1;
+        if (session.current()) {
+            this.updateNormalizationBytes(source, length);
+        }
+        float[] ramp = this.mixGain(session, samples);
+        float currentGain = ramp[0];
+        float step = ramp[1];
         byte[] bytes = new byte[duplicate ? length * 2 : length];
         double sum = 0.0;
         for (int i = 0; i < samples; ++i) {
             currentGain += step;
             int value = (source[i * 2 + 1] << 8) | (source[i * 2] & 0xFF);
             value = Math.max(-32768, Math.min(32767, (int) ((float) value * currentGain)));
+            if (this.equalizerOn && session.processor != null) {
+                int channel = duplicate ? 0 : i % Math.max(1, channels);
+                value = session.processor.processSample(channel, value);
+            }
             bytes[i * 2] = (byte) value;
             bytes[i * 2 + 1] = (byte) (value >> 8);
             if (duplicate) {
@@ -680,20 +915,24 @@ public final class MusicEngine {
             }
             sum += (double) value * (double) value;
         }
-        this.gain = currentGain;
-        this.updateLevel(sum / (double) Math.max(1, samples));
-        if (!this.paused) {
-            this.elapsedMs += (long) samples * 1000L / Math.max(1, rate * channels);
+        if (session.current()) {
+            this.updateLevel(sum / (double) Math.max(1, samples));
+            if (!this.paused) {
+                this.elapsedMs += (long) samples * 1000L / Math.max(1, rate * channels);
+            }
         }
-        this.safeWrite(dataLine, bytes, bytes.length);
+        this.safeWrite(dataLine, bytes, bytes.length, session);
     }
 
-    private void safeWrite(SourceDataLine dataLine, byte[] bytes, int length) {
+    private void safeWrite(SourceDataLine dataLine, byte[] bytes, int length, Session session) {
         try {
             dataLine.write(bytes, 0, length);
         }
         catch (Throwable ignored) {
             // the line was closed by a track switch - the worker is about to exit anyway
+        }
+        if (session.line != dataLine) {
+            this.closeSession(session);
         }
     }
 
@@ -735,21 +974,6 @@ public final class MusicEngine {
         float rms = (float) Math.sqrt(Math.max(0.0, meanSquare)) / 32768.0f;
         float scaled = Math.min(1.0f, rms * 3.2f);
         this.level = this.level + (scaled - this.level) * 0.35f;
-    }
-
-    private void closeLine() {
-        SourceDataLine dataLine = this.line;
-        this.line = null;
-        if (dataLine == null) {
-            return;
-        }
-        try {
-            dataLine.stop();
-            dataLine.flush();
-            dataLine.close();
-        }
-        catch (Throwable ignored) {
-        }
     }
 
     private static String describe(Throwable throwable) {

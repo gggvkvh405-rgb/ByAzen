@@ -19,9 +19,11 @@ import rtx.byazen.api.modules.settings.impl.ButtonSetting;
 import rtx.byazen.api.modules.settings.impl.SelectSetting;
 import rtx.byazen.api.modules.settings.impl.SeparatorSetting;
 import rtx.byazen.api.modules.settings.impl.SliderSetting;
+import rtx.byazen.api.music.Equalizer;
 import rtx.byazen.api.music.MusicEngine;
 import rtx.byazen.api.music.MusicHttp;
 import rtx.byazen.api.music.MusicLibrary;
+import rtx.byazen.api.music.MusicPlaylists;
 import rtx.byazen.api.music.MusicTrack;
 import rtx.byazen.api.music.RadioCatalog;
 import rtx.byazen.api.ui.MusicPlayerScreen;
@@ -40,6 +42,7 @@ extends InterfaceComponentModule {
     private static final int DEFAULT_SEARCH_KEY = 71; // G
     private static final String[] STATION_OPTIONS;
     private static final String[] REPEAT_OPTIONS = {"Без повтора", "Повтор списка", "Повтор трека"};
+    private static final String[] CROSSFADE_OPTIONS = {"Выключен", "1 с", "2 с", "3 с", "4 с"};
     public static final String[] VISUALIZER_OPTIONS = {"Столбики", "Волна", "Круг"};
 
     static {
@@ -78,6 +81,15 @@ extends InterfaceComponentModule {
     public final BooleanSetting nowPlayingToast = this.register(new BooleanSetting("Эфир в уведомлении", "Показывать, что сейчас играет в эфире радиостанции (ICY-метаданные).", true));
     public final BooleanSetting skipDisliked = this.register(new BooleanSetting("Пропускать «не нравится»", "Автоматически переключать треки, отмеченные значком «не нравится».", true));
 
+    public final SeparatorSetting mixSeparator = this.register(new SeparatorSetting("Переходы и звук"));
+    public final SelectSetting crossfade = this.register(new SelectSetting("Кроссфейд", "Плавный переход между треками: новый трек нарастает, старый затухает (идея №4).")
+            .value(CROSSFADE_OPTIONS).selected(CROSSFADE_OPTIONS[1]));
+    public final BooleanSetting equalizerEnabled = this.register(new BooleanSetting("Эквалайзер", "Десятиполосный эквалайзер для радио и треков: басы, середина, верх (идея №5).", false));
+    public final SelectSetting equalizerPreset = this.register(new SelectSetting("Пресет эквалайзера", "Готовые кривые: плоская, бас, вокал, ночной режим, электро.")
+            .value(Equalizer.presets()).selected(Equalizer.presetName(0)).visible(this.equalizerEnabled::getValue));
+    public final ButtonSetting equalizerWindow = this.register(new ButtonSetting("Полосы эквалайзера", "Открыть окно плеера на вкладке эквалайзера: десять полос тянутся мышью.").label("Открыть").onClick(this::openEqualizer));
+    public final ButtonSetting playlistsWindow = this.register(new ButtonSetting("Плейлисты", "Открыть свои плейлисты: «+ Создать», треки добавляются правой кнопкой (идея №3).").label("Открыть").onClick(this::openPlaylists));
+
     public final SeparatorSetting keySeparator = this.register(new SeparatorSetting("Клавиши плеера"));
     public final BindSetting playPauseKey = this.register(new BindSetting("Пауза / играть", "Свободная клавиша управления музыкой (по умолчанию не назначена)."));
     public final BindSetting nextKey = this.register(new BindSetting("Следующий трек", "Свободная клавиша для переключения вперёд."));
@@ -111,6 +123,9 @@ extends InterfaceComponentModule {
     private long lastActivityAt;
     private String lastTrackKey = "";
     private String lastNowPlaying = "";
+    private String appliedPreset = Equalizer.presetName(0);
+    private int appliedCrossfade = -1;
+    private boolean appliedEqualizer;
 
     public MusicPlayerModule() {
         super("Music Player", "Музыкальный плеер: интернет-радио и треки из онлайн-каталога прямо в игре, без скачивания файлов.");
@@ -224,14 +239,34 @@ extends InterfaceComponentModule {
         this.openScreen(true);
     }
 
+    /** Окно плеера сразу на вкладке эквалайзера (идея №5). */
+    public void openEqualizer() {
+        this.openScreen(2);
+    }
+
+    /** Окно плеера сразу на вкладке плейлистов (идея №3). */
+    public void openPlaylists() {
+        this.openScreen(3);
+    }
+
     private void openScreen(boolean search) {
+        this.openScreen(search ? 1 : 0);
+    }
+
+    private void openScreen(int tab) {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null) {
             return;
         }
         MusicPlayerScreen screen = new MusicPlayerScreen(client.currentScreen);
-        if (search) {
+        if (tab == 1) {
             screen.focusSearchTab();
+        }
+        else if (tab == 2) {
+            screen.focusEqualizerTab();
+        }
+        else if (tab == 3) {
+            screen.focusPlaylistsTab();
         }
         if (UI.isOpen()) {
             UI.closeInto(screen);
@@ -255,6 +290,41 @@ extends InterfaceComponentModule {
         engine.setRepeat(this.repeatFromSettings());
         engine.setShuffle(this.shuffleFromSettings());
         engine.setNormalize(this.normalizeVolume.getValue());
+        this.applyMixSettings(engine);
+    }
+
+    /**
+     * Переносит настройки «Музыка 2.0» в движок: кроссфейд между треками (идея №4) и десятиполосный
+     * эквалайзер (№5). Эквалайзер подхватывает изменения на лету — трек перезапускать не нужно.
+     */
+    private void applyMixSettings(MusicEngine engine) {
+        int milliseconds = this.crossfadeMilliseconds();
+        if (this.appliedCrossfade != milliseconds) {
+            this.appliedCrossfade = milliseconds;
+            engine.setCrossfadeMs(milliseconds);
+        }
+        Equalizer equalizer = Equalizer.get();
+        boolean enabled = this.equalizerEnabled.getValue();
+        if (this.appliedEqualizer != enabled) {
+            this.appliedEqualizer = enabled;
+            equalizer.setEnabled(enabled);
+        }
+        String preset = this.equalizerPreset.getValue();
+        if (preset != null && !preset.equals(this.appliedPreset)) {
+            this.appliedPreset = preset;
+            equalizer.applyPreset(preset);
+        }
+    }
+
+    /** Кроссфейд в миллисекундах: «Выключен» → 0, «3 с» → 3000 (идея №4). */
+    public int crossfadeMilliseconds() {
+        String selected = this.crossfade.getValue();
+        for (int i = 1; i < CROSSFADE_OPTIONS.length; ++i) {
+            if (CROSSFADE_OPTIONS[i].equals(selected)) {
+                return i * 1000;
+            }
+        }
+        return 0;
     }
 
     @EventHandler
@@ -267,6 +337,7 @@ extends InterfaceComponentModule {
         engine.setRepeat(this.repeatFromSettings());
         engine.setShuffle(this.shuffleFromSettings());
         engine.setNormalize(this.normalizeVolume.getValue());
+        this.applyMixSettings(engine);
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null) {
             return;

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import rtx.byazen.ByAzen;
 import rtx.byazen.utils.storage.RepositoryStorage;
@@ -203,6 +204,60 @@ public final class MusicLibrary {
         return this.lastPlayed;
     }
 
+    /**
+     * Поиск для чата и команд (идеи №3 и №21): сначала полное совпадение названия или ссылки, потом
+     * вхождение строки. Если по запросу ничего не нашлось, но это похоже на ссылку — создаётся трек
+     * на лету, чтобы можно было запустить поток OGG, MP3 или WAV прямо из чата.
+     */
+    public MusicTrack findByText(String query) {
+        if (query == null || query.isBlank()) {
+            return null;
+        }
+        String needle = query.trim().toLowerCase(Locale.ROOT);
+        List<MusicTrack> candidates = new ArrayList<MusicTrack>(this.all());
+        candidates.addAll(this.recent);
+        MusicTrack partial = null;
+        for (MusicTrack track : candidates) {
+            if (track.title() == null || track.url() == null) {
+                continue;
+            }
+            String title = track.title().toLowerCase(Locale.ROOT);
+            String subtitle = track.subtitle() == null ? "" : track.subtitle().toLowerCase(Locale.ROOT);
+            if (title.equals(needle) || track.url().equalsIgnoreCase(needle)) {
+                return track;
+            }
+            if (partial == null && (title.contains(needle) || subtitle.contains(needle))) {
+                partial = track;
+            }
+        }
+        if (partial != null) {
+            return partial;
+        }
+        if (looksLikeStream(query)) {
+            String title = MusicTrack.describeUrl(query);
+            return new MusicTrack(MusicTrack.Kind.LINK, title, "Своя ссылка", query, "", "Ссылка", 0L);
+        }
+        return null;
+    }
+
+    /** Ссылка или локальный путь — то, что плеер умеет открывать без каталога. */
+    private static boolean looksLikeStream(String query) {
+        String lower = query.toLowerCase(Locale.ROOT);
+        if (lower.startsWith("http://") || lower.startsWith("https://")) {
+            return true;
+        }
+        return lower.endsWith(".mp3") || lower.endsWith(".ogg") || lower.endsWith(".oga") || lower.endsWith(".opus")
+                || lower.endsWith(".wav") || lower.endsWith(".flac") || lower.endsWith(".m4a") || lower.endsWith(".aac");
+    }
+
+    /** Короткая сводка библиотеки для чата. */
+    public String summary() {
+        return "Станции: " + RadioCatalog.stations().size()
+                + " · свои ссылки: " + this.custom.size()
+                + " · избранное: " + this.favorites.size()
+                + " · недавние: " + this.recent.size();
+    }
+
     /** Keeps the length of an online track after the catalogue reported it. */
     public void updateDuration(MusicTrack track, long durationMs) {
         if (track == null || durationMs <= 0L || track.isLive()) {
@@ -253,7 +308,8 @@ public final class MusicLibrary {
         }
     }
 
-    private static void readTracks(JsonArray array, List<MusicTrack> out) {
+    /** Чтение/запись треков: используются и библиотекой, и плейлистами (идея №3). */
+    static void readTracks(JsonArray array, List<MusicTrack> out) {
         if (array == null) {
             return;
         }
@@ -325,7 +381,7 @@ public final class MusicLibrary {
         }
     }
 
-    private static JsonArray writeTracks(List<MusicTrack> tracks) {
+    static JsonArray writeTracks(List<MusicTrack> tracks) {
         JsonArray array = new JsonArray();
         for (MusicTrack track : tracks) {
             JsonObject object = new JsonObject();
