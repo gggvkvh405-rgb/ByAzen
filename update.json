@@ -1,16 +1,16 @@
 {
-  "version": "1.9.3",
-  "jar": "ByAzen-1.9.3.jar",
-  "url": "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.3.jar",
+  "version": "1.9.4",
+  "jar": "ByAzen-1.9.4.jar",
+  "url": "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.4.jar",
   "urls": [
-    "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.3.jar"
+    "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.4.jar"
   ],
-  "sha256": "3555f480548e6710311d968cfa4cdad220ecb03c4fd4be37dfc800ada5d2d9db",
-  "size": 81085366,
+  "sha256": "4d4cc6b392e3d25cb937d84b830e6679b3307ce801c4628357deeafeb729b4be",
+  "size": 81091156,
   "released": "2026-09-23",
   "minecraft": "1.21.11",
   "loader": "0.19.3",
   "java": 21,
-  "notes": "Свои плейлисты (№3). В окне плеера появилась вкладка «Плейлисты»: «+ Создать» заводит набор,",
+  "notes": "Журнал старта с «хлебными крошками». Клиент пишет шаг инициализации в лог",
   "generated": "CI"
 }
