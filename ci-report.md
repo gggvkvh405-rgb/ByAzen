@@ -1,6 +1,6 @@
 # Отчёт CI по сборке ByAzen
 
-Коммит: 835c9abb352600fb87ec0228004fda79d59b7ff8
+Коммит: e57096bbaadccc08ccf8eb375151dde1e6b49277
 
 ## Аудио-тракт (MP3 -> PCM, как в игре)
 ```
@@ -16,11 +16,28 @@ silent   = 27469 сэмплов нуля
 AUDIO SMOKE: OK
 ```
 
+## Аудио-тракт (OGG Vorbis -> PCM, идея №21)
+```
+файл     = src/main/resources/assets/byazen/sounds/charmsfxpack/echocharmmain.ogg
+кадров   = 151
+сэмплов  = 291482
+rate     = 48000 Hz
+channels = 2
+длит.    = 3.036 c
+PCM      = 145741 байт
+peak     = 0.5030
+rms      = 0.1079
+silent   = 324 сэмплов нуля
+поток    = дочитан до конца
+минимум  = 2.00 c
+OGG SMOKE: OK
+```
+
 ## Проверка собранного jar
 ```
-файл:             build/libs/ByAzen-1.9.2.jar
+файл:             build/libs/ByAzen-1.9.3.jar
 mod id:           byazen
-версия в jar:     1.9.2 (ожидается 1.9.2)
+версия в jar:     1.9.3 (ожидается 1.9.3)
 объявлено jar:    6
 лежит в jar:      6
 entrypoints:      client,main
@@ -30,26 +47,26 @@ VERIFY: OK
 
 ## Lite-сборка (идея №187)
 ```
--rw-r--r-- 1 runner runner 80404747 Sep 22 16:32 build/libs/ByAzen-lite-1.9.2.jar
+-rw-r--r-- 1 runner runner 80530960 Sep 23 03:06 build/libs/ByAzen-lite-1.9.3.jar
 маркер внутри jar: lite
 ```
 
 ## Манифест обновлений (идеи №206–№208)
 ```
 {
-  "version": "1.9.2",
-  "jar": "ByAzen-1.9.2.jar",
-  "url": "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.2.jar",
+  "version": "1.9.3",
+  "jar": "ByAzen-1.9.3.jar",
+  "url": "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.3.jar",
   "urls": [
-    "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.2.jar"
+    "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.3.jar"
   ],
-  "sha256": "f8a720dbb36c9d1fe65bad7624ae331383d605ffe6f2982b457bcd9bc7bbc455",
-  "size": 80958241,
-  "released": "2026-09-22",
+  "sha256": "3555f480548e6710311d968cfa4cdad220ecb03c4fd4be37dfc800ada5d2d9db",
+  "size": 81085366,
+  "released": "2026-09-23",
   "minecraft": "1.21.11",
   "loader": "0.19.3",
   "java": 21,
-  "notes": "Манифест обновлений (№206). В репозитории появился update.json, но главное — он больше не",
+  "notes": "Свои плейлисты (№3). В окне плеера появилась вкладка «Плейлисты»: «+ Создать» заводит набор,",
   "generated": "CI"
 }
 ```
