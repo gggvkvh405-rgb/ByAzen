@@ -1,6 +1,6 @@
 # Отчёт CI по сборке ByAzen
 
-Коммит: b30edbdbb2adba152f12550b292d98af2b13a77f
+Коммит: 30cb7f1f2574eb5c6e7ed4187200de2d0fb4ad9d
 
 ## Аудио-тракт (MP3 -> PCM, как в игре)
 ```
@@ -47,7 +47,7 @@ VERIFY: OK
 
 ## Lite-сборка (идея №187)
 ```
--rw-r--r-- 1 runner runner 80536734 Sep 23 13:25 build/libs/ByAzen-lite-1.9.4.jar
+-rw-r--r-- 1 runner runner 80536966 Sep 23 13:29 build/libs/ByAzen-lite-1.9.4.jar
 маркер внутри jar: lite
 ```
 
@@ -60,8 +60,8 @@ VERIFY: OK
   "urls": [
     "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.4.jar"
   ],
-  "sha256": "4d4cc6b392e3d25cb937d84b830e6679b3307ce801c4628357deeafeb729b4be",
-  "size": 81091156,
+  "sha256": "faea88f62dd3f69c1151bb3dc5711c1ccf6ceaf6f130435df042f297edb021ba",
+  "size": 81091388,
   "released": "2026-09-23",
   "minecraft": "1.21.11",
   "loader": "0.19.3",
