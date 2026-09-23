@@ -1,6 +1,6 @@
 # Отчёт CI по сборке ByAzen
 
-Коммит: ee51facd39e4bfab5419aa92de45b7e1f803f83e
+Коммит: 0ddc89c403a2db5686ed5158eb3852386f3dbe6f
 
 ## Аудио-тракт (MP3 -> PCM, как в игре)
 ```
@@ -47,7 +47,7 @@ VERIFY: OK
 
 ## Lite-сборка (идея №187)
 ```
--rw-r--r-- 1 runner runner 80537025 Sep 23 15:11 build/libs/ByAzen-lite-1.9.5.jar
+-rw-r--r-- 1 runner runner 80537025 Sep 23 15:16 build/libs/ByAzen-lite-1.9.5.jar
 маркер внутри jar: lite
 ```
 
