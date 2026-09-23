@@ -1,6 +1,6 @@
 # Отчёт CI по сборке ByAzen
 
-Коммит: 15f82c84a4aed86e7f4a3d4bc7455a0868ea42ae
+Коммит: ee51facd39e4bfab5419aa92de45b7e1f803f83e
 
 ## Аудио-тракт (MP3 -> PCM, как в игре)
 ```
@@ -35,9 +35,9 @@ OGG SMOKE: OK
 
 ## Проверка собранного jar
 ```
-файл:             build/libs/ByAzen-1.9.4.jar
+файл:             build/libs/ByAzen-1.9.5.jar
 mod id:           byazen
-версия в jar:     1.9.4 (ожидается 1.9.4)
+версия в jar:     1.9.5 (ожидается 1.9.5)
 объявлено jar:    6
 лежит в jar:      6
 entrypoints:      client,main
@@ -47,26 +47,26 @@ VERIFY: OK
 
 ## Lite-сборка (идея №187)
 ```
--rw-r--r-- 1 runner runner 80536966 Sep 23 13:32 build/libs/ByAzen-lite-1.9.4.jar
+-rw-r--r-- 1 runner runner 80537025 Sep 23 15:11 build/libs/ByAzen-lite-1.9.5.jar
 маркер внутри jar: lite
 ```
 
 ## Манифест обновлений (идеи №206–№208)
 ```
 {
-  "version": "1.9.4",
-  "jar": "ByAzen-1.9.4.jar",
-  "url": "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.4.jar",
+  "version": "1.9.5",
+  "jar": "ByAzen-1.9.5.jar",
+  "url": "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.5.jar",
   "urls": [
-    "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.4.jar"
+    "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.5.jar"
   ],
-  "sha256": "faea88f62dd3f69c1151bb3dc5711c1ccf6ceaf6f130435df042f297edb021ba",
-  "size": 81091388,
+  "sha256": "b5ced490ed4ca2be40c4dc2bb4d592c485956868a4759dfadc7486f810b081bd",
+  "size": 81091447,
   "released": "2026-09-23",
   "minecraft": "1.21.11",
   "loader": "0.19.3",
   "java": 21,
-  "notes": "Журнал старта с «хлебными крошками». Клиент пишет шаг инициализации в лог",
+  "notes": "Главное: исправлено падение Mixin transformation of net.minecraft.class_636 failed …",
   "generated": "CI"
 }
 ```
