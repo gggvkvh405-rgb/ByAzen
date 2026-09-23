@@ -4,19 +4,41 @@ Daemon will be stopped at the end of the build
 > Configure project :
 Fabric Loom: 1.17.19
 
-> Task :compileJava FAILED
-/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/nav/TeleportHelper.java:25: error: cannot find symbol
-    public static Waypoint home() {
-                  ^
-  symbol:   class Waypoint
-  location: class TeleportHelper
-/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/nav/TeleportHelper.java:68: error: cannot find symbol
-    private static String coords(Waypoint point) {
-                                 ^
-  symbol:   class Waypoint
-  location: class TeleportHelper
+> Task :compileJava
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/libs/audio/jorbis/Info.java:465: warning: [removal] Integer(int) in Integer has been deprecated and marked for removal
+    return "version:"+new Integer(version)+", channels:"+new Integer(channels)
+                      ^
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/libs/audio/jorbis/Info.java:465: warning: [removal] Integer(int) in Integer has been deprecated and marked for removal
+    return "version:"+new Integer(version)+", channels:"+new Integer(channels)
+                                                         ^
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/libs/audio/jorbis/Info.java:466: warning: [removal] Integer(int) in Integer has been deprecated and marked for removal
+        +", rate:"+new Integer(rate)+", bitrate:"+new Integer(bitrate_upper)
+                   ^
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/libs/audio/jorbis/Info.java:466: warning: [removal] Integer(int) in Integer has been deprecated and marked for removal
+        +", rate:"+new Integer(rate)+", bitrate:"+new Integer(bitrate_upper)
+                                                  ^
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/libs/audio/jorbis/Info.java:467: warning: [removal] Integer(int) in Integer has been deprecated and marked for removal
+        +","+new Integer(bitrate_nominal)+","+new Integer(bitrate_lower);
+             ^
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/libs/audio/jorbis/Info.java:467: warning: [removal] Integer(int) in Integer has been deprecated and marked for removal
+        +","+new Integer(bitrate_nominal)+","+new Integer(bitrate_lower);
+                                              ^
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/api/chat/commands/impl/MusicCommand.java:361: error: tabComplete(String,String[]) in MusicCommand cannot override tabComplete(String,String[]) in Command
+    public List<String> tabComplete(String label, String[] args) {
+                        ^
+  return type List<String> is not compatible with Stream<String>
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/api/chat/commands/impl/MusicCommand.java:360: error: method does not override or implement a method from a supertype
+    @Override
+    ^
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
 2 errors
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_4-1790085299182.json
+6 warnings
+
+> Task :compileJava FAILED
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_6-1790132482645.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/ByAzen/ByAzen/build/reports/problems/problems-report.html
 
@@ -25,17 +47,37 @@ FAILURE: Build failed with an exception.
 * What went wrong:
 Execution failed for task ':compileJava' (registered by plugin class 'org.gradle.api.plugins.JavaBasePlugin').
 > Compilation failed; see the compiler output below.
-  /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/nav/TeleportHelper.java:25: error: cannot find symbol
-      public static Waypoint home() {
-                    ^
-    symbol:   class Waypoint
-    location: class TeleportHelper
-  /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/nav/TeleportHelper.java:68: error: cannot find symbol
-      private static String coords(Waypoint point) {
-                                   ^
-    symbol:   class Waypoint
-    location: class TeleportHelper
+  Note: Recompile with -Xlint:deprecation for details.
+  /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/api/chat/commands/impl/MusicCommand.java:361: error: tabComplete(String,String[]) in MusicCommand cannot override tabComplete(String,String[]) in Command
+      public List<String> tabComplete(String label, String[] args) {
+                          ^
+    return type List<String> is not compatible with Stream<String>
+  Note: Recompile with -Xlint:unchecked for details.
+  Note: Some input files use or override a deprecated API.
+  /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/api/chat/commands/impl/MusicCommand.java:360: error: method does not override or implement a method from a supertype
+      @Override
+      ^
+  /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/libs/audio/jorbis/Info.java:465: warning: [removal] Integer(int) in Integer has been deprecated and marked for removal
+      return "version:"+new Integer(version)+", channels:"+new Integer(channels)
+                        ^
+  /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/libs/audio/jorbis/Info.java:465: warning: [removal] Integer(int) in Integer has been deprecated and marked for removal
+      return "version:"+new Integer(version)+", channels:"+new Integer(channels)
+                                                           ^
+  /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/libs/audio/jorbis/Info.java:466: warning: [removal] Integer(int) in Integer has been deprecated and marked for removal
+          +", rate:"+new Integer(rate)+", bitrate:"+new Integer(bitrate_upper)
+                     ^
+  /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/libs/audio/jorbis/Info.java:466: warning: [removal] Integer(int) in Integer has been deprecated and marked for removal
+          +", rate:"+new Integer(rate)+", bitrate:"+new Integer(bitrate_upper)
+                                                    ^
+  /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/libs/audio/jorbis/Info.java:467: warning: [removal] Integer(int) in Integer has been deprecated and marked for removal
+          +","+new Integer(bitrate_nominal)+","+new Integer(bitrate_lower);
+               ^
+  /home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/libs/audio/jorbis/Info.java:467: warning: [removal] Integer(int) in Integer has been deprecated and marked for removal
+          +","+new Integer(bitrate_nominal)+","+new Integer(bitrate_lower);
+                                                ^
+  Note: Some input files use unchecked or unsafe operations.
   2 errors
+  6 warnings
 
 * Try:
 > Check your code and dependencies to fix the compilation error(s)
@@ -77,17 +119,37 @@ org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':compile
 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
 Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Compilation failed; see the compiler output below.
-/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/nav/TeleportHelper.java:25: error: cannot find symbol
-    public static Waypoint home() {
-                  ^
-  symbol:   class Waypoint
-  location: class TeleportHelper
-/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/utils/nav/TeleportHelper.java:68: error: cannot find symbol
-    private static String coords(Waypoint point) {
-                                 ^
-  symbol:   class Waypoint
-  location: class TeleportHelper
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/libs/audio/jorbis/Info.java:465: warning: [removal] Integer(int) in Integer has been deprecated and marked for removal
+    return "version:"+new Integer(version)+", channels:"+new Integer(channels)
+                      ^
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/libs/audio/jorbis/Info.java:465: warning: [removal] Integer(int) in Integer has been deprecated and marked for removal
+    return "version:"+new Integer(version)+", channels:"+new Integer(channels)
+                                                         ^
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/libs/audio/jorbis/Info.java:466: warning: [removal] Integer(int) in Integer has been deprecated and marked for removal
+        +", rate:"+new Integer(rate)+", bitrate:"+new Integer(bitrate_upper)
+                   ^
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/libs/audio/jorbis/Info.java:466: warning: [removal] Integer(int) in Integer has been deprecated and marked for removal
+        +", rate:"+new Integer(rate)+", bitrate:"+new Integer(bitrate_upper)
+                                                  ^
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/libs/audio/jorbis/Info.java:467: warning: [removal] Integer(int) in Integer has been deprecated and marked for removal
+        +","+new Integer(bitrate_nominal)+","+new Integer(bitrate_lower);
+             ^
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/libs/audio/jorbis/Info.java:467: warning: [removal] Integer(int) in Integer has been deprecated and marked for removal
+        +","+new Integer(bitrate_nominal)+","+new Integer(bitrate_lower);
+                                              ^
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/api/chat/commands/impl/MusicCommand.java:361: error: tabComplete(String,String[]) in MusicCommand cannot override tabComplete(String,String[]) in Command
+    public List<String> tabComplete(String label, String[] args) {
+                        ^
+  return type List<String> is not compatible with Stream<String>
+/home/runner/work/ByAzen/ByAzen/src/main/java/rtx/byazen/api/chat/commands/impl/MusicCommand.java:360: error: method does not override or implement a method from a supertype
+    @Override
+    ^
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
 2 errors
+6 warnings
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:89)
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:50)
 	at org.gradle.api.internal.tasks.compile.NormalizingJavaCompiler.delegateAndHandleErrors(NormalizingJavaCompiler.java:98)
@@ -222,5 +284,5 @@ Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Com
 	... 30 more
 
 
-BUILD FAILED in 19s
+BUILD FAILED in 33s
 1 actionable task: 1 executed
