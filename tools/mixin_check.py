@@ -91,6 +91,13 @@ def load_index():
             parts = line.rstrip('\n').split('\t')
             if parts[0] == 'C':
                 classes.setdefault(parts[1], {'methods': [], 'fields': []})
+                data = classes[parts[1]]
+                BY_PATH[parts[1]] = data
+                if len(parts) > 2:
+                    BY_PATH[parts[2]] = data
+                    inter, yarn = parts[2], parts[1]
+                    ALIASES[inter.rsplit('/', 1)[-1].rsplit('$', 1)[-1]] = \
+                        yarn.rsplit('/', 1)[-1].rsplit('$', 1)[-1]
             elif parts[0] == 'M' and len(parts) >= 6:
                 classes.setdefault(parts[1], {'methods': [], 'fields': []})
                 classes[parts[1]]['methods'].append(
@@ -101,6 +108,10 @@ def load_index():
                 classes[parts[1]]['fields'].append(
                     {'name': parts[2], 'inter': parts[3], 'type': parts[4]})
     return classes
+
+
+BY_PATH = {}
+ALIASES = {}  # intermediary-имя класса -> yarn-имя (class_243 -> Vec3d)
 
 
 def simple_of(path):
@@ -156,8 +167,10 @@ def parse_annotations(text):
                        rest, re.S)
         if not sig:
             continue
+        ret = re.sub(r'\b(public|private|protected|static|final|synchronized|abstract|native|default|strictfp)\b',
+                     ' ', sig.group(1)).strip()
         out.append({'type': name, 'args': args,
-                    'ret': sig.group(1).strip(), 'member': sig.group(2),
+                    'ret': ret, 'member': sig.group(2),
                     'params': sig.group(3),
                     'line': text[:m.start()].count('\n') + 1})
     return out
@@ -271,7 +284,8 @@ def norm_type(name):
         return PRIM_TO_CODE[name]
     if name in BOX_TO_CODE:
         return BOX_TO_CODE[name]
-    return name.rsplit('$', 1)[-1].rsplit('.', 1)[-1]
+    short = name.rsplit('$', 1)[-1].rsplit('.', 1)[-1]
+    return ALIASES.get(short, short)
 
 
 def is_type_variable(name):
@@ -379,6 +393,32 @@ def check_handler(path, classes, targets, external, ann):
                                   f'метод не найден (возможно, в родителе)')
         return
 
+    if ann['type'] in ('ModifyArg', 'Redirect'):
+        # у этих перехватов тип возврата обработчика жёстко связан с целевым вызовом:
+        # @Redirect обязан возвращать то же, что перехваченный метод, иначе Mixin валит класс
+        for raw in at_targets(ann['args']):
+            parsed = split_target(raw)
+            if not parsed:
+                continue
+            owner, name, types, callee_ret = parsed
+            if owner not in BY_PATH:
+                continue  # внешняя библиотека (authlib, JDK) — ванильные подписи тут не помогут
+            callee = resolve_member(owner, name, types)
+            if callee is None:
+                note(f'{where}: @{ann["type"]} целится в {simple_of(owner)}.{name} — '
+                     f'такого метода в ванильном jar нет, перехват молча пропускается')
+                continue
+            handler_ret = norm_type(ann['ret'])
+            if ann['type'] == 'Redirect':
+                if callee_ret and handler_ret != callee_ret and not is_type_variable(ann['ret']):
+                    problem(f'{where}: @Redirect возвращает {handler_ret}, а перехваченный '
+                            f'{simple_of(owner)}.{name} возвращает {callee_ret} — '
+                            f'игра падает при загрузке класса')
+            else:
+                known = {norm_type(x) for m in callee for x in m['params']}
+                if known and handler_ret not in known and not is_type_variable(ann['ret']):
+                    note(f'{where}: @ModifyArg возвращает {handler_ret}, а у вызова '
+                         f'{simple_of(owner)}.{name} параметры {sorted(known)} — проверь тип аргумента')
     # инъекции: сверяем цель
     mstrings = method_strings(ann['args'])
     if not mstrings:
@@ -468,6 +508,30 @@ def mixin_added_methods(text):
         if name not in handlers:
             added.add(name)
     return added
+
+
+def split_target(text):
+    """'Lnet/minecraft/client/gui/hud/ChatHud;method_1812(Lnet/minecraft/class_2561;)V'
+    -> ('net/minecraft/client/gui/hud/ChatHud', 'method_1812', ['Text'], 'void')."""
+    m = re.match(r'L([^;]+);([\w<>$]+)(?:\((.*)\)(.+))?$', text)
+    if not m:
+        return None
+    owner, name, params, ret = m.group(1), m.group(2), m.group(3), m.group(4)
+    types = descriptor_param_types(params) if params else []
+    return owner, name, types, (norm_type(ret) if ret else None)
+
+
+def resolve_member(owner, name, param_types):
+    """Находит метод по цели из @At (и по yarn-, и по intermediary-имени класса/метода)."""
+    data = BY_PATH.get(owner)
+    if data is None:
+        return None
+    found = [m for m in data['methods'] if m['name'] == name or m['inter'] == name]
+    if param_types:
+        narrowed = [m for m in found if [norm_type(x) for x in m['params']] == param_types]
+        if narrowed:
+            return narrowed
+    return found or None
 
 
 def iterate_java():
