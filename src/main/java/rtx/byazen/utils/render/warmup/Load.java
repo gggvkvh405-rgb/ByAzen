@@ -1,4 +1,5 @@
 package rtx.byazen.utils.render.warmup;
+import rtx.byazen.ByAzen;
 import rtx.byazen.api.modules.impl.Visuals.custompet.CustomPetWarmup;
 import rtx.byazen.utils.render.render2d.Render2D;
 
@@ -38,6 +39,11 @@ public class Load {
                     rtx.byazen.utils.render.others.RenderCompatibility.glSummary());
         }
         catch (Throwable ignored) {
+        }
+        if (rtx.byazen.utils.startup.StartTrace.safeMode()) {
+            // Безопасный режим: текст измерится сам при первом отрисовке, питомец подождёт.
+            ByAzen.LOGGER.warn("[ByAzen] безопасный режим: прогрев шрифтов и текстур пропущен");
+            return;
         }
         Load.warmupFonts();
         try {

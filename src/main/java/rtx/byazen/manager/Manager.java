@@ -127,6 +127,9 @@ public final class Manager {
                     Load.runStartupWarmup();
                     return;
                 }
+                if (safe) {
+                    return;
+                }
                 Load.warmupFonts();
                 try {
                     Render2DWarmup.reset();
