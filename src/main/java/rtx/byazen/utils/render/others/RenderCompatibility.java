@@ -1,5 +1,6 @@
 package rtx.byazen.utils.render.others;
 import com.mojang.blaze3d.systems.RenderSystem;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
 public final class RenderCompatibility {
@@ -61,7 +62,38 @@ public final class RenderCompatibility {
         RenderCompatibility.shouldDisableFragEffectScanShader();
     }
 
+    /**
+     * Готов ли OpenGL-контекст именно в этом потоке.
+     * <p>
+     * Важная защита: клиент инициализируется раньше, чем Minecraft создаёт GL-устройство, и вызов
+     * любой GL-функции в этот момент — это нативное падение драйвера
+     * ({@code EXCEPTION_ACCESS_VIOLATION [lwjgl_opengl.dll+…]}), которое невозможно поймать
+     * на стороне Java. Поэтому перед каждым обращением к OpenGL проверяем, что мы на потоке
+     * отрисовки и что возможности GL созданы ({@code GL.createCapabilities()} уже вызывался).
+     */
+    public static boolean glReady() {
+        try {
+            return RenderSystem.isOnRenderThread() && GL.getCapabilities() != null;
+        }
+        catch (Throwable throwable) {
+            return false;
+        }
+    }
+
+    /** Короткая строка про OpenGL для логов: производитель, модель, версия. */
+    public static String glSummary() {
+        if (!RenderCompatibility.glReady()) {
+            return "контекст OpenGL ещё не создан";
+        }
+        return "vendor=" + RenderCompatibility.readGlString(7936)
+                + " · renderer=" + RenderCompatibility.readGlString(7937)
+                + " · version=" + RenderCompatibility.readGlString(7938);
+    }
+
     private static String readGlString(int n) {
+        if (!RenderCompatibility.glReady()) {
+            return "недоступно";
+        }
         try {
             return RenderCompatibility.normalize(GL11.glGetString((int)n));
         }

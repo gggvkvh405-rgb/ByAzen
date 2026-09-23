@@ -17,6 +17,11 @@ public final class CustomPetWarmup {
         if (minecraftClient == null) {
             return;
         }
+        // Регистрация текстуры = работа с видео memory: до создания GL-устройства это нативное
+        // падение драйвера, поэтому прогреваемся только когда контекст точно готов.
+        if (!rtx.byazen.utils.render.others.RenderCompatibility.glReady()) {
+            return;
+        }
         try {
             if (minecraftClient.getTextureManager() != null) {
                 minecraftClient.getTextureManager().registerTexture(TEXTURE, (ReloadableTexture)new ResourceTexture(TEXTURE));

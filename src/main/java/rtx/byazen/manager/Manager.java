@@ -1,5 +1,6 @@
 package rtx.byazen.manager;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
+import rtx.byazen.ByAzen;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.ResourceReloader;
@@ -29,6 +30,7 @@ import rtx.byazen.utils.render.warmup.Load;
 import rtx.byazen.utils.render.warmup.Render2DWarmup;
 import rtx.byazen.utils.sounds.SoundManager;
 import rtx.byazen.utils.startup.LazyTasks;
+import rtx.byazen.utils.startup.StartTrace;
 import rtx.byazen.utils.storage.macro.MacroHandler;
 
 public final class Manager {
@@ -45,25 +47,46 @@ public final class Manager {
     }
 
     public static void init() {
+        StartTrace.begin();
+        boolean safe = StartTrace.safeMode();
         Render2D.init();
-        Render2DWarmup.init();
+        StartTrace.step("1/12 · отрисовка клиента");
+        if (safe) {
+            ByAzen.LOGGER.warn("[ByAzen] безопасный режим: прогрев отрисовки пропущен");
+        }
+        else {
+            Render2DWarmup.init();
+        }
         AnimationUtil.init();
+        StartTrace.step("2/12 · анимации и управление камерой");
         GuiMovementHandler.init();
         ModuleManager.get().init();
+        StartTrace.step("3/12 · модули (" + ModuleManager.get().getAll().size() + ")");
         ConfigManager.init();
+        StartTrace.step("4/12 · конфиги");
         CommandManager.get().init();
+        StartTrace.step("5/12 · команды (" + CommandManager.getInstance().getCommands().size() + ")");
         MacroHandler.init();
         DragSystem.get().init();
+        StartTrace.step("6/12 · макросы и HUD");
         FunTimeEventsClient.INSTANCE.start();
         new GeckoLibClient().onInitializeClient();
+        StartTrace.step("7/12 · анимации мобов и события");
         SoundManager.init();
+        StartTrace.step("8/12 · звуки интерфейса");
         LiteApiClient.INSTANCE.start();
         ClientLifecycleEvents.CLIENT_STOPPING.register(minecraftClient -> Manager.shutdown());
         // тяжёлые интеграции готовятся не на старте, а при входе в мир (идея №165)
-        LazyTasks.submit("Косые плащи", () -> WaveyCapesMod.INSTANCE.init());
-        LazyTasks.submit("Просмотр шалкеров", ShulkerViewMod::init);
-        LazyTasks.submit("Головы в чате", ChatHeads::init);
-        LazyTasks.submit("Анимации чата", ChatAnimationMod::init);
+        if (safe) {
+            LazyTasks.setAutoRun(false);
+            ByAzen.LOGGER.warn("[ByAzen] безопасный режим: отложенные интеграции (плащи, шалкеры, чат) не готовятся");
+        }
+        else {
+            LazyTasks.submit("Косые плащи", () -> WaveyCapesMod.INSTANCE.init());
+            LazyTasks.submit("Просмотр шалкеров", ShulkerViewMod::init);
+            LazyTasks.submit("Головы в чате", ChatHeads::init);
+            LazyTasks.submit("Анимации чата", ChatAnimationMod::init);
+        }
         net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.END_CLIENT_TICK.register(LazyTasks::tick);
         // один раз при входе в мир: проверка требований и конфликтов миксинов (идеи №171, №173)
         net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.END_CLIENT_TICK.register(client -> {
@@ -76,8 +99,12 @@ public final class Manager {
         Thread thread = new Thread(DiscordRPCManager::start, "ByAzen-Discord-RPC-Init");
         thread.setDaemon(true);
         thread.start();
+        StartTrace.step("9/12 · Discord RPC и фоновые службы");
         MinecraftClient minecraftClient2 = MinecraftClient.getInstance();
         Runnable runnable = () -> {
+            if (StartTrace.safeMode()) {
+                return;
+            }
             LazyTasks.submit("Первый GIF клиента", () -> GifRenderer.preload("byazen:gif/kity.gif"));
             LazyTasks.submit("Прогрев отрисовки", Load::runStartupWarmup);
         };
@@ -86,6 +113,7 @@ public final class Manager {
         } else {
             runnable.run();
         }
+        StartTrace.step("10/12 · прогревы отрисовки поставлены в очередь");
         Identifier identifier = Identifier.of((String)"byazen", (String)"ui_font_rewarmup");
         ResourceLoader.get((ResourceType)ResourceType.CLIENT_RESOURCES).registerReloader(identifier, (ResourceReloader)((SynchronousResourceReloader)resourceManager -> {
             MinecraftClient minecraftClient = MinecraftClient.getInstance();
@@ -114,6 +142,8 @@ public final class Manager {
                 }
             });
         }));
+        StartTrace.step("11/12 · слушатель перезагрузки ресурсов");
+        StartTrace.finished();
     }
 }
 

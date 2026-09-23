@@ -31,6 +31,11 @@ public abstract class WindowTitleMixin {
 
     @Inject(method="<init>", at={@At(value="TAIL")}, require = 0)
     private void byazen_applyDarkTitleBar(WindowEventHandler eventHandler, MonitorTracker screenManager, WindowSettings displayData, String preferredFullscreenVideoMode, String title, CallbackInfo ci) {
+        // Окно только что создано — это самый «хрупкий» момент запуска с нативными вызовами,
+        // поэтому в безопасном режиме тёмную полосу заголовка не трогаем.
+        if (rtx.byazen.utils.startup.StartTrace.safeMode()) {
+            return;
+        }
         MainWindow.applyDarkMode(this.handle);
     }
 }

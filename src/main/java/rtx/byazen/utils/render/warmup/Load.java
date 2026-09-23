@@ -32,6 +32,13 @@ public class Load {
             return;
         }
         startupWarmupDone = true;
+        // Первый настоящий кадр: сообщаем в лог, что OpenGL готов, и с какой картой мы работаем.
+        try {
+            rtx.byazen.utils.startup.StartTrace.reportGl(
+                    rtx.byazen.utils.render.others.RenderCompatibility.glSummary());
+        }
+        catch (Throwable ignored) {
+        }
         Load.warmupFonts();
         try {
             CustomPetWarmup.warmup();

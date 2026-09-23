@@ -9,6 +9,7 @@ import rtx.byazen.api.modules.impl.Utils.GraphicsPresets;
 import rtx.byazen.utils.chat.ChatMessage;
 import rtx.byazen.utils.logs.ClientLog;
 import rtx.byazen.utils.profiles.BuildTier;
+import rtx.byazen.utils.render.others.RenderCompatibility;
 import rtx.byazen.utils.storage.RepositoryStorage;
 
 /**
@@ -79,6 +80,12 @@ public final class HardwareProfile {
     public static String gpuName() {
         if (gpu != null) {
             return gpu;
+        }
+        // Пока Minecraft не создал GL-устройство, любой вызов OpenGL — нативное падение драйвера,
+        // поэтому до готовности контекста ничего не читаем и не запоминаем.
+        if (!RenderCompatibility.glReady()) {
+            ClientLog.debug("железо: OpenGL ещё не готов — видеокарту посмотрим позже");
+            return "не определена";
         }
         gpu = "не определена";
         try {
