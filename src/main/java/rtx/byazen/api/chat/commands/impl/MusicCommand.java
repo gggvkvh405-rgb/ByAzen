@@ -1,8 +1,8 @@
 package rtx.byazen.api.chat.commands.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Stream;
 import net.minecraft.util.Formatting;
 import rtx.byazen.api.chat.commands.Command;
 import rtx.byazen.api.music.Equalizer;
@@ -357,37 +357,33 @@ extends Command {
         return builder.toString().trim();
     }
 
+    /** Автодополнение подкоманд: база возвращает {@code Stream}, как и у остальных команд клиента. */
     @Override
-    public List<String> tabComplete(String label, String[] args) {
-        List<String> options = new ArrayList<String>();
+    public Stream<String> tabComplete(String label, String[] args) {
         if (args.length == 1) {
-            options.add("play");
-            options.add("next");
-            options.add("prev");
-            options.add("pause");
-            options.add("stop");
-            options.add("list");
-            options.add("pl");
-            options.add("eq");
-            options.add("crossfade");
-            options.add("volume");
+            return Stream.of("play", "next", "prev", "pause", "stop", "list", "pl", "eq", "crossfade", "volume");
         }
-        else if (args.length == 2 && args[0].equalsIgnoreCase("pl")) {
-            options.add("new");
-            options.add("add");
-            options.add("play");
-            options.add("show");
-            options.add("remove");
-            options.add("list");
+        if (args.length == 2 && args[0].equalsIgnoreCase("pl")) {
+            return Stream.of("new", "add", "play", "show", "remove", "list");
         }
-        else if (args.length == 2 && args[0].equalsIgnoreCase("eq")) {
-            options.add("on");
-            options.add("off");
-            options.add("preset");
-            options.add("set");
-            options.add("reset");
+        if (args.length == 2 && args[0].equalsIgnoreCase("eq")) {
+            return Stream.of("on", "off", "preset", "set", "reset");
         }
-        return options;
+        if (args.length == 2 && args[0].equalsIgnoreCase("play")) {
+            return MusicLibrary.get().all().stream().map(MusicTrack::title);
+        }
+        if (args.length == 2 && (args[0].equalsIgnoreCase("crossfade") || args[0].equalsIgnoreCase("volume"))) {
+            return Stream.of("0", "1000", "2000", "3000", "4000");
+        }
+        if (args.length == 3 && args[0].equalsIgnoreCase("pl") && (args[1].equalsIgnoreCase("play")
+                || args[1].equalsIgnoreCase("show") || args[1].equalsIgnoreCase("remove")
+                || args[1].equalsIgnoreCase("add"))) {
+            return MusicPlaylists.get().all().stream().map(MusicPlaylists.Playlist::name);
+        }
+        if (args.length == 3 && args[0].equalsIgnoreCase("eq") && args[1].equalsIgnoreCase("preset")) {
+            return Stream.of(Equalizer.presets());
+        }
+        return Stream.empty();
     }
 
     @Override

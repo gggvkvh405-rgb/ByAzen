@@ -461,6 +461,8 @@ public class Info{
     return (blocksizes[mode_param[mode].blockflag]);
   }
 
+  // ByAzen: подавляем предупреждение о new Integer(...) на JDK 21 — код JOrbis оставлен как есть.
+  @SuppressWarnings("removal")
   public String toString(){
     return "version:"+new Integer(version)+", channels:"+new Integer(channels)
         +", rate:"+new Integer(rate)+", bitrate:"+new Integer(bitrate_upper)
