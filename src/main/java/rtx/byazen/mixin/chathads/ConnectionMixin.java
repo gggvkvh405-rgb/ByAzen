@@ -9,7 +9,10 @@ import rtx.byazen.api.mods.chathads.ChatHeads;
 @Mixin(net.minecraft.network.ClientConnection.class)
 
 public abstract class ConnectionMixin {
-    @Inject(method="connect", at={@At(value="HEAD")}, require = 0)
+    // Важно: у ClientConnection.connect несколько перегрузок, часть возвращает значения.
+    // Селектор без дескриптора цеплял их все — для возвращающих нужен CallbackInfoReturnable,
+    // и игра падала при загрузке класса. Поэтому дескриптор указан точно (вход в игру).
+    @Inject(method="connect(Ljava/lang/String;ILnet/minecraft/network/listener/ClientLoginPacketListener;)V", at={@At(value="HEAD")}, require = 0)
     public void chatheads_resetServerKnowledge(CallbackInfo ci) {
         ChatHeads.serverSentUuid = false;
         ChatHeads.serverDisabledChatHeads = false;

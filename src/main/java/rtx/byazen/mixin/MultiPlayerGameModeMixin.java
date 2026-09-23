@@ -28,8 +28,10 @@ public abstract class MultiPlayerGameModeMixin {
         }
     }
 
+    // breakBlock возвращает boolean, поэтому обработчику нужен CallbackInfoReturnable:
+    // с обычным CallbackInfo игра падает при загрузке класса («CallbackInfoReturnable is required»).
     @Inject(method="breakBlock", at={@At(value="HEAD")}, require = 0)
-    private void byazen_postBlockBreak(net.minecraft.util.math.BlockPos blockPos, CallbackInfo ci) {
+    private void byazen_postBlockBreak(net.minecraft.util.math.BlockPos blockPos, CallbackInfoReturnable<Boolean> cir) {
         net.minecraft.client.MinecraftClient client = net.minecraft.client.MinecraftClient.getInstance();
         if (client == null || client.world == null || blockPos == null) {
             return;

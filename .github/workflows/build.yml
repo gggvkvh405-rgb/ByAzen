@@ -34,6 +34,9 @@ jobs:
       - name: Preflight-проверки проекта (импорты, модули, версии, доки)
         run: python3 tools/repo_checks.py
 
+      - name: Проверка миксинов (подписи ванильных классов из маппингов Yarn)
+        run: python3 tools/mixin_check.py
+
       - name: Audio smoke test (MP3 декодируется как в игре)
         run: |
           set -e

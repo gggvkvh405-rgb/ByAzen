@@ -54,7 +54,9 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, S extend
         }
     }
 
-    @Inject(method="getHurtColor", at={@At(value="RETURN")}, cancellable=true, require = 0)
+    // В 1.21.11 итоговый цвет модели (в том числе оттенок урона) считает getMixColor,
+    // а не getHurtColor — прежняя цель не существовала, свой цвет урона не применялся.
+    @Inject(method="getMixColor", at={@At(value="RETURN")}, cancellable=true, require = 0)
     private void byazen_customHurtTint(S state, CallbackInfoReturnable<Integer> cir) {
         Integer tint = HitColor.tintFor(state);
         if (tint != null) {

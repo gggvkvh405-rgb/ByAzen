@@ -265,6 +265,32 @@ def check_layout(quiet: bool) -> None:
         print("раскладка окон совпадает с эталоном")
 
 
+def check_mixins(quiet: bool) -> None:
+    """Миксины сверяются с подписями ванильных классов (падение в игре ловится здесь, а не у игрока).
+
+    Ошибка в аннотации миксина не видна компилятору: игра падает в бою, при загрузке целевого класса.
+    Пример — ByAzen 1.9.4: обработчик breakBlock просил CallbackInfo вместо CallbackInfoReturnable.
+    """
+    script = os.path.join(ROOT, "tools", "mixin_check.py")
+    if not os.path.exists(script):
+        return
+    result = subprocess.run([sys.executable, script], cwd=ROOT, capture_output=True, text=True)
+    output = (result.stdout or "") + (result.stderr or "")
+    if result.returncode != 0:
+        errors = [line.strip() for line in output.splitlines() if line.strip().startswith("✗")]
+        for text in errors[:10]:
+            report("миксины", text.lstrip("✗ ").strip())
+        if not errors:
+            report("миксины", "mixin_check.py нашёл ошибки — смотрите его вывод")
+        return
+    summary = next((line for line in output.splitlines() if line.startswith("миксины:")), "")
+    if not quiet:
+        print(summary or "миксины сверены с подписями ванильных классов")
+        for line in output.splitlines():
+            if line.startswith("ВНИМАНИЕ") or line.startswith("вероятно унаследованные"):
+                print("  " + line)
+
+
 def main() -> int:
     quiet = "--quiet" in sys.argv
     sources = Sources()
@@ -278,6 +304,7 @@ def main() -> int:
     check_manifest()
     check_docs(quiet)
     check_layout(quiet)
+    check_mixins(quiet)
     print()
     if warnings:
         print(f"замечания (не блокируют сборку): {len(warnings)}")
@@ -291,7 +318,7 @@ def main() -> int:
         for text in problems:
             print("  - " + text)
         return 1
-    print("Preflight: всё чисто (импорты, статические вызовы, модули, версии, доки, раскладка)")
+    print("Preflight: всё чисто (импорты, статические вызовы, модули, версии, доки, раскладка, миксины)")
     return 0
 
 
