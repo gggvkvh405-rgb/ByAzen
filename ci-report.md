@@ -1,6 +1,6 @@
 # Отчёт CI по сборке ByAzen
 
-Коммит: 0610cfda0eca4bcd4fae85072074cf3ada899525
+Коммит: b30edbdbb2adba152f12550b292d98af2b13a77f
 
 ## Аудио-тракт (MP3 -> PCM, как в игре)
 ```
@@ -35,9 +35,9 @@ OGG SMOKE: OK
 
 ## Проверка собранного jar
 ```
-файл:             build/libs/ByAzen-1.9.3.jar
+файл:             build/libs/ByAzen-1.9.4.jar
 mod id:           byazen
-версия в jar:     1.9.3 (ожидается 1.9.3)
+версия в jar:     1.9.4 (ожидается 1.9.4)
 объявлено jar:    6
 лежит в jar:      6
 entrypoints:      client,main
@@ -47,26 +47,26 @@ VERIFY: OK
 
 ## Lite-сборка (идея №187)
 ```
--rw-r--r-- 1 runner runner 80530960 Sep 23 03:10 build/libs/ByAzen-lite-1.9.3.jar
+-rw-r--r-- 1 runner runner 80536734 Sep 23 13:25 build/libs/ByAzen-lite-1.9.4.jar
 маркер внутри jar: lite
 ```
 
 ## Манифест обновлений (идеи №206–№208)
 ```
 {
-  "version": "1.9.3",
-  "jar": "ByAzen-1.9.3.jar",
-  "url": "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.3.jar",
+  "version": "1.9.4",
+  "jar": "ByAzen-1.9.4.jar",
+  "url": "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.4.jar",
   "urls": [
-    "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.3.jar"
+    "https://raw.githubusercontent.com/gggvkvh405-rgb/ByAzen/arena/01a0bf74-byazen/ByAzen-1.9.4.jar"
   ],
-  "sha256": "3555f480548e6710311d968cfa4cdad220ecb03c4fd4be37dfc800ada5d2d9db",
-  "size": 81085366,
+  "sha256": "4d4cc6b392e3d25cb937d84b830e6679b3307ce801c4628357deeafeb729b4be",
+  "size": 81091156,
   "released": "2026-09-23",
   "minecraft": "1.21.11",
   "loader": "0.19.3",
   "java": 21,
-  "notes": "Свои плейлисты (№3). В окне плеера появилась вкладка «Плейлисты»: «+ Создать» заводит набор,",
+  "notes": "Журнал старта с «хлебными крошками». Клиент пишет шаг инициализации в лог",
   "generated": "CI"
 }
 ```
